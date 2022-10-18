@@ -1,0 +1,28 @@
+{
+  "name": "javascriptos",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "api": "nodemon api/index.js"
+  },
+  "devDependencies": {
+    "@types/jquery": "^2.0.47",
+    "@types/node": "^18.11.0",
+    "jqueryui": "^1.11.1",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0"
+  },
+  "dependencies": {
+    "@types/jqueryui": "^1.12.16",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jquery": "^3.6.1",
+    "jquery-ui-dist": "^1.13.2",
+    "vite-tsconfig-paths": "^3.5.1"
+  }
+}

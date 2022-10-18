@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="https://code.jquery.com/jquery-3.6.1.js"
+        integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"
+        integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
+    <title>Thijmen - Desktop</title>
+    <link rel="stylesheet" href="./css/main.css" />
+</head>
+
+<body>
+    <div id="display-too-small">
+        <h1>This website requires a bigger screen. Try a larger screen</h1>
+    </div>
+
+    <!-- #Section top navigation bar -->
+    <section id="desktop">
+        <section id="top-nav-bar-container">
+            <div class="top-nav-bar">
+                <div class="left-side" id="app-props-container">
+                    <span class="logo">t.</span>
+                    <p id="current-app"></p>
+                    <div id="dynamic-props">
+                    </div>
+                </div>
+                <div class="right-side">
+                    <div class="battery">
+                        <div class="battery-level" style="height:90%;"></div>
+                    </div>
+                    <div class="wifisignal-3 wifi">
+                        <div class="wv4 wave">
+                            <div class="wv3 wave">
+                                <div class="wv2 wave">
+                                    <div class="wv1 wave">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="ico ico-mglass"></span>
+                    <em class="gg-options"></em>
+                    <p id="current-date-time"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- #Section main applications -->
+        <section id="main-application-container" class="overlay-element">
+        </section>
+
+        <!-- #Section app dock -->
+        <div id="all-apps-container" class="all-apps-container">
+            <section class="all-apps-top-section">
+                <h3>All apps</h3>
+                <form>
+                    <input type="text" class="app-search-bar" placeholder="start typing..." id="app-search-query">
+                </form>
+            </section>
+            <section id="all-apps">
+            </section>
+        </div>
+        <section id="bottom-app-dock">
+            <div class="app-dock">
+                <div class="app-bar" id="bottom-app-bar">
+                    <div id="inner-app-dock" class="normal-apps">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+
+</body>
+
+</html>
+
+<!--new code-->
+
+<script type="module" src="./src/index.ts"></script>

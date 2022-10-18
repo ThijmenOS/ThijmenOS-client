@@ -1,0 +1,20 @@
+.wave {
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    border-style: solid;
+    margin: 2px;
+}
+
+.wifi {
+    margin-top: 10px;
+}
+
+.wifisignal-3 .wv4.wave,
+.wifisignal-2 .wv4.wave,
+.wifisignal-2 .wv3.wave,
+.wifisignal-1 .wv4.wave,
+.wifisignal-1 .wv3.wave,
+.wifisignal-1 .wv2.wave {
+    border-top-color: rgba(255, 255, 255, 0.3);
+}

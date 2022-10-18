@@ -1,0 +1,115 @@
+<head>
+    <meta name="title" content="Explorer" />
+    <meta name="icon" content="userFiles/C/Program-files/file-explorer/file-explorer.svg" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js">
+    </script>
+</head>
+
+<body>
+    <div>
+        <img alt="back" id="back-arrow"
+            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSIyNHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBhcmlhLWxhYmVsbGVkYnk9ImFycm93TGVmdEljb25UaXRsZSIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSIgY29sb3I9IiMwMDAwMDAiPiA8dGl0bGUgaWQ9ImFycm93TGVmdEljb25UaXRsZSI+QXJyb3cgTGVmdDwvdGl0bGU+IDxwYXRoIGQ9Ik05IDZsLTYgNiA2IDYiLz4gPHBhdGggZD0iTTIxIDEySDQiLz4gPHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBkPSJNMyAxMmgxIi8+IDwvc3ZnPg==" />
+        <input type="text" id="file-path" readonly>
+    </div>
+    <div class="main-files" id="main-files">
+
+    </div>
+</body>
+
+
+<script id="os-class-element" data-id="Explorer">
+    class OS {
+        #listen(callback) {
+            window.onmessage = (e) => {
+                callback(e.data);
+            }
+        }
+        call(method, params, callback) {
+            let appName = document.getElementById("os-class-element").getAttribute("data-id")
+            window.top.postMessage({
+                origin: appName,
+                method: method,
+                params: params,
+            }, "https://thijmenbrand.nl");
+
+            if (callback)
+                this.#listen(callback)
+        }
+    }
+</script>
+<script>
+    let os = new OS();
+    let pathHistory = [""]
+    let explorerMode = "openFile"
+    let target;
+
+    getDirs()
+
+    document.getElementById("back-arrow").onclick = () => handleBackButton();
+
+
+    window.addEventListener('message', (event) => {
+        handleExternalData(event.data)
+    });
+    function handleExternalData(data) {
+        if (data.return == "selectFile") {
+            explorerMode = "sendData"
+            target = data.sender;
+        }
+    }
+
+    function handleBackButton() {
+        if (pathHistory.length <= 1) return
+        pathHistory.pop();
+        openFileOrDir(pathHistory.at(-1))
+    }
+
+    function handleDirResponse(res) {
+        let files = [];
+        res.forEach(path => {
+            let filePath = path.filePath.split("/");
+            filePath.splice(0, 2);
+            files.push({ filePath: filePath.join("/"), fileType: path.fileType })
+        });
+
+        $("#file-path").val(pathHistory.at(-1))
+
+        if (!files.length) {
+            $("#main-files").html("<p>this dir is empty</p>");
+            return;
+        }
+        files.forEach((element) => {
+            $("#main-files").append(
+                `<p onclick='openFileOrDir("${element.filePath}", "${element.fileType
+                }")'>${element.filePath.split("/").at(-1)}</p>`
+            );
+        });
+    }
+
+    function getDirs(filePath = "") {
+        $("#main-files").empty();
+
+        os.call('filesInDir', filePath, (res) => res.sender == "system" && handleDirResponse(res.return))
+    }
+
+    function openFileOrDir(filePath = "", fileType = null) {
+        if (fileType == null) {
+            getDirs(filePath)
+            return
+        }
+        if (fileType == "dir") {
+            getDirs(filePath);
+            pathHistory.push(filePath)
+            return;
+        }
+
+        if (explorerMode == "openFile")
+            os.call('openFile', filePath, (res) => console.log(res))
+
+        if (explorerMode == "sendData") {
+            os.call('sendData', { target: target, data: filePath })
+            os.call('closeSelf');
+        }
+    }
+
+</script>

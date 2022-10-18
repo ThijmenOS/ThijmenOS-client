@@ -1,0 +1,101 @@
+.app-page.window-full-screen {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 50 !important;
+}
+
+.app-page {
+  border-radius: 0px 0px 10px 10px;
+  left: 10em;
+  top: 10em;
+  position: absolute;
+  display: inline-block;
+  background-color: white;
+  z-index: 20;
+}
+
+.app-iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+.app-top-header {
+  z-index: 10;
+  height: 25px;
+  margin-top: -25px;
+  width: 100%;
+  border-radius: 10px 10px 0px 0px;
+  background-color: rgb(211, 211, 211);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-top-header.window-full-screen {
+  border-radius: unset;
+  margin-top: unset;
+}
+
+.app-top-header:hover {
+  cursor: move;
+}
+
+.javascript-os-inner-icon {
+  height: 15px;
+  width: 15px;
+  background-repeat: no-repeat;
+  background-size: 15px 15px;
+}
+
+.javascript-os-icon {
+  margin-right: 10px;
+}
+
+.app-options {
+  display: inline-flex;
+  width: 70px;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+}
+
+.javascript-os-title {
+  display: inline-block;
+  margin: 0;
+  color: black;
+  font-weight: lighter;
+}
+
+.ball {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0;
+  cursor: pointer;
+}
+
+.ball:hover {
+  transform: scale(1.1);
+}
+
+.ball.red {
+  background-color: red;
+}
+
+.ball.orange {
+  background-color: orange;
+}
+.ball.green {
+  background-color: green;
+}
+
+.top-header-full-screen {
+  border-radius: 0px;
+}

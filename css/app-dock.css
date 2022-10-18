@@ -1,0 +1,96 @@
+:root {
+  --app-icon-width: 70px;
+  --app-icons-size: 50px;
+  --app-bar-height: 40px;
+}
+
+.app-dock {
+  width: 100%;
+  height: var(--app-bar-height);
+  background-color: rgba(207, 207, 207, 0.95);
+  position: absolute;
+  margin: 0 auto;
+  bottom: 0;
+  z-index: 50;
+}
+
+.app-bar {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+.normal-apps {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.app-apps * {
+  display: inline-block;
+}
+
+.app {
+  display: inline-flex;
+  flex-direction: row;
+  height: var(--app-icons-size);
+  width: var(--app-icon-width);
+  cursor: pointer;
+}
+
+.javascript-os-file-icon-wrapper {
+  margin: 1em;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app > p {
+  font-size: 15px;
+  margin: 0;
+  color: white;
+  margin-top: 5px;
+}
+
+.all-apps-container {
+  background-color: rgba(207, 207, 207, 0.95);
+  width: 20%;
+  height: 30pc;
+  position: absolute;
+  bottom: var(--app-bar-height);
+  display: none;
+  z-index: 200;
+}
+.all-apps-container.all-apps-visible {
+  display: block;
+}
+
+#all-apps {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  height: 20pc;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.app.app-in-all-apps {
+  margin: 1pc;
+}
+.app-name-combination p {
+  display: inline-block;
+}
+.app-name-combination {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+.app-name-combination:hover {
+  background-color: rgba(190, 190, 190, 0.95);
+}

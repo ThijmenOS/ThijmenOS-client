@@ -1,0 +1,26 @@
+.ico-mglass {
+    position: relative;
+    display: inline-block;
+    background: transparent;
+    border-radius: 30px;
+    height: 6px;
+    width: 6px;
+    border: 2px solid white;
+}
+
+.ico-mglass:after {
+      content: "";
+      height: 2px;
+      width: 6px;
+      background: white;
+      position: absolute;
+      top: 7px;
+      left: 5px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+    }
+
+  

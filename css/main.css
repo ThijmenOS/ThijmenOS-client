@@ -1,0 +1,79 @@
+@import url("https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+/* icon styles */
+@import "./css-icons/wifi.css";
+@import "./css-icons/batery.css";
+@import "./css-icons/settings.css";
+@import "./css-icons/loop.css";
+
+/* os styles */
+@import "./app-dock.css";
+@import "./top-bar.css";
+@import "./login.css";
+@import "./system-popup.css";
+
+/* app styles */
+@import "./desktop-app.css";
+
+:root {
+  --appZIndex: 10;
+}
+
+#desktop {
+  height: 100vh;
+  width: 100%;
+}
+.overlay-element {
+  width: 100%;
+  height: 93vh;
+}
+
+#display-too-small {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  bottom: 0;
+  right: 0;
+  background-color: rgb(255, 255, 255);
+  z-index: 1000;
+  display: none;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  background-image: url("../public/background.jpg");
+  background-size: cover;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+
+.test123 {
+  position: absolute;
+  box-sizing: border-box;
+  user-select: none;
+  visibility: visible;
+  touch-action: none;
+
+  /* This actually increases performance */
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  perspective: 1000;
+}
+
+.test123::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999999999;
+  display: none;
+}

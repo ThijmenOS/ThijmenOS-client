@@ -1,0 +1,10 @@
+{
+  "type": "application",
+  "title": "vsCode",
+  "autostart": false,
+  "icon": "userFiles/C/Program-files/vsCode/app-icon.svg",
+  "mimes": ["text/plain", "image/png"],
+  "state": "dev",
+  "fileLocation": "userFiles/C/Program-files/vsCode/src/index.html",
+  "iconState": 0
+}
