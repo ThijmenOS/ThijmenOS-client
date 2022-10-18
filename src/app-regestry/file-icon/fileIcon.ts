@@ -1,18 +1,22 @@
-import { Location, IFileIcon } from "@interface/fileIcon";
+import { IFileIcon, Location } from "@interface/fileIcon";
 import fileIcons from "./fileIcons";
-import Utils from "@utils/utils";
 import { appIcon } from "@static/dom-defaults";
 
-import CreateWindow from "@app/window/CreateWindow";
-
 import "jqueryui";
+import { PropertiesObject } from "@interface/applicationProperties";
+import { inject, injectable } from "inversify";
+import { IAppManager } from "@interface/appManager";
+import types from "@interface/types";
+import { IUtils } from "@interface/utils/utils";
 
-const registerdFileIcons = [];
-
+@injectable()
 class FileIcon implements IFileIcon {
-  public readonly fileLocation: string;
+  private readonly _appManager: IAppManager;
+  private readonly _utils: IUtils;
+
+  public fileLocation: string = "";
   public iconLocation?: string;
-  private readonly supportedMimeTypes: Array<string>;
+  public supportedMimeTypes: Array<string>;
 
   private iconContainerElement?: HTMLDivElement;
   private iconImageElement?: HTMLObjectElement;
@@ -23,18 +27,26 @@ class FileIcon implements IFileIcon {
 
   public title: string;
 
-  constructor(fileLocation: string) {
-    this.fileLocation = fileLocation;
+  constructor(
+    @inject(types.AppManager) appManager: IAppManager,
+    @inject(types.Utils) utils: IUtils
+  ) {
+    this._appManager = appManager;
+    this._utils = utils;
+
     this.title = "";
     this.supportedMimeTypes = [];
 
-    this.appHash = this.title + "-" + Utils.generateUUID();
+    this.appHash = this.title + "-" + this._utils.GenerateUUID();
 
     this.initialIconLocation = {
       left: 0,
       top: 0,
     };
+  }
 
+  public ConstructFileIcon(filePath: string) {
+    this.fileLocation = filePath;
     this.getFileConfig();
   }
 
@@ -44,21 +56,31 @@ class FileIcon implements IFileIcon {
 
     if (targetFileExtention != "thijm") {
       this.iconLocation =
-        "./public/icons/file_type_" + fileIcons[targetFileExtention] + ".svg";
+        "./userFiles/C/Operating system/Icons/file_type_" +
+        fileIcons[targetFileExtention] +
+        ".svg";
 
       this.title = targetFile;
     } else {
-      let [appTitle, appIcon] = await Utils.getAppProperties(this.fileLocation);
+      let AppProperties: PropertiesObject = await this._utils.GetAppProperties(
+        this.fileLocation
+      );
 
-      this.title = appTitle;
-      this.iconLocation = appIcon;
+      if (AppProperties.exeLocation)
+        this.fileLocation = AppProperties.exeLocation;
+
+      this.title = AppProperties.title;
+      if (AppProperties.iconLocation === undefined)
+        AppProperties.iconLocation =
+          "C/Operating system/Icons/default-app-icon.svg";
+      this.iconLocation = "./userFiles/" + AppProperties.iconLocation;
     }
 
     this.InitIcon();
   }
 
   private InitIcon() {
-    this.iconContainerElement = Utils.createElementFromHTML(appIcon);
+    this.iconContainerElement = this._utils.CreateElementFromHTML(appIcon);
 
     this.iconImageElement = this.iconContainerElement.querySelector(
       ".javascript-os-file-icon"
@@ -120,14 +142,14 @@ class FileIcon implements IFileIcon {
 
   private Render() {
     this.iconImageElement!.data =
-      this.iconLocation || "./public/icons/default-app-icon.svg";
+      this.iconLocation ||
+      "./userFiles/C/Operating system/Icons/default-app-icon.svg";
     this.iconTitleElement!.innerHTML = this.title;
 
     document!
       .getElementById("main-application-container")!
       .appendChild(this.iconContainerElement!);
 
-    registerdFileIcons.push(this);
     this.initialIconLocation.left =
       this.iconContainerElement!.getBoundingClientRect().left;
     this.initialIconLocation.top =
@@ -135,7 +157,7 @@ class FileIcon implements IFileIcon {
   }
 
   private OpenFile(_ev: Event, icon: FileIcon) {
-    new CreateWindow().application(icon).then((e) => e.initWindow());
+    this._appManager.openApplication(icon);
   }
   public Destory() {
     this.iconContainerElement!.remove();

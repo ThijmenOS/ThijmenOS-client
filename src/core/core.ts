@@ -1,19 +1,21 @@
-import CreateWindow from "@app/window/CreateWindow";
 import FileSystem from "@core/fileSystem";
-import RootUtils from "@core/rootUtils.js";
-import Settings from "@core/settings";
+import { IAppManager } from "@interface/appManager";
+import { ICore } from "@interface/core/core";
+import { IFileSystem } from "@interface/fileSystem/fileSystem";
+import types from "@interface/types";
+import { inject, injectable } from "inversify";
 
-class Core {
+@injectable()
+class Core implements ICore {
   public fileSystem: FileSystem;
-  public appRegistry: CreateWindow;
-  public settings: Settings;
-  public rootUtils: RootUtils;
+  public appManager: IAppManager;
 
-  constructor() {
-    this.fileSystem = new FileSystem();
-    this.appRegistry = new CreateWindow();
-    this.settings = new Settings();
-    this.rootUtils = new RootUtils();
+  constructor(
+    @inject(types.FileSystem) fileSystem: IFileSystem,
+    @inject(types.AppManager) appManager: IAppManager
+  ) {
+    this.fileSystem = fileSystem;
+    this.appManager = appManager;
   }
 }
 

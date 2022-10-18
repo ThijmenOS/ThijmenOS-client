@@ -1,40 +1,66 @@
-import { windows } from "../app-regestry/window/appWindow.js";
-import Core from "./core.js";
-import { FileInDir, KernelMethods, ValidMethods } from "@interface/kernel";
+import {
+  Path,
+  KernelMethods,
+  ValidMethods,
+} from "@interface/kernel/kernelTypes";
+import { inject, injectable } from "inversify";
+import { IKernel } from "@interface/kernel/kernel.js";
+import types from "@interface/types";
+import { IAppManager } from "@interface/appManager.js";
+import { ICore } from "@interface/core/core.js";
 
-class Kernel {
-  private core: Core;
+@injectable()
+class Kernel implements IKernel {
+  private readonly _appManager: IAppManager;
+  private readonly _core: ICore;
   private origin: string = "";
 
   private kernelMethods: KernelMethods = {
+    kernelMethodNotFound: () =>
+      this._core.appManager.SendDataToApp(
+        this.origin,
+        "Error: The requested kernel method does not exist",
+        "system"
+      ),
+
     testCommand: (targetApp: string) =>
-      this.core.rootUtils.SendDataToApp(targetApp, "test123", "system"),
+      this._core.appManager.SendDataToApp(targetApp, "test123", "system"),
 
     //FileSystem
-    filesInDir: (props: FileInDir) =>
-      this.core.fileSystem
-        .showFilesInDir(props.targetPath)
+    filesInDir: (props: Path) =>
+      this._core.fileSystem
+        .ShowFilesInDir(props)
         .then((res) =>
-          this.core.rootUtils.SendDataToApp(this.origin, res, "system")
+          this._core.appManager.SendDataToApp(this.origin, res, "system")
         ),
+
+    readFile: (props: Path) =>
+      this._core.fileSystem
+        .OpenFile(props)
+        .then((res) =>
+          this._core.appManager.SendDataToApp(this.origin, res, "system")
+        ),
+
+    //Window operations
+    closeSelf: () => this._core.appManager.CloseApplication(this.origin),
   };
 
-  constructor() {
-    this.core = new Core();
-    this.ListenToCommunication();
+  constructor(
+    @inject(types.AppManager) appManager: IAppManager,
+    @inject(types.Core) core: ICore
+  ) {
+    this._appManager = appManager;
+    this._core = core;
   }
-  private ListenToCommunication() {
+  public ListenToCommunication(): void {
     window.onmessage = (event: MessageEvent) => {
-      if (event.origin != "https://thijmenbrand.nl")
-        throw new Error("Origin is not trusted!");
+      console.log(event);
+      // if (event.origin != "https://thijmenbrand.nl")
+      //   throw new Error("Origin is not trusted!");
 
       let messageData: JsOsCommunicationMessage = event.data;
 
-      if (
-        !windows.find(
-          (win) => win.windowOptions.windowTitle === messageData.origin
-        )
-      )
+      if (!this._appManager.CheckIfAppExists(messageData.origin))
         throw new Error("Sender app is not known!");
 
       this.origin = messageData.origin;
@@ -49,14 +75,18 @@ class Kernel {
       case "testCommand":
         this.ExcecuteMethod<string>(ValidMethods.testCommand, props.origin);
         break;
-      // case "filesInDir":
-      //   this.ExcecuteMethod<FileInDir>(ValidMethods.testCommand, props.params);
-      //   break;
-      // case "openFile":
-      //   core.fileSystem
-      //     .openFile(props.params)
-      //     .then((res) => this.#sendDataToApp(props.origin, res, "system"));
-      //   break;
+      case "filesInDir":
+        this.ExcecuteMethod<Path>(
+          ValidMethods.filesInDir,
+          props.params as string
+        );
+        break;
+      case "readFile":
+        this.ExcecuteMethod<Path>(
+          ValidMethods.readFile,
+          props.params as string
+        );
+        break;
 
       // //Settings
       // case "changeBackground":
@@ -81,13 +111,16 @@ class Kernel {
       // case "sendData":
       //   this.#sendDataToApp(params.target, params.data, props.origin);
       //   break;
-      // case "closeSelf":
-      //   core.rootUtils.closeWindow(props.origin);
-      //   break;
+      case "closeSelf":
+        this.ExcecuteMethod<void>(ValidMethods.closeSelf);
+        break;
+      default:
+        this.ExcecuteMethod<void>(ValidMethods.kernelMethodNotFound);
+        break;
     }
   }
 
-  private ExcecuteMethod<T>(method: ValidMethods, props: T) {
+  private ExcecuteMethod<T>(method: ValidMethods, props?: T) {
     this.kernelMethods[method](props);
   }
 }

@@ -1,6 +1,6 @@
 <head>
     <meta name="title" content="Explorer" />
-    <meta name="icon" content="userFiles/C/Program-files/file-explorer/file-explorer.svg" />
+    <meta name="iconLocation" content="C/Operating system/Icons/ThijmenOsFileExplorer.svg" />
     <script src="https://code.jquery.com/jquery-3.6.0.js">
     </script>
 </head>
@@ -30,7 +30,7 @@
                 origin: appName,
                 method: method,
                 params: params,
-            }, "https://thijmenbrand.nl");
+            }, "*");
 
             if (callback)
                 this.#listen(callback)
@@ -64,13 +64,7 @@
         openFileOrDir(pathHistory.at(-1))
     }
 
-    function handleDirResponse(res) {
-        let files = [];
-        res.forEach(path => {
-            let filePath = path.filePath.split("/");
-            filePath.splice(0, 2);
-            files.push({ filePath: filePath.join("/"), fileType: path.fileType })
-        });
+    function handleDirResponse(files) {
 
         $("#file-path").val(pathHistory.at(-1))
 
@@ -78,10 +72,10 @@
             $("#main-files").html("<p>this dir is empty</p>");
             return;
         }
-        files.forEach((element) => {
+        files.forEach((files) => {
+            let displayValue = files.filePath.split("/").at(-1);
             $("#main-files").append(
-                `<p onclick='openFileOrDir("${element.filePath}", "${element.fileType
-                }")'>${element.filePath.split("/").at(-1)}</p>`
+                `<p onclick="openFileOrDir('${files.filePath}', '${files.isDir}')">${displayValue}</p>`
             );
         });
     }
@@ -89,22 +83,24 @@
     function getDirs(filePath = "") {
         $("#main-files").empty();
 
+        console.log(filePath)
+
         os.call('filesInDir', filePath, (res) => res.sender == "system" && handleDirResponse(res.return))
     }
 
-    function openFileOrDir(filePath = "", fileType = null) {
-        if (fileType == null) {
+    function openFileOrDir(filePath = "", isDir) {
+        if (isDir == null) {
             getDirs(filePath)
             return
         }
-        if (fileType == "dir") {
+        if (isDir === 'true') {
             getDirs(filePath);
             pathHistory.push(filePath)
             return;
         }
 
         if (explorerMode == "openFile")
-            os.call('openFile', filePath, (res) => console.log(res))
+            os.call('readFile', filePath, (res) => console.log(res))
 
         if (explorerMode == "sendData") {
             os.call('sendData', { target: target, data: filePath })

@@ -16,7 +16,19 @@ function getFilesInDir(dir) {
     return null;
   }
 
-  return fs.readdirSync(targetDir);
+  let files = fs.readdirSync(targetDir);
+  let ret = [];
+
+  files.forEach((file) =>
+    ret.push({
+      filePath: dir + "/" + file,
+      isDir: fs.lstatSync(path.join(targetDir, file)).isDirectory()
+        ? true
+        : false,
+    })
+  );
+
+  return ret;
 }
 
 function readFile(dir) {
@@ -31,8 +43,8 @@ app.get("/filesystem/showUserFiles", (req, res) => {
   let requestedDir = req.query.dir || "";
 
   let result = getFilesInDir(requestedDir);
+  console.log(result);
 
-  result = result.map((file) => (file = requestedDir + "/" + file));
   res.send(result);
 });
 

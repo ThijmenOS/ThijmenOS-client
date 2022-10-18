@@ -11,7 +11,7 @@ export function openAppPopup(requestingApp: string, appToOpen: string): string {
 }
 export const appIcon: string = `<div class="app javascript-os-file-icon-wrapper">
                 <object class='app javascript-os-file-icon' type="image/png">
-                  <img class='app javascript-os-fallback-icon' src='./public/icons/default-app-icon.svg'>
+                  <img class='app javascript-os-fallback-icon' src='./userFiles/C/Operating system/Icons/default-app-icon.svg'>
                 </object>
                 <p id="file-icon-title"></p>
               </div>

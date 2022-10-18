@@ -1,40 +1,46 @@
 import FileIcon from "@app/file-icon/fileIcon";
-import { BaseWindowOptions, WindowType } from "@interface/window";
+import { ICreateWindow } from "@interface/appWindow/createWindow";
+import { IWindow } from "@interface/appWindow/window";
+import {
+  BaseWindowOptions,
+  WindowType,
+} from "@interface/appWindow/windowTypes";
+import types from "@interface/types";
+import { inject, injectable } from "inversify";
 import AppWindow from "./appWindow";
 import WindowBehaviour from "./WindowBehaviour";
 
-class CreateWindow {
-  private windowContent: string;
-  private readonly windowOptions: BaseWindowOptions;
+@injectable()
+class CreateWindow implements ICreateWindow {
+  private readonly _window: IWindow;
 
-  private windowFileLocation: string;
-  private windowTitle: string;
+  private windowContent: string = "";
+  private readonly windowOptions: BaseWindowOptions = {
+    windowHeight: 400,
+    windowWidth: 700,
+    windowType: WindowType.APPLICATION,
+  };
+
+  private windowFileLocation: string = "";
+  private windowTitle: string = "";
   private windowIconLocation?: string;
 
-  constructor() {
-    this.windowFileLocation = "";
-    this.windowTitle = "undef";
-    this.windowContent = "";
-
-    this.windowOptions = {
-      windowHeight: 400,
-      windowWidth: 700,
-      windowType: WindowType.APPLICATION,
-    };
+  constructor(@inject(types.AppWindow) window: IWindow) {
+    this._window = window;
   }
 
-  async application(fileIcon: FileIcon) {
+  public Application(fileIcon: FileIcon) {
     this.windowFileLocation = fileIcon.fileLocation;
     this.windowTitle = fileIcon.title;
     this.windowIconLocation = fileIcon.iconLocation;
 
     this.windowContent = `<iframe id='${this.windowTitle}' class='app-iframe' style="height: ${this.windowOptions.windowHeight}px; width: ${this.windowOptions.windowWidth}px;" src='./userFiles/${this.windowFileLocation}'></iframe>`;
 
-    return this;
+    return this.InitWindow();
   }
 
-  async initWindow() {
-    let window = new AppWindow({
+  public InitWindow(): AppWindow {
+    let window = this._window.NewWindow({
       windowTitle: this.windowTitle,
       iconLocation: this.windowIconLocation,
       windowHeight: this.windowOptions.windowHeight,
@@ -46,6 +52,8 @@ class CreateWindow {
 
     let windowBehaviour = new WindowBehaviour();
     windowBehaviour.init(window);
+
+    return window;
   }
 }
 

@@ -12,6 +12,7 @@ export default defineConfig({
       "@utils": path.resolve(__dirname, "./src/utils/"),
       "@app": path.resolve(__dirname, "./src/app-regestry/"),
       "@static": path.resolve(__dirname, "./src/static/"),
+      "@root": path.resolve(__dirname, "./src/"),
     },
   },
 });

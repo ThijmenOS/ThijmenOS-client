@@ -1,0 +1,41 @@
+<head>
+    <meta name="title" content="NoteBlock" />
+    <meta name="iconLocation" content="C/Operating system/Icons/ThijmenOsFileExplorer.svg" />
+    <meta name="mimeTypes" content="txt" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js">
+    </script>
+</head>
+
+<body>
+    <div>
+        <p>Heelo!</p>
+    </div>
+</body>
+
+<script id="os-class-element" data-id="NoteBlock">
+    class OS {
+        #listen(callback) {
+            window.onmessage = (e) => {
+                callback(e.data);
+            }
+        }
+        call(method, params, callback) {
+            let appName = document.getElementById("os-class-element").getAttribute("data-id")
+            window.top.postMessage({
+                origin: appName,
+                method: method,
+                params: params,
+            }, "*");
+
+            if (callback)
+                this.#listen(callback)
+        }
+    }
+</script>
+<script>
+    let os = new OS();
+
+    window.addEventListener('message', (event) => {
+        console.log(event);
+    });
+</script>

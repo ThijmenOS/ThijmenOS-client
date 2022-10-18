@@ -1,6 +1,7 @@
-import Startup from "@core/startup";
+import "reflect-metadata";
+import javascriptOs from "../inversify.config";
+import types from "./interfaces/types";
+import { IStartup } from "@interface/startup";
 
-const options = {};
-
-let startup = new Startup(options);
+const startup = javascriptOs.get<IStartup>(types.Startup);
 startup.InitialiseOperatingSystem();

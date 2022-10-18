@@ -1,33 +1,51 @@
-import { WindowOptions, WindowType } from "@interface/window";
+import { IWindow } from "@interface/appWindow/window";
+import {
+  AppWindowArgs,
+  WindowOptions,
+  WindowType,
+} from "@interface/appWindow/windowTypes";
+import types from "@interface/types";
+import { IUtils } from "@interface/utils/utils";
 import { appWindow } from "@static/dom-defaults";
-import Utils from "@utils/utils";
+import { inject, injectable } from "inversify";
 
 export let windows: Array<AppWindow> = [];
 export let windowCount = 0;
 
-interface AppWindowArgs extends WindowOptions {}
+@injectable()
+class AppWindow implements IWindow {
+  private readonly _utils: IUtils;
 
-class AppWindow {
   private windowContentElement?: HTMLDivElement;
   private windowIconElement?: HTMLDivElement;
   private windowTitleElement?: HTMLDivElement;
 
   public windowContainerElement?: HTMLDivElement;
-  public windowOptions: WindowOptions;
+  public windowOptions!: WindowOptions;
   public windowHeaderElement?: HTMLDivElement;
 
-  constructor(args: AppWindowArgs) {
-    this.windowOptions = args;
+  constructor(@inject(types.Utils) utils: IUtils) {
+    this._utils = utils;
 
     windowCount++;
   }
 
-  public Destroy() {
+  public Destroy(): void {
+    windows.splice(
+      windows.findIndex((window: AppWindow): boolean => window === this),
+      1
+    );
     if (this.windowContainerElement) this.windowContainerElement.remove();
   }
 
-  InitTemplate() {
-    this.windowContainerElement = Utils.createElementFromHTML(appWindow);
+  public NewWindow(windowOptions: AppWindowArgs): AppWindow {
+    this.windowOptions = windowOptions;
+
+    return this;
+  }
+
+  public InitTemplate(): AppWindow {
+    this.windowContainerElement = this._utils.CreateElementFromHTML(appWindow);
 
     this.windowContentElement = this.windowContainerElement.querySelector(
       ".javascript-os-content"
@@ -79,14 +97,12 @@ class AppWindow {
     }
   }
 
-  Render(content: string) {
+  public Render(content: string): void {
     this.windowContentElement!.innerHTML = content;
 
     document
       .getElementById("main-application-container")!
       .appendChild(this.windowContainerElement!);
-
-    windows.push(this);
   }
 }
 

@@ -5,4 +5,5 @@ export interface Location {
 
 export interface IFileIcon {
   Destory(): void;
+  ConstructFileIcon(filePath: string): void;
 }

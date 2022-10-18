@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -13,11 +15,10 @@
       "@app/*": ["app-regestry/*"],
       "@static/*": ["static/*"]
     },
-    "types": ["node"],
+    "types": ["node", "reflect-metadata"],
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "esModuleInterop": true,
     "noEmit": true,
     "noUnusedLocals": true,

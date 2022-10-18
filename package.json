@@ -21,8 +21,9 @@
     "@types/jqueryui": "^1.12.16",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "inversify": "^6.0.1",
     "jquery": "^3.6.1",
     "jquery-ui-dist": "^1.13.2",
-    "vite-tsconfig-paths": "^3.5.1"
+    "reflect-metadata": "^0.1.13"
   }
 }
