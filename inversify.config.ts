@@ -22,7 +22,10 @@ import { ICore } from "@interface/core/core";
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon);
 javascriptOs.bind<IStartup>(types.Startup).to(Startup);
-javascriptOs.bind<IAppManager>(types.AppManager).to(AppManager);
+javascriptOs
+  .bind<IAppManager>(types.AppManager)
+  .to(AppManager)
+  .inSingletonScope();
 javascriptOs.bind<IFileSystem>(types.FileSystem).to(FileSystem);
 javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
 javascriptOs.bind<IUtils>(types.Utils).to(Utils);

@@ -72,10 +72,14 @@
             $("#main-files").html("<p>this dir is empty</p>");
             return;
         }
-        files.forEach((files) => {
-            let displayValue = files.filePath.split("/").at(-1);
+        files.forEach((file) => {
+            let displayValue = file.filePath.split("/").at(-1);
+            let fileExt = displayValue.split(".").at(-1);
+            if (!file.isDir) {
+                file.isDir = fileExt;
+            }
             $("#main-files").append(
-                `<p onclick="openFileOrDir('${files.filePath}', '${files.isDir}')">${displayValue}</p>`
+                `<p onclick="openFileOrDir('${file.filePath}', '${file.isDir}')">${displayValue}</p>`
             );
         });
     }
@@ -100,7 +104,7 @@
         }
 
         if (explorerMode == "openFile")
-            os.call('readFile', filePath, (res) => console.log(res))
+            os.call('openFile', isDir)
 
         if (explorerMode == "sendData") {
             os.call('sendData', { target: target, data: filePath })

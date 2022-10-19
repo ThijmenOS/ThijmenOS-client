@@ -43,6 +43,8 @@ class Kernel implements IKernel {
 
     //Window operations
     closeSelf: () => this._core.appManager.CloseApplication(this.origin),
+    openFile: (mimeType: string) =>
+      this._core.appManager.openApplicationWithMimeType(mimeType),
   };
 
   constructor(
@@ -54,7 +56,6 @@ class Kernel implements IKernel {
   }
   public ListenToCommunication(): void {
     window.onmessage = (event: MessageEvent) => {
-      console.log(event);
       // if (event.origin != "https://thijmenbrand.nl")
       //   throw new Error("Origin is not trusted!");
 
@@ -114,6 +115,8 @@ class Kernel implements IKernel {
       case "closeSelf":
         this.ExcecuteMethod<void>(ValidMethods.closeSelf);
         break;
+      case "openFile":
+        this.ExcecuteMethod<string>(ValidMethods.openFile, props.params);
       default:
         this.ExcecuteMethod<void>(ValidMethods.kernelMethodNotFound);
         break;

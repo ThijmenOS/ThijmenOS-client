@@ -56,6 +56,11 @@ app.get("/filesystem/openUserFile", (req, res) => {
   res.send(result);
 });
 
+app.get("/filesystem/readRegisteredApplications", (req, res) => {
+  let rawFile = readFile("C/Operating System/ThijmenOS data/applications.json");
+  res.send(JSON.parse(rawFile));
+});
+
 app.listen(port, () => {
   console.log("api listening");
 });

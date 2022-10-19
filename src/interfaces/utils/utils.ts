@@ -1,4 +1,4 @@
-import { PropertiesObject } from "@interface/applicationProperties";
+import { PropertiesObject } from "@interface/application/applicationProperties";
 
 export interface IUtils {
   CreateElementFromHTML(htmlString: string): HTMLDivElement;

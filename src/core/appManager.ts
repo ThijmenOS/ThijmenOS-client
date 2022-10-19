@@ -1,34 +1,54 @@
 import FileIcon from "@app/file-icon/fileIcon";
 import AppWindow from "@app/window/appWindow";
+import { Props } from "@interface/application/applicationProperties";
 import { IAppManager } from "@interface/appManager";
 import { ICreateWindow } from "@interface/appWindow/createWindow";
+import { IFileSystem } from "@interface/fileSystem/fileSystem";
 import types from "@interface/types";
 import { IUtils } from "@interface/utils/utils";
+import { appIcon } from "@static/dom-defaults";
 import { inject, injectable } from "inversify";
 
 @injectable()
 class AppManager implements IAppManager {
   private readonly _createWindow: ICreateWindow;
   private readonly _utils: IUtils;
+  private readonly _fileSystem: IFileSystem;
 
   private openApps: Array<AppWindow> = new Array<AppWindow>();
+  private installedApps: Array<Props> = new Array<Props>();
 
   constructor(
     @inject(types.CreateWindow) createWindow: ICreateWindow,
-    @inject(types.Utils) utils: IUtils
+    @inject(types.Utils) utils: IUtils,
+    @inject(types.FileSystem) fileSystem: IFileSystem
   ) {
     this._createWindow = createWindow;
     this._utils = utils;
+    this._fileSystem = fileSystem;
   }
 
-  public openApplication(applicationDetails: FileIcon): void {
+  public async FetchInstalledApps(): Promise<void> {
+    this.installedApps = await this._fileSystem.FetchInstalledApplications();
+  }
+
+  public openApplicationWithMimeType(mimeType: string) {
+    console.log(this.installedApps);
+    console.log(mimeType);
+    let installedAppsWithDesiredMimetype = this.installedApps.find((app) =>
+      app.mimeTypes.includes(mimeType)
+    );
+    console.log(installedAppsWithDesiredMimetype);
+  }
+
+  public OpenApplication(applicationDetails: FileIcon): void {
     let application = this._createWindow.Application(applicationDetails);
 
     this.openApps.push(application);
   }
 
   public CheckIfAppExists(appName: string): boolean {
-    return !this.openApps.find(
+    return this.openApps.some(
       (win) => win.windowOptions.windowTitle === appName
     );
   }

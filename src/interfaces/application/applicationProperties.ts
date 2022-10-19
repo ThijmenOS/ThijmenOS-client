@@ -9,4 +9,11 @@ export enum Properties {
   mimeTypes = "mimeTypes",
 }
 
+export interface Props {
+  title: string;
+  iconLocation: string;
+  exeLocation: string;
+  mimeTypes: Array<string>;
+}
+
 export type PropertiesObject = { [key in Properties]: any };

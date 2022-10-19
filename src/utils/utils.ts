@@ -1,4 +1,8 @@
-import { Properties, PropertiesObject } from "@interface/applicationProperties";
+import {
+  Properties,
+  PropertiesObject,
+  Props,
+} from "@interface/application/applicationProperties";
 import { IFileSystem } from "@interface/fileSystem/fileSystem";
 import { Path } from "@interface/kernel/kernelTypes";
 import types from "@interface/types";
@@ -52,9 +56,7 @@ class Utils implements IUtils {
     return false;
   }
 
-  public async GetAppProperties(
-    appLocation: string
-  ): Promise<PropertiesObject> {
+  public async GetAppProperties(appLocation: string): Promise<Props> {
     let appPath: string = appLocation;
     let isShortCut = await this.CheckShortCut(appLocation);
     if (isShortCut) appPath = isShortCut as string;

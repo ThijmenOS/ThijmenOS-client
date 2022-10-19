@@ -1,9 +1,9 @@
-import { IFileIcon, Location } from "@interface/fileIcon";
+import { IFileIcon } from "@interface/fileIcon";
 import fileIcons from "./fileIcons";
 import { appIcon } from "@static/dom-defaults";
 
 import "jqueryui";
-import { PropertiesObject } from "@interface/applicationProperties";
+import { Props } from "@interface/application/applicationProperties";
 import { inject, injectable } from "inversify";
 import { IAppManager } from "@interface/appManager";
 import types from "@interface/types";
@@ -23,9 +23,8 @@ class FileIcon implements IFileIcon {
   private iconTitleElement?: HTMLParagraphElement;
 
   private readonly appHash: string;
-  private readonly initialIconLocation: Location;
 
-  public title: string;
+  public title: string = "";
 
   constructor(
     @inject(types.AppManager) appManager: IAppManager,
@@ -34,35 +33,29 @@ class FileIcon implements IFileIcon {
     this._appManager = appManager;
     this._utils = utils;
 
-    this.title = "";
     this.supportedMimeTypes = [];
 
     this.appHash = this.title + "-" + this._utils.GenerateUUID();
-
-    this.initialIconLocation = {
-      left: 0,
-      top: 0,
-    };
   }
 
   public ConstructFileIcon(filePath: string) {
     this.fileLocation = filePath;
-    this.getFileConfig();
+    this.GetFileConfigurations();
   }
 
-  private async getFileConfig() {
+  private async GetFileConfigurations() {
     let targetFile: string = this.fileLocation.split("/").at(-1)!;
     let targetFileExtention: string = targetFile.split(".").at(-1)!;
+
+    this.title = targetFile;
 
     if (targetFileExtention != "thijm") {
       this.iconLocation =
         "./userFiles/C/Operating system/Icons/file_type_" +
         fileIcons[targetFileExtention] +
         ".svg";
-
-      this.title = targetFile;
     } else {
-      let AppProperties: PropertiesObject = await this._utils.GetAppProperties(
+      let AppProperties: Props = await this._utils.GetAppProperties(
         this.fileLocation
       );
 
@@ -149,15 +142,10 @@ class FileIcon implements IFileIcon {
     document!
       .getElementById("main-application-container")!
       .appendChild(this.iconContainerElement!);
-
-    this.initialIconLocation.left =
-      this.iconContainerElement!.getBoundingClientRect().left;
-    this.initialIconLocation.top =
-      this.iconContainerElement!.getBoundingClientRect().top;
   }
 
   private OpenFile(_ev: Event, icon: FileIcon) {
-    this._appManager.openApplication(icon);
+    this._appManager.OpenApplication(icon);
   }
   public Destory() {
     this.iconContainerElement!.remove();

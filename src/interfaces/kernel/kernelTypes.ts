@@ -8,6 +8,7 @@ export enum ValidMethods {
 
   //window operations
   closeSelf = "closeSelf",
+  openFile = "openFile",
 }
 
 export type KernelMethods = { [key in ValidMethods]: Function };
