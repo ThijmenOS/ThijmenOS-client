@@ -2,18 +2,20 @@ enum MimeTypes {
   txt,
 }
 
-export enum Properties {
+export enum ApplicationMetaDataFields {
   title = "title",
   iconLocation = "iconLocation",
   exeLocation = "exeLocation",
   mimeTypes = "mimeTypes",
 }
 
-export interface Props {
+export interface ApplicationMetaData {
   title: string;
   iconLocation: string;
   exeLocation: string;
   mimeTypes: Array<string>;
 }
 
-export type PropertiesObject = { [key in Properties]: any };
+export type ApplicationMetaDataObject = {
+  [key in ApplicationMetaDataFields]: any;
+};

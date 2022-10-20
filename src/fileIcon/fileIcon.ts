@@ -3,7 +3,7 @@ import fileIcons from "./fileIcons";
 import { appIcon } from "@static/dom-defaults";
 
 import "jqueryui";
-import { Props } from "@interface/application/applicationProperties";
+import { ApplicationMetaData } from "@interface/application/applicationProperties";
 import { inject, injectable } from "inversify";
 import { IAppManager } from "@interface/appManager";
 import types from "@interface/types";
@@ -14,7 +14,7 @@ class FileIcon implements IFileIcon {
   private readonly _appManager: IAppManager;
   private readonly _utils: IUtils;
 
-  public fileLocation: string = "";
+  public exeLocation = "";
   public iconLocation?: string;
   public supportedMimeTypes: Array<string>;
 
@@ -24,7 +24,7 @@ class FileIcon implements IFileIcon {
 
   private readonly appHash: string;
 
-  public title: string = "";
+  public title = "";
 
   constructor(
     @inject(types.AppManager) appManager: IAppManager,
@@ -39,28 +39,27 @@ class FileIcon implements IFileIcon {
   }
 
   public ConstructFileIcon(filePath: string) {
-    this.fileLocation = filePath;
+    this.exeLocation = filePath;
     this.GetFileConfigurations();
   }
 
   private async GetFileConfigurations() {
-    let targetFile: string = this.fileLocation.split("/").at(-1)!;
-    let targetFileExtention: string = targetFile.split(".").at(-1)!;
+    const targetFile: string = this.exeLocation.split("/").at(-1)!;
+    const targetFileExtention: string = targetFile.split(".").at(-1)!;
 
     this.title = targetFile;
 
-    if (targetFileExtention != "thijm") {
+    if (targetFileExtention !== "thijm") {
       this.iconLocation =
         "./userFiles/C/Operating system/Icons/file_type_" +
         fileIcons[targetFileExtention] +
         ".svg";
     } else {
-      let AppProperties: Props = await this._utils.GetAppProperties(
-        this.fileLocation
-      );
+      const AppProperties: ApplicationMetaData =
+        await this._utils.GetAppProperties(this.exeLocation);
 
       if (AppProperties.exeLocation)
-        this.fileLocation = AppProperties.exeLocation;
+        this.exeLocation = AppProperties.exeLocation;
 
       this.title = AppProperties.title;
       if (AppProperties.iconLocation === undefined)
@@ -101,37 +100,12 @@ class FileIcon implements IFileIcon {
     if (!this.iconContainerElement)
       throw new Error("Icon container element not found");
 
-    let dataId = this.iconContainerElement.getAttribute("data-id");
+    const dataId = this.iconContainerElement.getAttribute("data-id");
 
     jQuery(`[data-id="${dataId}"]`).draggable({
       containment: "parent",
     });
   }
-
-  // #detectRaster(element) {
-  //   let left = element.$element.getBoundingClientRect().left;
-  //   let top = element.$element.getBoundingClientRect().top;
-
-  //   this.leftBound = Math.round(left / 100) * 100;
-  //   this.topBound = Math.round(top / 100) * 100;
-  // }
-  // #placeInRaster(element) {
-  //   registerdFileIcons.forEach((icon) => {
-  //     if (
-  //       this.leftBound === icon.leftBound &&
-  //       this.topBound === icon.topBound
-  //     ) {
-  //       element.style.left = this.initalLocation.left + "px";
-  //       element.style.top = this.initalLocation.top + "px";
-  //     }
-  //   });
-
-  //   element.$element.style.left = this.leftBound + "px";
-  //   element.$element.style.top = this.topBound + "px";
-
-  //   this.initalLocation.left = leftBound;
-  //   this.initalLocation.top = topBound;
-  // }
 
   private Render() {
     this.iconImageElement!.data =

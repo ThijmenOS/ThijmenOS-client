@@ -1,4 +1,4 @@
-import { PropertiesObject } from "@interface/application/applicationProperties";
+import { ApplicationMetaDataObject } from "@interface/application/applicationProperties";
 import { IFileSystem } from "@interface/fileSystem/fileSystem";
 import { directory } from "@interface/fileSystem/fileSystemTypes";
 import { injectable } from "inversify";
@@ -15,7 +15,9 @@ class FileSystem implements IFileSystem {
       `http://localhost:8080/filesystem/openUserFile?file=${path}`
     );
   }
-  public async FetchInstalledApplications(): Promise<Array<PropertiesObject>> {
+  public async FetchInstalledApplications(): Promise<
+    Array<ApplicationMetaDataObject>
+  > {
     return await $.get(
       "http://localhost:8080/filesystem/readRegisteredApplications"
     );

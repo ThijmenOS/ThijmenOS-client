@@ -12,7 +12,8 @@
       "@interface/*": ["interfaces/*"],
       "@core/*": ["core/*"],
       "@utils/*": ["utils/*"],
-      "@app/*": ["app-regestry/*"],
+      "@icon/*": ["fileIcon/*"],
+      "@window/*": ["window/*"],
       "@static/*": ["static/*"]
     },
     "types": ["node", "reflect-metadata"],

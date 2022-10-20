@@ -10,5 +10,11 @@
     "iconLocation": "C/Operating system/Icons/ThijmenOsNoteBlock.svg",
     "exeLocation": "C/Program Files/note block/note-block.thijm",
     "mimeTypes": ["txt"]
+  },
+  {
+    "title": "testAapp",
+    "iconLocation": "C/Operating system/Icons/ThijmenOsNoteBlock.svg",
+    "exeLocation": "C/Program Files/note block/note-block.thijm",
+    "mimeTypes": ["txt"]
   }
 ]

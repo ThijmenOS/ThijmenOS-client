@@ -1,48 +1,70 @@
-import FileIcon from "@app/file-icon/fileIcon";
-import AppWindow from "@app/window/appWindow";
-import { Props } from "@interface/application/applicationProperties";
-import { IAppManager } from "@interface/appManager";
-import { ICreateWindow } from "@interface/appWindow/createWindow";
-import { IFileSystem } from "@interface/fileSystem/fileSystem";
-import types from "@interface/types";
-import { IUtils } from "@interface/utils/utils";
-import { appIcon } from "@static/dom-defaults";
 import { inject, injectable } from "inversify";
+import javascriptOs from "../../inversify.config";
+import types from "@interface/types";
+
+import FileIcon from "fileIcon/fileIcon";
+import Window from "window/window";
+
+import { IAppManager } from "@interface/appManager";
+import { ICreateWindow } from "@interface/window/createWindow";
+import { IFileSystem } from "@interface/fileSystem/fileSystem";
+import { IPrompt } from "@interface/prompt/prompt";
+import { IUtils } from "@interface/utils/utils";
+
+import { ApplicationMetaData } from "@interface/application/applicationProperties";
 
 @injectable()
 class AppManager implements IAppManager {
-  private readonly _createWindow: ICreateWindow;
   private readonly _utils: IUtils;
   private readonly _fileSystem: IFileSystem;
+  private readonly _prompt: IPrompt;
 
-  private openApps: Array<AppWindow> = new Array<AppWindow>();
-  private installedApps: Array<Props> = new Array<Props>();
+  private openApps: Array<Window> = new Array<Window>();
+  private installedApps: Array<ApplicationMetaData> =
+    new Array<ApplicationMetaData>();
 
   constructor(
-    @inject(types.CreateWindow) createWindow: ICreateWindow,
     @inject(types.Utils) utils: IUtils,
-    @inject(types.FileSystem) fileSystem: IFileSystem
+    @inject(types.FileSystem) fileSystem: IFileSystem,
+    @inject(types.Prompt) prompt: IPrompt
   ) {
-    this._createWindow = createWindow;
     this._utils = utils;
     this._fileSystem = fileSystem;
+    this._prompt = prompt;
   }
 
   public async FetchInstalledApps(): Promise<void> {
     this.installedApps = await this._fileSystem.FetchInstalledApplications();
   }
 
-  public openApplicationWithMimeType(mimeType: string) {
-    console.log(this.installedApps);
-    console.log(mimeType);
-    let installedAppsWithDesiredMimetype = this.installedApps.find((app) =>
-      app.mimeTypes.includes(mimeType)
+  public openApplicationWithMimeType(requestingApp: string, mimeType: string) {
+    const targetApp = this.openApps.find(
+      (app) => app.windowOptions.windowTitle === requestingApp
     );
-    console.log(installedAppsWithDesiredMimetype);
+
+    targetApp?.Freese();
+
+    const installedAppsWithDesiredMimetype: Array<ApplicationMetaData> =
+      this.installedApps.filter((app) => app.mimeTypes.includes(mimeType));
+
+    const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
+
+    this._prompt.Prompt().SelectApp(resultTitles, (selectedApp: string) => {
+      this.OpenApplication(
+        installedAppsWithDesiredMimetype.find(
+          (app) => app.title === selectedApp
+        )!
+      );
+      targetApp?.Unfreese();
+    });
   }
 
-  public OpenApplication(applicationDetails: FileIcon): void {
-    let application = this._createWindow.Application(applicationDetails);
+  public OpenApplication(
+    applicationDetails: FileIcon | ApplicationMetaData
+  ): void {
+    const application = javascriptOs
+      .get<ICreateWindow>(types.CreateWindow)
+      .Application(applicationDetails);
 
     this.openApps.push(application);
   }
@@ -54,29 +76,32 @@ class AppManager implements IAppManager {
   }
 
   public CloseApplication(targetWindow: string): void {
-    let targetWin = this.openApps.find(
-      (window: AppWindow): boolean =>
-        window.windowOptions.windowTitle == targetWindow
+    const targetWin = this.openApps.find(
+      (window: Window): boolean =>
+        window.windowOptions.windowTitle === targetWindow
     );
 
     if (targetWin) targetWin.Destroy();
   }
-  public async SendDataToApp(
+  public async SendDataToApp<T>(
     app: string,
-    data: string | object,
+    data: T,
     sender: string
   ): Promise<void> {
     if (!sender || !app) throw new Error("No app or sender specified!");
-    let content = {
+
+    const content = {
       sender: sender,
       return: data,
     };
 
-    this._utils.WaitForElm(app).then((res: any) => {
-      setTimeout(() => {
-        res.contentWindow.postMessage(content, "*");
-      }, 200);
-    });
+    this._utils
+      .WaitForElm<HTMLIFrameElement>(app)
+      .then((res: HTMLIFrameElement) => {
+        setTimeout(() => {
+          res.contentWindow?.postMessage(content, "*");
+        }, 200);
+      });
   }
 }
 

@@ -6,17 +6,16 @@ export enum ValidMethods {
   filesInDir = "filesInDir",
   readFile = "readFile",
 
-  //window operations
+  //Window operations
   closeSelf = "closeSelf",
   openFile = "openFile",
 }
 
-export type KernelMethods = { [key in ValidMethods]: Function };
+export type kernelMethodNoParams = () => void;
+export type kernelMethodOnePatam = (args: any) => void;
 
-export interface SendDataToApp {
-  targetApp: string;
-  data: any;
-  messageSender: string;
-}
+export type KernelMethods = {
+  [key in ValidMethods]: kernelMethodNoParams | kernelMethodOnePatam;
+};
 
 export type Path = string;

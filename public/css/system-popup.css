@@ -1,0 +1,18 @@
+.javascript-os-prompt-message {
+  width: 200px;
+  height: fit-content;
+  background-color: white;
+  box-shadow: 1px 1px black;
+  z-index: 100;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.javascript-os-prompt-body {
+  display: flex;
+  flex-direction: column;
+}

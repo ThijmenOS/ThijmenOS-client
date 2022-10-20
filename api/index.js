@@ -43,7 +43,6 @@ app.get("/filesystem/showUserFiles", (req, res) => {
   let requestedDir = req.query.dir || "";
 
   let result = getFilesInDir(requestedDir);
-  console.log(result);
 
   res.send(result);
 });

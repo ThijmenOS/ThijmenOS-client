@@ -1,36 +1,33 @@
-import FileIcon from "@app/file-icon/fileIcon";
-import { ICreateWindow } from "@interface/appWindow/createWindow";
-import { IWindow } from "@interface/appWindow/window";
-import {
-  BaseWindowOptions,
-  WindowType,
-} from "@interface/appWindow/windowTypes";
+import FileIcon from "fileIcon/fileIcon";
+import { ICreateWindow } from "@interface/window/createWindow";
+import { IWindow } from "@interface/window/window";
+import { BaseWindowOptions, WindowType } from "@interface/window/windowTypes";
 import types from "@interface/types";
 import { inject, injectable } from "inversify";
-import AppWindow from "./appWindow";
-import WindowBehaviour from "./WindowBehaviour";
+import window from "./window";
+import { ApplicationMetaData } from "@interface/application/applicationProperties";
 
 @injectable()
 class CreateWindow implements ICreateWindow {
   private readonly _window: IWindow;
 
-  private windowContent: string = "";
+  private windowContent = "";
   private readonly windowOptions: BaseWindowOptions = {
     windowHeight: 400,
     windowWidth: 700,
     windowType: WindowType.APPLICATION,
   };
 
-  private windowFileLocation: string = "";
-  private windowTitle: string = "";
+  private windowFileLocation = "";
+  private windowTitle = "";
   private windowIconLocation?: string;
 
-  constructor(@inject(types.AppWindow) window: IWindow) {
+  constructor(@inject(types.window) window: IWindow) {
     this._window = window;
   }
 
-  public Application(fileIcon: FileIcon) {
-    this.windowFileLocation = fileIcon.fileLocation;
+  public Application(fileIcon: FileIcon | ApplicationMetaData) {
+    this.windowFileLocation = fileIcon.exeLocation;
     this.windowTitle = fileIcon.title;
     this.windowIconLocation = fileIcon.iconLocation;
 
@@ -39,8 +36,8 @@ class CreateWindow implements ICreateWindow {
     return this.InitWindow();
   }
 
-  public InitWindow(): AppWindow {
-    let window = this._window.NewWindow({
+  public InitWindow(): window {
+    const window = this._window.NewWindow({
       windowTitle: this.windowTitle,
       iconLocation: this.windowIconLocation,
       windowHeight: this.windowOptions.windowHeight,
@@ -49,9 +46,7 @@ class CreateWindow implements ICreateWindow {
     });
     window.InitTemplate();
     window.Render(this.windowContent);
-
-    let windowBehaviour = new WindowBehaviour();
-    windowBehaviour.init(window);
+    window.InitBehaviour();
 
     return window;
   }

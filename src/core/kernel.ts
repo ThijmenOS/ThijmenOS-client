@@ -8,43 +8,56 @@ import { IKernel } from "@interface/kernel/kernel.js";
 import types from "@interface/types";
 import { IAppManager } from "@interface/appManager.js";
 import { ICore } from "@interface/core/core.js";
+import { directory } from "@interface/fileSystem/fileSystemTypes";
 
 @injectable()
 class Kernel implements IKernel {
   private readonly _appManager: IAppManager;
   private readonly _core: ICore;
-  private origin: string = "";
+  private origin = "";
 
   private kernelMethods: KernelMethods = {
     kernelMethodNotFound: () =>
-      this._core.appManager.SendDataToApp(
+      this._core.appManager.SendDataToApp<Error>(
         this.origin,
-        "Error: The requested kernel method does not exist",
+        new Error("Error: The requested kernel method does not exist"),
         "system"
       ),
 
-    testCommand: (targetApp: string) =>
-      this._core.appManager.SendDataToApp(targetApp, "test123", "system"),
+    testCommand: (targetApp: string): void =>
+      this._core.appManager.SendDataToApp<string>(
+        targetApp,
+        "test123",
+        "system"
+      ),
 
     //FileSystem
     filesInDir: (props: Path) =>
       this._core.fileSystem
         .ShowFilesInDir(props)
         .then((res) =>
-          this._core.appManager.SendDataToApp(this.origin, res, "system")
+          this._core.appManager.SendDataToApp<Array<directory>>(
+            this.origin,
+            res,
+            "system"
+          )
         ),
 
     readFile: (props: Path) =>
       this._core.fileSystem
         .OpenFile(props)
         .then((res) =>
-          this._core.appManager.SendDataToApp(this.origin, res, "system")
+          this._core.appManager.SendDataToApp<string>(
+            this.origin,
+            res,
+            "system"
+          )
         ),
 
     //Window operations
     closeSelf: () => this._core.appManager.CloseApplication(this.origin),
     openFile: (mimeType: string) =>
-      this._core.appManager.openApplicationWithMimeType(mimeType),
+      this._core.appManager.openApplicationWithMimeType(this.origin, mimeType),
   };
 
   constructor(
@@ -56,10 +69,7 @@ class Kernel implements IKernel {
   }
   public ListenToCommunication(): void {
     window.onmessage = (event: MessageEvent) => {
-      // if (event.origin != "https://thijmenbrand.nl")
-      //   throw new Error("Origin is not trusted!");
-
-      let messageData: JsOsCommunicationMessage = event.data;
+      const messageData: JsOsCommunicationMessage = event.data;
 
       if (!this._appManager.CheckIfAppExists(messageData.origin))
         throw new Error("Sender app is not known!");
@@ -70,9 +80,9 @@ class Kernel implements IKernel {
     };
   }
 
+  // eslint-disable-next-line complexity
   private ProcessMethod(props: JsOsCommunicationMessage) {
     switch (props.method) {
-      //File stuff
       case "testCommand":
         this.ExcecuteMethod<string>(ValidMethods.testCommand, props.origin);
         break;
@@ -88,35 +98,15 @@ class Kernel implements IKernel {
           props.params as string
         );
         break;
-
-      // //Settings
-      // case "changeBackground":
-      //   core.settings.setApplicationBackground(params);
-      //   break;
-
-      // //App stuff
-      // case "openApp":
-      //   core.appRegistry
-      //     .application(params)
-      //     .then((e) => e.initWindow())
-      //     .finally(() => this.#sendDataToApp(props.origin, true, "system"));
-      //   break;
-      // case "selectFile":
-      //   core.appRegistry
-      //     .application("userFiles/D/desktop/file-explorer.thijm")
-      //     .then((e) => e.initWindow())
-      //     .finally(() =>
-      //       this.#sendDataToApp("Explorer", "selectFile", props.origin)
-      //     );
-      //   break;
-      // case "sendData":
-      //   this.#sendDataToApp(params.target, params.data, props.origin);
-      //   break;
       case "closeSelf":
         this.ExcecuteMethod<void>(ValidMethods.closeSelf);
         break;
       case "openFile":
-        this.ExcecuteMethod<string>(ValidMethods.openFile, props.params);
+        this.ExcecuteMethod<string>(
+          ValidMethods.openFile,
+          props.params as string
+        );
+        break;
       default:
         this.ExcecuteMethod<void>(ValidMethods.kernelMethodNotFound);
         break;

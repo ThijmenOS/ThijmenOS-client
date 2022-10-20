@@ -5,9 +5,10 @@ const types = {
   FileSystem: Symbol.for("FileSystem"),
   Kernel: Symbol.for("Kernel"),
   Utils: Symbol.for("Utils"),
-  AppWindow: Symbol.for("AppWindow"),
+  window: Symbol.for("window"),
   CreateWindow: Symbol.for("CreateWindow"),
   Core: Symbol.for("Core"),
+  Prompt: Symbol.for("Prompt"),
 };
 
 export default types;

@@ -8,7 +8,7 @@ class AppBuilder {
     Array.from(css).forEach(async (css) => {
       if (
         css.hasAttribute("href") &&
-        new URL(css.href).host == "thijmenbrand.nl"
+        new URL(css.href).host === "thijmenbrand.nl"
       ) {
         let cssHref = this.#GetCorrectUrl(appPath, css.href);
         let fileText = await fetch(cssHref).then((res) => res.text());
@@ -21,7 +21,10 @@ class AppBuilder {
 
     let js = el.getElementsByTagName("script");
     Array.from(js).forEach(async (js) => {
-      if (js.hasAttribute("src") && new URL(js.src).host == "thijmenbrand.nl") {
+      if (
+        js.hasAttribute("src") &&
+        new URL(js.src).host === "thijmenbrand.nl"
+      ) {
         let jsHref = this.#GetCorrectUrl(appPath, js.src);
         let fileText = await fetch(jsHref).then((res) => res.text());
         js.remove();
@@ -35,7 +38,7 @@ class AppBuilder {
     Array.from(img).forEach(async (img) => {
       if (
         img.hasAttribute("src") &&
-        new URL(img.src).host == "thijmenbrand.nl"
+        new URL(img.src).host === "thijmenbrand.nl"
       ) {
         let imgHref = this.#GetCorrectUrl(appPath, img.src);
         let base64Image = await this.#toDataURL(imgHref);
@@ -68,11 +71,12 @@ class AppBuilder {
           })
       );
   static #GetCorrectUrl(appPath, filePath) {
-    if (new URL(filePath).host != "thijmenbrand.nl") return;
+    if (new URL(filePath).host !== "thijmenbrand.nl") return;
     appPath = appPath.split("/");
     appPath.pop();
     filePath = filePath.split("/");
     filePath.splice(5, 0, ...appPath);
+    // eslint-disable-next-line consistent-return
     return filePath.join("/");
   }
 }

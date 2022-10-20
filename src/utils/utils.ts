@@ -1,12 +1,12 @@
 import {
-  Properties,
-  PropertiesObject,
-  Props,
+  ApplicationMetaData,
+  ApplicationMetaDataFields,
+  ApplicationMetaDataObject,
 } from "@interface/application/applicationProperties";
 import { IFileSystem } from "@interface/fileSystem/fileSystem";
 import { Path } from "@interface/kernel/kernelTypes";
 import types from "@interface/types";
-import { IUtils } from "@interface/utils/utils";
+import { ClassOperation, IUtils } from "@interface/utils/utils";
 import { inject, injectable } from "inversify";
 
 @injectable()
@@ -16,16 +16,39 @@ class Utils implements IUtils {
   constructor(@inject(types.FileSystem) fileSystem: IFileSystem) {
     this._fileSystem = fileSystem;
   }
-  public CreateElementFromHTML(htmlString: string): HTMLDivElement {
-    var div = document.createElement("div");
+  public MainAppContainer: HTMLElement = document.getElementById(
+    "main-application-container"
+  )!;
+  public CreateElementFromHTML<T>(htmlString: string): T {
+    const div = document.createElement("div");
     div.innerHTML = htmlString.trim();
 
-    return div.firstChild as HTMLDivElement;
+    return div.firstChild as T;
+  }
+  public GetElement<T>(element: HTMLElement, selector: string): T {
+    return element.querySelector(selector) as T;
+  }
+  public AddElement(targetElement: HTMLElement, element: HTMLElement): void {
+    targetElement.append(element);
+  }
+  public AddOrRemoveClass(
+    targetElement: Array<HTMLElement>,
+    classes: Array<string>,
+    operation: ClassOperation
+  ): void {
+    if (Array.isArray(targetElement)) {
+      targetElement.forEach((el) =>
+        operation === ClassOperation.ADD
+          ? el.classList.add(...classes)
+          : el.classList.remove(...classes)
+      );
+      return;
+    }
   }
 
   public UpdateTime(): void {
-    let currentDate = new Date();
-    let currentTime = currentDate.getHours() + ":" + currentDate.getMinutes();
+    const currentDate = new Date();
+    const currentTime = currentDate.getHours() + ":" + currentDate.getMinutes();
     $("#current-date-time").text(
       currentDate.toDateString() + " " + currentTime
     );
@@ -33,8 +56,8 @@ class Utils implements IUtils {
 
   public GenerateUUID(): string {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
-      let random = (Math.random() * 16) | 0;
-      let value = char === "x" ? random : (random % 4) + 8;
+      const random = (Math.random() * 16) | 0;
+      const value = char === "x" ? random : (random % 4) + 8;
       return value.toString(16);
     });
   }
@@ -44,11 +67,11 @@ class Utils implements IUtils {
   }
 
   private async CheckShortCut(path: string): Promise<Path | boolean> {
-    let tmp = document.createElement("html") as HTMLElement;
+    const tmp = document.createElement("html") as HTMLElement;
     tmp.innerHTML = await this.ReadFile(path);
 
-    let isShortCut = tmp
-      .querySelector(`meta[name='exeLocation']`)
+    const isShortCut = tmp
+      .querySelector("meta[name='exeLocation']")
       ?.getAttribute("content") as string;
 
     if (isShortCut) return isShortCut;
@@ -56,24 +79,26 @@ class Utils implements IUtils {
     return false;
   }
 
-  public async GetAppProperties(appLocation: string): Promise<Props> {
+  public async GetAppProperties(
+    appLocation: string
+  ): Promise<ApplicationMetaData> {
     let appPath: string = appLocation;
-    let isShortCut = await this.CheckShortCut(appLocation);
+    const isShortCut = await this.CheckShortCut(appLocation);
     if (isShortCut) appPath = isShortCut as string;
 
-    let tmp = document.createElement("html") as HTMLElement;
+    const tmp = document.createElement("html") as HTMLElement;
     tmp.innerHTML = await this.ReadFile(appPath);
 
-    let results: PropertiesObject = {
+    const results: ApplicationMetaDataObject = {
       exeLocation: "",
       iconLocation: "",
       mimeTypes: [],
       title: "",
     };
 
-    for (const value in Properties) {
+    for (const value in ApplicationMetaDataFields) {
       if (isNaN(Number(value))) {
-        results[value as Properties] = tmp
+        results[value as ApplicationMetaDataFields] = tmp
           .querySelector(`meta[name='${value}']`)
           ?.getAttribute("content") as string;
       }
@@ -84,15 +109,16 @@ class Utils implements IUtils {
     return results;
   }
 
-  public WaitForElm(selector: string): Promise<HTMLElement> {
+  public WaitForElm<T>(selector: string): Promise<T> {
+    // eslint-disable-next-line consistent-return
     return new Promise((resolve) => {
       if (document.getElementById(selector)) {
-        return resolve(document.getElementById(selector) as HTMLElement);
+        return resolve(document.getElementById(selector) as T);
       }
 
       const observer = new MutationObserver(() => {
         if (document.getElementById(selector)) {
-          resolve(document.getElementById(selector) as HTMLElement);
+          resolve(document.getElementById(selector) as T);
           observer.disconnect();
         }
       });
