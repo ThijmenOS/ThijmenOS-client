@@ -2,11 +2,11 @@ import {
   ApplicationMetaData,
   ApplicationMetaDataFields,
   ApplicationMetaDataObject,
-} from "@interface/application/applicationProperties";
-import { IFileSystem } from "@interface/fileSystem/fileSystem";
-import { Path } from "@interface/kernel/kernelTypes";
-import types from "@interface/types";
-import { ClassOperation, IUtils } from "@interface/utils/utils";
+} from "@ostypes/ApplicationTypes";
+import IFileSystem from "@drivers/fileSystem/IFileSystem";
+import { Path } from "@ostypes/KernelTypes";
+import types from "@ostypes/types";
+import IUtils from "./IUtils";
 import { inject, injectable } from "inversify";
 
 @injectable()
@@ -15,35 +15,6 @@ class Utils implements IUtils {
 
   constructor(@inject(types.FileSystem) fileSystem: IFileSystem) {
     this._fileSystem = fileSystem;
-  }
-  public MainAppContainer: HTMLElement = document.getElementById(
-    "main-application-container"
-  )!;
-  public CreateElementFromHTML<T>(htmlString: string): T {
-    const div = document.createElement("div");
-    div.innerHTML = htmlString.trim();
-
-    return div.firstChild as T;
-  }
-  public GetElement<T>(element: HTMLElement, selector: string): T {
-    return element.querySelector(selector) as T;
-  }
-  public AddElement(targetElement: HTMLElement, element: HTMLElement): void {
-    targetElement.append(element);
-  }
-  public AddOrRemoveClass(
-    targetElement: Array<HTMLElement>,
-    classes: Array<string>,
-    operation: ClassOperation
-  ): void {
-    if (Array.isArray(targetElement)) {
-      targetElement.forEach((el) =>
-        operation === ClassOperation.ADD
-          ? el.classList.add(...classes)
-          : el.classList.remove(...classes)
-      );
-      return;
-    }
   }
 
   public UpdateTime(): void {
@@ -107,27 +78,6 @@ class Utils implements IUtils {
     results.exeLocation = appPath;
 
     return results;
-  }
-
-  public WaitForElm<T>(selector: string): Promise<T> {
-    // eslint-disable-next-line consistent-return
-    return new Promise((resolve) => {
-      if (document.getElementById(selector)) {
-        return resolve(document.getElementById(selector) as T);
-      }
-
-      const observer = new MutationObserver(() => {
-        if (document.getElementById(selector)) {
-          resolve(document.getElementById(selector) as T);
-          observer.disconnect();
-        }
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-    });
   }
 }
 

@@ -9,12 +9,14 @@
     "moduleResolution": "Node",
     "baseUrl": "./src/",
     "paths": {
-      "@interface/*": ["interfaces/*"],
+      "@ostypes/*": ["types/*"],
+      "@drivers/*": ["drivers/*"],
       "@core/*": ["core/*"],
       "@utils/*": ["utils/*"],
       "@icon/*": ["fileIcon/*"],
       "@window/*": ["window/*"],
-      "@static/*": ["static/*"]
+      "@static/*": ["static/*"],
+      "@config/*": ["config/*"]
     },
     "types": ["node", "reflect-metadata"],
     "strict": true,

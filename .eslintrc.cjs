@@ -13,9 +13,9 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   rules: {
+    "@typescript-eslint/no-namespace": "off",
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
-    semi: ["error", "always"],
     "no-await-in-loop": "error",
     "no-unused-private-class-members": "error",
     "block-scoped-var": "error",

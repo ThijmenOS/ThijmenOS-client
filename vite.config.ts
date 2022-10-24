@@ -9,13 +9,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@interface": path.resolve(__dirname, "./src/interfaces/"),
+      "@ostypes": path.resolve(__dirname, "./src/types/"),
+      "@drivers": path.resolve(__dirname, "./src/drivers/"),
       "@core": path.resolve(__dirname, "./src/core/"),
       "@utils": path.resolve(__dirname, "./src/utils/"),
       "@fileIcon": path.resolve(__dirname, "./src/fileIcon/"),
       "@window": path.resolve(__dirname, "./src/window/"),
       "@static": path.resolve(__dirname, "./src/static/"),
-      "@root": path.resolve(__dirname, "./src/"),
+      "@config": path.resolve(__dirname, "./src/config"),
       "@icon": path.resolve(__dirname, "./src/fileIcon"),
     },
   },
