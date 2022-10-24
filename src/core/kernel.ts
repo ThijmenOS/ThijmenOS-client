@@ -2,6 +2,7 @@ import {
   Path,
   KernelMethods,
   ValidMethods,
+  JsOsCommunicationMessage,
 } from "@interface/kernel/kernelTypes";
 import { inject, injectable } from "inversify";
 import { IKernel } from "@interface/kernel/kernel.js";

@@ -1,3 +1,9 @@
+export interface JsOsCommunicationMessage {
+  origin: string;
+  method: ValidMethods;
+  params: any;
+}
+
 export enum ValidMethods {
   kernelMethodNotFound = "kernelMethodNotFound",
   testCommand = "testCommand",
