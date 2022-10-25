@@ -25,3 +25,4 @@ export type KernelMethods = {
 };
 
 export type Path = string;
+export type OpenFile = { mimeType: string; filePath: string };

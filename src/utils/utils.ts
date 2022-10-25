@@ -58,7 +58,8 @@ class Utils implements IUtils {
     if (isShortCut) appPath = isShortCut as string;
 
     const tmp = document.createElement("html") as HTMLElement;
-    tmp.innerHTML = await this.ReadFile(appPath);
+    const fileContent = await this.ReadFile(appPath);
+    tmp.innerHTML = fileContent.substring(0, fileContent.indexOf("</head>"));
 
     const results: ApplicationMetaDataObject = {
       exeLocation: "",

@@ -25,7 +25,7 @@ class FileIcon implements IFileIcon {
   private iconImageElement?: HTMLObjectElement;
   private iconTitleElement?: HTMLParagraphElement;
 
-  private readonly appHash: string;
+  private appHash?: string;
 
   public title = "";
 
@@ -39,8 +39,6 @@ class FileIcon implements IFileIcon {
     this._graphicsUtils = graphicsUtils;
 
     this.supportedMimeTypes = [];
-
-    this.appHash = this.title + "-" + this._utils.GenerateUUID();
   }
 
   public ConstructFileIcon(filePath: string) {
@@ -85,6 +83,8 @@ class FileIcon implements IFileIcon {
     this.iconTitleElement =
       this.iconContainerElement.querySelector("#file-icon-title")!;
 
+    this.appHash = this.title + "-" + this._utils.GenerateUUID();
+
     this.iconContainerElement.setAttribute("data-id", this.appHash);
 
     this.Render();
@@ -99,19 +99,10 @@ class FileIcon implements IFileIcon {
 
     this.iconContainerElement.addEventListener("dblclick", openFile);
 
-    this.InitMovement();
+    const dataId = this.iconContainerElement.getAttribute("data-id")!;
+
+    this._graphicsUtils.InitMovement(dataId);
   }
-  private InitMovement() {
-    if (!this.iconContainerElement)
-      throw new Error("Icon container element not found");
-
-    const dataId = this.iconContainerElement.getAttribute("data-id");
-
-    jQuery(`[data-id="${dataId}"]`).draggable({
-      containment: "parent",
-    });
-  }
-
   private Render() {
     this.iconImageElement!.data =
       this.iconLocation ||

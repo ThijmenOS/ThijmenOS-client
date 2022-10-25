@@ -1,4 +1,4 @@
 export type Location = {
-  top: number;
-  left: number;
+  top: string;
+  left: string;
 };

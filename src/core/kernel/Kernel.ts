@@ -3,6 +3,7 @@ import {
   KernelMethods,
   ValidMethods,
   JsOsCommunicationMessage,
+  OpenFile,
 } from "@ostypes/KernelTypes";
 import { inject, injectable } from "inversify";
 import IKernel from "./IKernel";
@@ -57,8 +58,8 @@ class Kernel implements IKernel {
 
     //Window operations
     closeSelf: () => this._core.appManager.CloseApplication(this.origin),
-    openFile: (mimeType: string) =>
-      this._core.appManager.openApplicationWithMimeType(this.origin, mimeType),
+    openFile: (props: OpenFile) =>
+      this._core.appManager.openApplicationWithMimeType(this.origin, props),
   };
 
   constructor(
@@ -103,9 +104,9 @@ class Kernel implements IKernel {
         this.ExcecuteMethod<void>(ValidMethods.closeSelf);
         break;
       case "openFile":
-        this.ExcecuteMethod<string>(
+        this.ExcecuteMethod<OpenFile>(
           ValidMethods.openFile,
-          props.params as string
+          props.params as OpenFile
         );
         break;
       default:

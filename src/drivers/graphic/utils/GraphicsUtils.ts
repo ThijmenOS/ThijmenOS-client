@@ -53,6 +53,11 @@ class GraphicsUtils implements IGraphicsUtils {
       });
     });
   }
+  public InitMovement(dataId: string): void {
+    $(`[data-id="${dataId}"]`).draggable({
+      containment: "parent",
+    });
+  }
 }
 
 export default GraphicsUtils;

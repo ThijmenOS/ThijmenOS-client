@@ -11,4 +11,5 @@ export default interface IGraphicsUtils {
     operation: ClassOperation
   ): void;
   WaitForElm<T>(selector: string): Promise<T>;
+  InitMovement(dataId: string): void;
 }

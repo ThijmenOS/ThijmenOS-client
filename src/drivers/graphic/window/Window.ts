@@ -18,12 +18,11 @@ let lastWindowOnTop: Window;
 class Window implements IWindow {
   private readonly _graphicsUtils: IGraphicsUtils;
 
-  private windowContainerElement!: HTMLDivElement;
+  public windowContainerElement!: HTMLDivElement;
   private windowHeaderElement!: HTMLDivElement;
   private windowContentElement!: HTMLDivElement;
   private windowFrozenElement!: HTMLDivElement;
   private fullScreen = false;
-  private windowId!: string;
 
   public windowOptions!: WindowOptions;
 
@@ -34,16 +33,21 @@ class Window implements IWindow {
   public Destroy(): void {
     if (this.windowContainerElement) this.windowContainerElement.remove();
   }
+
   public Freese(): void {
-    $(`[data-id="${this.windowId}"]`).draggable("disable");
+    $(`[data-id="${this.windowOptions.windowIdentifier}"]`).draggable(
+      "disable"
+    );
     this.RemoveEventListeners();
     this.windowContentElement.before(this.windowFrozenElement);
   }
+
   public Unfreese(): void {
-    $(`[data-id="${this.windowId}"]`).draggable("enable");
+    $(`[data-id="${this.windowOptions.windowIdentifier}"]`).draggable("enable");
     this.RegisterEventListeners();
     this.windowFrozenElement.remove();
   }
+
   private onclick = (ev: Event) => this.Click(ev);
   private dblClick = () => this.DblClick();
   private mouseDown = () => this.MouseDown();
@@ -53,6 +57,7 @@ class Window implements IWindow {
     this.windowContainerElement!.addEventListener("dblclick", this.dblClick);
     this.windowContainerElement!.addEventListener("mousedown", this.mouseDown);
   }
+
   private RemoveEventListeners() {
     this.windowContainerElement!.removeEventListener("click", this.onclick);
     this.windowContainerElement!.removeEventListener("dblclick", this.dblClick);
@@ -92,9 +97,10 @@ class Window implements IWindow {
       this.windowOptions.windowTitle + windowCount.toString()
     );
 
-    this.windowId = windowCount.toString();
-
-    this.windowContainerElement.setAttribute("data-id", this.windowId);
+    this.windowContainerElement.setAttribute(
+      "data-id",
+      this.windowOptions.windowIdentifier
+    );
 
     this.UpdateStyle();
     this.UpdateUI();
@@ -107,13 +113,8 @@ class Window implements IWindow {
     this.InitMovement();
   }
 
-  private InitMovement() {
-    $(`[data-id="${this.windowId}"]`).draggable({
-      containment: "document",
-      handle: $(
-        `[data-id="${this.windowOptions.windowTitle + this.windowId}"]`
-      ),
-    });
+  private InitMovement(): void {
+    this._graphicsUtils.InitMovement(this.windowOptions.windowIdentifier);
   }
 
   private Click(ev: Event) {

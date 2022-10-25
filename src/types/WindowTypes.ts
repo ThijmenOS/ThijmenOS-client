@@ -12,4 +12,5 @@ export interface BaseWindowOptions {
 export interface WindowOptions extends BaseWindowOptions {
   iconLocation?: string;
   windowTitle: string;
+  windowIdentifier: string;
 }

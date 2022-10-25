@@ -12,12 +12,12 @@ import IPrompt from "@drivers/graphic/prompt/IPrompt";
 
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
+import { OpenFile } from "@ostypes/KernelTypes";
 
 @injectable()
 class AppManager implements IAppManager {
   private readonly _graphicsUtils: IGraphicsUtils;
   private readonly _fileSystem: IFileSystem;
-  private readonly _prompt: IPrompt;
 
   private openApps: Array<Window> = new Array<Window>();
   private installedApps: Array<ApplicationMetaData> =
@@ -25,53 +25,65 @@ class AppManager implements IAppManager {
 
   constructor(
     @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
-    @inject(types.FileSystem) fileSystem: IFileSystem,
-    @inject(types.Prompt) prompt: IPrompt
+    @inject(types.FileSystem) fileSystem: IFileSystem
   ) {
     this._graphicsUtils = graphicsUtils;
     this._fileSystem = fileSystem;
-    this._prompt = prompt;
   }
 
   public async FetchInstalledApps(): Promise<void> {
     this.installedApps = await this._fileSystem.FetchInstalledApplications();
   }
 
-  public openApplicationWithMimeType(requestingApp: string, mimeType: string) {
+  public openApplicationWithMimeType(requestingApp: string, props: OpenFile) {
     const targetApp = this.openApps.find(
-      (app) => app.windowOptions.windowTitle === requestingApp
+      (app) => app.windowOptions.windowIdentifier === requestingApp
     );
 
     targetApp?.Freese();
 
     const installedAppsWithDesiredMimetype: Array<ApplicationMetaData> =
-      this.installedApps.filter((app) => app.mimeTypes.includes(mimeType));
+      this.installedApps.filter((app) =>
+        app.mimeTypes.includes(props.mimeType)
+      );
 
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
 
-    this._prompt.Prompt().SelectApp(resultTitles, (selectedApp: string) => {
-      this.OpenApplication(
-        installedAppsWithDesiredMimetype.find(
+    javascriptOs
+      .get<IPrompt>(types.Prompt)
+      .Prompt({
+        left: window.getComputedStyle(targetApp!.windowContainerElement).left,
+        top: window.getComputedStyle(targetApp!.windowContainerElement).top,
+      })
+      .SelectApp(resultTitles, (selectedApp: string) => {
+        const app = installedAppsWithDesiredMimetype.find(
           (app) => app.title === selectedApp
-        )!
-      );
-      targetApp?.Unfreese();
-    });
+        )!;
+        const openedApp = this.OpenApplication(app);
+        this.SendDataToApp<string>(
+          openedApp.windowOptions.windowIdentifier,
+          props.filePath,
+          requestingApp
+        );
+        targetApp?.Unfreese();
+      });
   }
 
   public OpenApplication(
     applicationDetails: FileIcon | ApplicationMetaData
-  ): void {
+  ): Window {
     const application = javascriptOs
       .get<ICreateWindow>(types.CreateWindow)
       .Application(applicationDetails);
 
     this.openApps.push(application);
+
+    return application;
   }
 
-  public CheckIfAppExists(appName: string): boolean {
+  public CheckIfAppExists(origin: string): boolean {
     return this.openApps.some(
-      (win) => win.windowOptions.windowTitle === appName
+      (win) => win.windowOptions.windowIdentifier === origin
     );
   }
 
