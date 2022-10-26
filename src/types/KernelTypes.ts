@@ -11,6 +11,7 @@ export enum ValidMethods {
   //File system
   filesInDir = "filesInDir",
   readFile = "readFile",
+  changeDir = "changeDir",
 
   //Window operations
   closeSelf = "closeSelf",

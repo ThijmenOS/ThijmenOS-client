@@ -7,17 +7,18 @@ import Window from "@drivers/graphic/window/Window";
 
 import IAppManager from "./IAppManager";
 import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
-import IFileSystem from "@drivers/fileSystem/IFileSystem";
 import IPrompt from "@drivers/graphic/prompt/IPrompt";
 
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
-import { OpenFile } from "@ostypes/KernelTypes";
+import { OpenFile, Path } from "@ostypes/KernelTypes";
+import ISettings from "@core/settings/ISettings";
+import { MimeTypes } from "@ostypes/SettingsTypes";
 
 @injectable()
 class AppManager implements IAppManager {
   private readonly _graphicsUtils: IGraphicsUtils;
-  private readonly _fileSystem: IFileSystem;
+  private readonly _settings: ISettings;
 
   private openApps: Array<Window> = new Array<Window>();
   private installedApps: Array<ApplicationMetaData> =
@@ -25,14 +26,15 @@ class AppManager implements IAppManager {
 
   constructor(
     @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
-    @inject(types.FileSystem) fileSystem: IFileSystem
+    @inject(types.Settings) settings: ISettings
   ) {
     this._graphicsUtils = graphicsUtils;
-    this._fileSystem = fileSystem;
+    this._settings = settings;
   }
 
   public async FetchInstalledApps(): Promise<void> {
-    this.installedApps = await this._fileSystem.FetchInstalledApplications();
+    await this._settings.Initialise();
+    this.installedApps = this._settings.settings.apps.installedApps;
   }
 
   public openApplicationWithMimeType(requestingApp: string, props: OpenFile) {
@@ -59,7 +61,7 @@ class AppManager implements IAppManager {
         const app = installedAppsWithDesiredMimetype.find(
           (app) => app.title === selectedApp
         )!;
-        const openedApp = this.OpenApplication(app);
+        const openedApp = this.OpenExecutable(app);
         this.SendDataToApp<string>(
           openedApp.windowOptions.windowIdentifier,
           props.filePath,
@@ -69,7 +71,7 @@ class AppManager implements IAppManager {
       });
   }
 
-  public OpenApplication(
+  public OpenExecutable(
     applicationDetails: FileIcon | ApplicationMetaData
   ): Window {
     const application = javascriptOs
@@ -77,6 +79,22 @@ class AppManager implements IAppManager {
       .Application(applicationDetails);
 
     this.openApps.push(application);
+
+    return application;
+  }
+
+  public OpenFile(mimeType: MimeTypes, filePath: Path): Window {
+    const AppToOpen = this._settings.DefaultApplication(mimeType);
+
+    if (!AppToOpen) throw new Error("File type not supported!");
+
+    const application = this.OpenExecutable(AppToOpen);
+
+    this.SendDataToApp(
+      application.windowOptions.windowIdentifier,
+      filePath,
+      "test"
+    );
 
     return application;
   }

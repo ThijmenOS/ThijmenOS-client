@@ -56,6 +56,13 @@ class Kernel implements IKernel {
           )
         ),
 
+    changeDir: (props: Path) =>
+      this._core.fileSystem
+        .ChangeDirectory(props)
+        .then((res: string) =>
+          this._core.appManager.SendDataToApp(this.origin, res, "system")
+        ),
+
     //Window operations
     closeSelf: () => this._core.appManager.CloseApplication(this.origin),
     openFile: (props: OpenFile) =>
@@ -108,6 +115,9 @@ class Kernel implements IKernel {
           ValidMethods.openFile,
           props.params as OpenFile
         );
+        break;
+      case "changeDir":
+        this.ExcecuteMethod<Path>(ValidMethods.changeDir, props.params);
         break;
       default:
         this.ExcecuteMethod<void>(ValidMethods.kernelMethodNotFound);

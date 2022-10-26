@@ -10,6 +10,7 @@ import types from "@ostypes/types";
 import IUtils from "@utils/IUtils";
 import { config } from "@config/javascriptOsConfig";
 import IGraphicsUtils from "../utils/IGraphicUtils";
+import { MimeTypes } from "@ostypes/SettingsTypes";
 
 @injectable()
 class FileIcon implements IFileIcon {
@@ -19,13 +20,13 @@ class FileIcon implements IFileIcon {
 
   public exeLocation = "";
   public iconLocation?: string;
-  public supportedMimeTypes: Array<string>;
 
   private iconContainerElement?: HTMLDivElement;
   private iconImageElement?: HTMLObjectElement;
   private iconTitleElement?: HTMLParagraphElement;
 
   private appHash?: string;
+  private mimeType?: MimeTypes;
 
   public title = "";
 
@@ -37,8 +38,6 @@ class FileIcon implements IFileIcon {
     this._appManager = appManager;
     this._utils = utils;
     this._graphicsUtils = graphicsUtils;
-
-    this.supportedMimeTypes = [];
   }
 
   public ConstructFileIcon(filePath: string) {
@@ -48,14 +47,15 @@ class FileIcon implements IFileIcon {
 
   private async GetFileConfigurations() {
     const targetFile: string = this.exeLocation.split("/").at(-1)!;
-    const targetFileExtention: string = targetFile.split(".").at(-1)!;
+    this.mimeType = targetFile.split(".").at(-1)! as MimeTypes;
 
     this.title = targetFile;
+    //If it is a thijm, execute it directly else it should check which default app it has to excecute
 
-    if (targetFileExtention !== "thijm") {
+    if (this.mimeType !== MimeTypes.thijm) {
       this.iconLocation =
         `${config.host}${config.fileIconsPath}/file_type_` +
-        fileIcons[targetFileExtention] +
+        fileIcons[this.mimeType] +
         ".svg";
     } else {
       const AppProperties: ApplicationMetaData =
@@ -115,7 +115,9 @@ class FileIcon implements IFileIcon {
   }
 
   private OpenFile(_ev: Event, icon: FileIcon) {
-    this._appManager.OpenApplication(icon);
+    if (this.mimeType === MimeTypes.thijm)
+      this._appManager.OpenExecutable(icon);
+    else this._appManager.OpenFile(this.mimeType!, this.exeLocation);
   }
   public Destory() {
     this.iconContainerElement!.remove();
