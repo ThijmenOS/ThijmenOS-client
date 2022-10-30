@@ -10,5 +10,10 @@ export default interface IAppManager {
   OpenFile(mimeType: MimeTypes, filePath: Path): Window;
   CheckIfAppExists(appName: string): boolean;
   CloseApplication(targetWindow: string): void;
-  SendDataToApp<T>(app: string, data: T, sender: string): void;
+  SendDataToApp<T>(
+    app: string,
+    data: T,
+    sender: string,
+    eventName: string
+  ): void;
 }

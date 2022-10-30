@@ -1,7 +1,7 @@
 import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
-import { Directory } from "@ostypes/FileSystemTypes";
-import { Path } from "@ostypes/KernelTypes";
+import { Mkdir } from "@common/FileSystem";
 import { OSSettings } from "@ostypes/SettingsTypes";
+import { Directory, Path } from "@common/FileSystem";
 
 export default interface IFileSystem {
   ShowFilesInDir(path: string): Promise<Array<Directory>>;
@@ -9,4 +9,7 @@ export default interface IFileSystem {
   FetchInstalledApplications(): Promise<Array<ApplicationMetaDataObject>>;
   FetchSettings(): Promise<OSSettings>;
   ChangeDirectory(path: Path): Promise<string>;
+  MakeDirectory(props: Mkdir): Promise<string>;
+  RemoveDirectory(props: Path): Promise<string>;
+  CreateFile(props: string): Promise<string>;
 }

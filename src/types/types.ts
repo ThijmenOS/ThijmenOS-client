@@ -11,6 +11,7 @@ const types = {
   Core: Symbol.for("Core"),
   Prompt: Symbol.for("Prompt"),
   Settings: Symbol.for("Settings"),
+  ErrorManager: Symbol.for("ErrorManager"),
 };
 
 export default types;

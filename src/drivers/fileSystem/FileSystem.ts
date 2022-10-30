@@ -1,10 +1,10 @@
 import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
 import IFileSystem from "./IFileSystem";
-import { Directory } from "@ostypes/FileSystemTypes";
+import { Mkdir } from "../../../../javascriptOS-common/types/FileSystem";
 import { injectable } from "inversify";
 import { config } from "@config/javascriptOsConfig";
 import { OSSettings } from "@ostypes/SettingsTypes";
-import { Path } from "@ostypes/KernelTypes";
+import { Directory, Path } from "@common/FileSystem";
 
 @injectable()
 class FileSystem implements IFileSystem {
@@ -24,6 +24,17 @@ class FileSystem implements IFileSystem {
   }
   public async ChangeDirectory(path: Path): Promise<string> {
     return await $.get(config.host + `/root/changeDirectory?path=${path}`);
+  }
+  public async MakeDirectory(props: Mkdir): Promise<string> {
+    return await $.post(config.host + "/filesystem/makeDirectory", props);
+  }
+  public async CreateFile(props: string): Promise<string> {
+    return await $.post(config.host + "/filesystem/makeFIle", props);
+  }
+  public async RemoveDirectory(props: Path): Promise<string> {
+    return await $.post(config.host + "/filesystem/removeDirectory", {
+      Path: props,
+    });
   }
 }
 

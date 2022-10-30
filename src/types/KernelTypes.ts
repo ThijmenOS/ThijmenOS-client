@@ -1,6 +1,8 @@
+import { MimeTypes } from "./SettingsTypes";
+
 export type JsOsCommunicationMessage = {
   origin: string;
-  method: ValidMethods;
+  method: string;
   params: any;
 };
 
@@ -12,6 +14,9 @@ export enum ValidMethods {
   filesInDir = "filesInDir",
   readFile = "readFile",
   changeDir = "changeDir",
+  mkdir = "mkdir",
+  rmdir = "rmdir",
+  touch = "touch",
 
   //Window operations
   closeSelf = "closeSelf",
@@ -19,11 +24,10 @@ export enum ValidMethods {
 }
 
 export type kernelMethodNoParams = () => void;
-export type kernelMethodOnePatam = (args: any) => void;
+export type kernelMethodOneParam = (args: any) => void;
 
 export type KernelMethods = {
-  [key in ValidMethods]: kernelMethodNoParams | kernelMethodOnePatam;
+  [key in ValidMethods]: kernelMethodNoParams | kernelMethodOneParam;
 };
 
-export type Path = string;
-export type OpenFile = { mimeType: string; filePath: string };
+export type OpenFile = { mimeType: MimeTypes; filePath: string };

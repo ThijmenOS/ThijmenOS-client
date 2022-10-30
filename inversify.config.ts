@@ -26,6 +26,8 @@ import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
 import GraphicsUtils from "@drivers/graphic/utils/GraphicsUtils";
 import ISettings from "@core/settings/ISettings";
 import Settings from "@core/settings/Settings";
+import IErrorManager from "@core/errorManager/IErrorManager";
+import ErrorManager from "@core/errorManager/ErrorManager";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
@@ -43,5 +45,6 @@ javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<ICore>(types.Core).to(Core);
 javascriptOs.bind<IPrompt>(types.Prompt).to(Prompt);
 javascriptOs.bind<ISettings>(types.Settings).to(Settings);
+javascriptOs.bind<IErrorManager>(types.ErrorManager).to(ErrorManager);
 
 export default javascriptOs;

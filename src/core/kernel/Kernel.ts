@@ -1,5 +1,4 @@
 import {
-  Path,
   KernelMethods,
   ValidMethods,
   JsOsCommunicationMessage,
@@ -10,7 +9,8 @@ import IKernel from "./IKernel";
 import types from "@ostypes/types";
 import IAppManager from "@core/appManager/IAppManager";
 import ICore from "@core/core/ICore";
-import { Directory } from "@ostypes/FileSystemTypes";
+import { Mkdir, Directory, Path } from "@common/FileSystem";
+import { EventName, system } from "@ostypes/AppManagerTypes";
 
 @injectable()
 class Kernel implements IKernel {
@@ -22,15 +22,17 @@ class Kernel implements IKernel {
     kernelMethodNotFound: () =>
       this._core.appManager.SendDataToApp<Error>(
         this.origin,
-        new Error("Error: The requested kernel method does not exist"),
-        "system"
+        new Error("The requested kernel method does not exist"),
+        system,
+        EventName.Error
       ),
 
-    testCommand: (targetApp: string): void =>
+    testCommand: (): void =>
       this._core.appManager.SendDataToApp<string>(
-        targetApp,
+        this.origin,
         "test123",
-        "system"
+        system,
+        EventName.TestCommand
       ),
 
     //FileSystem
@@ -41,7 +43,8 @@ class Kernel implements IKernel {
           this._core.appManager.SendDataToApp<Array<Directory>>(
             this.origin,
             res,
-            "system"
+            system,
+            EventName.SelfInvoked
           )
         ),
 
@@ -52,7 +55,8 @@ class Kernel implements IKernel {
           this._core.appManager.SendDataToApp<string>(
             this.origin,
             res,
-            "system"
+            system,
+            EventName.SelfInvoked
           )
         ),
 
@@ -60,8 +64,52 @@ class Kernel implements IKernel {
       this._core.fileSystem
         .ChangeDirectory(props)
         .then((res: string) =>
-          this._core.appManager.SendDataToApp(this.origin, res, "system")
+          this._core.appManager.SendDataToApp(
+            this.origin,
+            res,
+            system,
+            EventName.SelfInvoked
+          )
         ),
+
+    mkdir: (props: Mkdir) => {
+      this._core.fileSystem
+        .MakeDirectory(props)
+        .then((res: string) =>
+          this._core.appManager.SendDataToApp<string>(
+            this.origin,
+            res,
+            system,
+            EventName.SelfInvoked
+          )
+        );
+    },
+
+    rmdir: (props: Path) => {
+      this._core.fileSystem
+        .RemoveDirectory(props)
+        .then((res: string) =>
+          this._core.appManager.SendDataToApp<string>(
+            this.origin,
+            res,
+            system,
+            EventName.SelfInvoked
+          )
+        );
+    },
+
+    touch: (props: Path) => {
+      this._core.fileSystem
+        .CreateFile(props)
+        .then((res: string) =>
+          this._core.appManager.SendDataToApp<string>(
+            this.origin,
+            res,
+            system,
+            EventName.SelfInvoked
+          )
+        );
+    },
 
     //Window operations
     closeSelf: () => this._core.appManager.CloseApplication(this.origin),
@@ -91,42 +139,11 @@ class Kernel implements IKernel {
 
   // eslint-disable-next-line complexity
   private ProcessMethod(props: JsOsCommunicationMessage) {
-    switch (props.method) {
-      case "testCommand":
-        this.ExcecuteMethod<string>(ValidMethods.testCommand, props.origin);
-        break;
-      case "filesInDir":
-        this.ExcecuteMethod<Path>(
-          ValidMethods.filesInDir,
-          props.params as string
-        );
-        break;
-      case "readFile":
-        this.ExcecuteMethod<Path>(
-          ValidMethods.readFile,
-          props.params as string
-        );
-        break;
-      case "closeSelf":
-        this.ExcecuteMethod<void>(ValidMethods.closeSelf);
-        break;
-      case "openFile":
-        this.ExcecuteMethod<OpenFile>(
-          ValidMethods.openFile,
-          props.params as OpenFile
-        );
-        break;
-      case "changeDir":
-        this.ExcecuteMethod<Path>(ValidMethods.changeDir, props.params);
-        break;
-      default:
-        this.ExcecuteMethod<void>(ValidMethods.kernelMethodNotFound);
-        break;
+    try {
+      this.kernelMethods[props.method as ValidMethods](props.params);
+    } catch (error) {
+      this.kernelMethods.kernelMethodNotFound();
     }
-  }
-
-  private ExcecuteMethod<T>(method: ValidMethods, props?: T) {
-    this.kernelMethods[method](props);
   }
 }
 

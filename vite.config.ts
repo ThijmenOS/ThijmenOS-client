@@ -18,6 +18,7 @@ export default defineConfig({
       "@static": path.resolve(__dirname, "./src/static/"),
       "@config": path.resolve(__dirname, "./src/config"),
       "@icon": path.resolve(__dirname, "./src/fileIcon"),
+      "@common": path.resolve(__dirname, "../javascriptOS-common/types"),
     },
   },
 });

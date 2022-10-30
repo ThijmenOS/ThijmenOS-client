@@ -11,23 +11,24 @@ import IPrompt from "@drivers/graphic/prompt/IPrompt";
 
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
-import { OpenFile, Path } from "@ostypes/KernelTypes";
+import { OpenFile } from "@ostypes/KernelTypes";
+import { Path } from "@common/FileSystem";
 import ISettings from "@core/settings/ISettings";
 import { MimeTypes } from "@ostypes/SettingsTypes";
+import { Event, EventName, system } from "@ostypes/AppManagerTypes";
+import AppManagerUtils from "./AppManagerUtils";
 
 @injectable()
-class AppManager implements IAppManager {
+class AppManager extends AppManagerUtils implements IAppManager {
   private readonly _graphicsUtils: IGraphicsUtils;
   private readonly _settings: ISettings;
-
-  private openApps: Array<Window> = new Array<Window>();
-  private installedApps: Array<ApplicationMetaData> =
-    new Array<ApplicationMetaData>();
 
   constructor(
     @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
     @inject(types.Settings) settings: ISettings
   ) {
+    super();
+
     this._graphicsUtils = graphicsUtils;
     this._settings = settings;
   }
@@ -38,16 +39,13 @@ class AppManager implements IAppManager {
   }
 
   public openApplicationWithMimeType(requestingApp: string, props: OpenFile) {
-    const targetApp = this.openApps.find(
-      (app) => app.windowOptions.windowIdentifier === requestingApp
+    const targetApp = this.findTargetApp(requestingApp);
+
+    targetApp.Freese();
+
+    const installedAppsWithDesiredMimetype = this.findAppsWithDesiredMimetype(
+      props.mimeType
     );
-
-    targetApp?.Freese();
-
-    const installedAppsWithDesiredMimetype: Array<ApplicationMetaData> =
-      this.installedApps.filter((app) =>
-        app.mimeTypes.includes(props.mimeType)
-      );
 
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
 
@@ -65,9 +63,10 @@ class AppManager implements IAppManager {
         this.SendDataToApp<string>(
           openedApp.windowOptions.windowIdentifier,
           props.filePath,
-          requestingApp
+          requestingApp,
+          EventName.OpenFile
         );
-        targetApp?.Unfreese();
+        targetApp.Unfreese();
       });
   }
 
@@ -93,7 +92,8 @@ class AppManager implements IAppManager {
     this.SendDataToApp(
       application.windowOptions.windowIdentifier,
       filePath,
-      "test"
+      system,
+      EventName.OpenFile
     );
 
     return application;
@@ -116,20 +116,22 @@ class AppManager implements IAppManager {
   public async SendDataToApp<T>(
     app: string,
     data: T,
-    sender: string
+    sender: string,
+    eventName: EventName
   ): Promise<void> {
     if (!sender || !app) throw new Error("No app or sender specified!");
 
-    const content = {
-      sender: sender,
-      return: data,
+    const event: Event<T> = {
+      eventName: eventName,
+      eventSender: sender,
+      eventData: data,
     };
 
     this._graphicsUtils
       .WaitForElm<HTMLIFrameElement>(app)
       .then((res: HTMLIFrameElement) => {
         setTimeout(() => {
-          res.contentWindow?.postMessage(content, "*");
+          res.contentWindow?.postMessage(event, "*");
         }, 200);
       });
   }

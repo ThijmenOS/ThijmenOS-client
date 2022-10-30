@@ -19,7 +19,6 @@ module.exports = {
     "no-unused-private-class-members": "error",
     "block-scoped-var": "error",
     camelcase: "error",
-    "capitalized-comments": ["error", "always"],
     complexity: ["error", 5],
     "consistent-return": "error",
     "default-case": "error",
