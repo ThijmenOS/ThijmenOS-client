@@ -1,15 +1,34 @@
+/* <Class Documentation>
+
+  <Class Description>
+    The file icon holds does two main things. It knows how to display itself on the screen and in knows information about the file in order to excecute it.
+
+  <Method Descriptions>
+    ConstructFileIcon(): This method is the entry point to start the processes that are involved with the file icon.
+    GetFileConfigurations(): If the file is an executable or a short to an executable, this method gathers information about where the executable actually is and what icon to display with it. If it is not an executable but an file, it gathes information about which default app to open this file with and which icon to show
+    InitIcon(): This method does the nesecery dom things for the file icon to render and give behaviour
+    InitBehaviour(): This method initialises for example movement of the icon or what happens when you click the icon.
+    Render(): This method renders the icon to the actual DOM so it is visible on the desktop
+    OpenFile(): Opens the file or executable
+    Destroy(): Removes the file icon from the DOM
+
+*/
+
+//DI
+import types from "@ostypes/types";
+import { inject, injectable } from "inversify";
+
+//Interfaces
 import IFileIcon from "./IFileIcon";
+import IAppManager from "@core/appManager/IAppManager";
+import IUtils from "@utils/IUtils";
+import IGraphicsUtils from "../utils/IGraphicUtils";
+
+//Types
 import fileIcons from "./fileIcons";
 import { appIcon, fileIconSelectors } from "@utils/dom-defaults";
-
-import "jqueryui";
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
-import { inject, injectable } from "inversify";
-import IAppManager from "@core/appManager/IAppManager";
-import types from "@ostypes/types";
-import IUtils from "@utils/IUtils";
 import { config } from "@config/javascriptOsConfig";
-import IGraphicsUtils from "../utils/IGraphicUtils";
 import { MimeTypes } from "@ostypes/SettingsTypes";
 
 @injectable()
@@ -50,7 +69,7 @@ class FileIcon implements IFileIcon {
     this.mimeType = targetFile.split(".").at(-1)! as MimeTypes;
 
     this.title = targetFile;
-    //If it is a thijm, execute it directly else it should check which default app it has to excecute
+    //TODO: If it is a thijm, execute it directly else it should check which default app it has to excecute
 
     if (this.mimeType !== MimeTypes.thijm) {
       this.iconLocation =

@@ -1,14 +1,33 @@
+/* <Class Documentation>
+
+  <Class Description>
+    The kernel class is the heart of communication between apps and OS. An app can send method requests to the os which all come in here. These requests can for example be to get some information or to open an file.
+
+  <Method Description>
+    kernelMethods: This is an object that contains implementations for every possible kernel method
+      |_ There is an enum with names of kernel methods. These are the existing kernel methods. This object has properties with impementations of all of these enum values. If it then has to send some data back to the application it will call the SendDataToApp method that lives within the AppManager class
+      
+    ListenToCommunication(): This method listens to incomming requests from apps. It will validate the nesecery things and extracts the needed that from the request. Then it will pass it on to the handler to perform the request that was maade
+    ProcessMethod(): This method will call the implementation of the method that was requested by the app
+
+*/
+
+//DI
+import { inject, injectable } from "inversify";
+import types from "@ostypes/types";
+
+//Interfaces
+import IKernel from "./IKernel";
+import IAppManager from "@core/appManager/IAppManager";
+import ICore from "@core/core/ICore";
+
+//Types
 import {
   KernelMethods,
   ValidMethods,
   JsOsCommunicationMessage,
   OpenFile,
 } from "@ostypes/KernelTypes";
-import { inject, injectable } from "inversify";
-import IKernel from "./IKernel";
-import types from "@ostypes/types";
-import IAppManager from "@core/appManager/IAppManager";
-import ICore from "@core/core/ICore";
 import { Mkdir, Directory, Path } from "@common/FileSystem";
 import { EventName, system } from "@ostypes/AppManagerTypes";
 
@@ -112,9 +131,9 @@ class Kernel implements IKernel {
     },
 
     //Window operations
-    closeSelf: () => this._core.appManager.CloseApplication(this.origin),
+    closeSelf: () => this._core.appManager.CloseExecutable(this.origin),
     openFile: (props: OpenFile) =>
-      this._core.appManager.openApplicationWithMimeType(this.origin, props),
+      this._core.appManager.OpenFileWithApplication(this.origin, props),
   };
 
   constructor(
@@ -128,7 +147,7 @@ class Kernel implements IKernel {
     window.onmessage = (event: MessageEvent) => {
       const messageData: JsOsCommunicationMessage = event.data;
 
-      if (!this._appManager.CheckIfAppExists(messageData.origin))
+      if (!this._appManager.CheckIfAppIsOpen(messageData.origin))
         throw new Error("Sender app is not known!");
 
       this.origin = messageData.origin;
@@ -137,12 +156,18 @@ class Kernel implements IKernel {
     };
   }
 
-  // eslint-disable-next-line complexity
+  //TODO: Other kernel method implementation
+  /*
+    For every method there is a class.
+    This class then knows the implementation of the method. This class has a property which knows if it has to send data back to the app
+    if this property is true the class will set another property on itself with the data that has to go back to the app.
+    The this processMethod will send the data on that property to the app.
+  */
   private ProcessMethod(props: JsOsCommunicationMessage) {
     try {
       this.kernelMethods[props.method as ValidMethods](props.params);
     } catch (error) {
-      this.kernelMethods.kernelMethodNotFound();
+      this.kernelMethods.kernelMethodNotFound;
     }
   }
 }

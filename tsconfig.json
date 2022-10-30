@@ -19,7 +19,7 @@
       "@config/*": ["config/*"],
       "@common/*": ["../../javascriptOS-common/types/*"]
     },
-    "types": ["node", "reflect-metadata"],
+    "types": ["node", "reflect-metadata", "jquery"],
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,

@@ -1,3 +1,5 @@
+//TODO: Document this class
+
 import { ClassOperation } from "@ostypes/UtilsTypes";
 import { injectable } from "inversify";
 import IGraphicsUtils from "./IGraphicUtils";

@@ -1,7 +1,3 @@
-enum MimeTypes {
-  txt,
-}
-
 export enum ApplicationMetaDataFields {
   title = "title",
   iconLocation = "iconLocation",

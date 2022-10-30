@@ -1,3 +1,5 @@
+//TODO: Document this class
+
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 import ICreateWindow from "./IWindowCreation";
 import IWindow from "./IWindow";

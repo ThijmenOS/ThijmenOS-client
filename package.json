@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore --fix src"
   },
   "devDependencies": {
-    "@types/jquery": "^2.0.47",
+    "@types/jquery": "^2.0.60",
     "@types/node": "^18.11.0",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",

@@ -1,10 +1,22 @@
-import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
-import IFileSystem from "./IFileSystem";
-import { Mkdir } from "../../../../javascriptOS-common/types/FileSystem";
+/* <Class Documentation>
+
+  <Class Description>
+    This class provides methods that perform different actions on the backend api
+
+*/
+
+//DI
 import { injectable } from "inversify";
-import { config } from "@config/javascriptOsConfig";
+
+//Interfaces
+import IFileSystem from "./IFileSystem";
+
+//Types
+import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
 import { OSSettings } from "@ostypes/SettingsTypes";
+import { Mkdir } from "@common/FileSystem";
 import { Directory, Path } from "@common/FileSystem";
+import { config } from "@config/javascriptOsConfig";
 
 @injectable()
 class FileSystem implements IFileSystem {

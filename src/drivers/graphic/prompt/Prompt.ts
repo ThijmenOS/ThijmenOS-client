@@ -1,3 +1,5 @@
+//TODO: Document this class
+
 import types from "@ostypes/types";
 import { inject, injectable } from "inversify";
 import { prompt, promptSelectors } from "@utils/dom-defaults";

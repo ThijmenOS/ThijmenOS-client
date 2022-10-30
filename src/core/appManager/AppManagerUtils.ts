@@ -1,10 +1,28 @@
+/* <Class Documentation>
+
+  <Class Description>
+    AppManagerUtls is a set of utility methods that are used by AppManager.ts
+
+  <Method Description>
+    FindInstalledAppsWithMimetype(): This method finds applications that support a given mimetype.
+    FindTargetApp(): When the AppManager needs to do some operations on an application it gets the application hash. With this has the FindTargetApp method will try to find the mathing application meta data
+
+*/
+
+//DI
+import { injectable } from "inversify";
+import javascriptOs from "../../../inversify.config";
+import types from "@ostypes/types";
+
+//Classes
+import Window from "@drivers/graphic/window/Window";
+
+//DI interfaces
+import IErrorManager from "@core/errorManager/IErrorManager";
+
+//Types
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import { MimeTypes } from "@ostypes/SettingsTypes";
-import Window from "@drivers/graphic/window/Window";
-import { injectable } from "inversify";
-import types from "@ostypes/types";
-import IErrorManager from "@core/errorManager/IErrorManager";
-import javascriptOs from "../../../inversify.config";
 
 @injectable()
 class AppManagerUtils {
@@ -18,12 +36,12 @@ class AppManagerUtils {
     this._errorManager = javascriptOs.get<IErrorManager>(types.ErrorManager);
   }
 
-  protected findAppsWithDesiredMimetype = (
+  protected FindInstalledAppsWithMimetype = (
     mimeType: MimeTypes
   ): Array<ApplicationMetaData> =>
     this.installedApps.filter((app) => app.mimeTypes.includes(mimeType));
 
-  protected findTargetApp = (target: string): Window => {
+  protected FindTargetApp = (target: string): Window => {
     const targetApp = this.openApps.find(
       (app) => app.windowOptions.windowIdentifier === target
     );

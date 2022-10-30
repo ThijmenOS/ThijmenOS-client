@@ -1,3 +1,5 @@
+//TODO: Document this class
+
 import IWindow from "./IWindow";
 import { WindowOptions } from "@ostypes/WindowTypes";
 import types from "@ostypes/types";
@@ -10,6 +12,8 @@ import {
 import { inject, injectable } from "inversify";
 import IGraphicsUtils from "../utils/IGraphicUtils";
 import GraphicsUtils from "../utils/GraphicsUtils";
+import { config } from "@config/javascriptOsConfig";
+import "jqueryui";
 
 export let windowCount = 0;
 let lastWindowOnTop: Window;
@@ -35,7 +39,7 @@ class Window implements IWindow {
   }
 
   public Freese(): void {
-    $(`[data-id="${this.windowOptions.windowIdentifier}"]`).draggable(
+    jQuery(`[data-id="${this.windowOptions.windowIdentifier}"]`).draggable(
       "disable"
     );
     this.RemoveEventListeners();
@@ -43,7 +47,9 @@ class Window implements IWindow {
   }
 
   public Unfreese(): void {
-    $(`[data-id="${this.windowOptions.windowIdentifier}"]`).draggable("enable");
+    jQuery(`[data-id="${this.windowOptions.windowIdentifier}"]`).draggable(
+      "enable"
+    );
     this.RegisterEventListeners();
     this.windowFrozenElement.remove();
   }
@@ -177,6 +183,7 @@ class Window implements IWindow {
       this.windowOptions.windowWidth + "px";
   }
   private UpdateUI() {
+    const staticURL = config.host + "/static/";
     this._graphicsUtils.GetElementByClass<HTMLDivElement>(
       this.windowContainerElement,
       windowSelectors.windowTitle
@@ -184,7 +191,11 @@ class Window implements IWindow {
     this._graphicsUtils.GetElementByClass<HTMLDivElement>(
       this.windowContainerElement,
       `${windowSelectors.windowIcon} > div`
-    ).style.backgroundImage = `url('${this.windowOptions.iconLocation}')`;
+    ).style.backgroundImage = `url('${
+      this.windowOptions.iconLocation?.includes(staticURL)
+        ? this.windowOptions.iconLocation
+        : staticURL + this.windowOptions.iconLocation
+    }')`;
   }
 
   public Render(content: string): void {

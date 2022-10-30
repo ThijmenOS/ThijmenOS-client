@@ -1,15 +1,30 @@
-import $ from "jquery";
-import { injectable, inject } from "inversify";
+/* <Class Documentation>
+
+  <Class Description>
+    The startup class calls every method that is needed to startup the operating system. So it starts listening for app requests, it finds all the desktop apps and more
+
+  <Method Description>
+    InitialiseOperatingSystem(): Calls all the methods to start the operating system
+    ShowFilesOnDesktop(): Fetches all the files on the desktop directory
+
+*/
+
+//DI
 import "reflect-metadata";
+import { injectable, inject } from "inversify";
 import types from "@ostypes/types";
-import { Directory } from "@ostypes/FileSystemTypes";
+import javascriptOs from "../../../inversify.config";
+
+//Interfaces
 import IFileIcon from "@drivers/graphic/fileIcon/IFileIcon";
 import IStartup from "./IStartup";
 import IFileSystem from "@drivers/fileSystem/IFileSystem";
 import IKernel from "@core/kernel/IKernel";
 import IUtils from "@utils/IUtils";
 import IAppManager from "@core/appManager/IAppManager";
-import javascriptOs from "../../../inversify.config";
+
+//Types
+import { Directory } from "@common/FileSystem";
 
 @injectable()
 class Startup implements IStartup {
@@ -36,7 +51,7 @@ class Startup implements IStartup {
 
     this._utils.UpdateTime();
 
-    this.showFilesOnDesktop();
+    this.ShowFilesOnDesktop();
 
     onresize = () => {
       const pageWidth = window.innerWidth;
@@ -50,7 +65,7 @@ class Startup implements IStartup {
     }, 1000);
   }
 
-  private async showFilesOnDesktop() {
+  private async ShowFilesOnDesktop() {
     this._fileSystem
       .ShowFilesInDir("C/Desktop")
       .then((res: Array<Directory>) => {

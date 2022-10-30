@@ -1,13 +1,15 @@
+//TODO: document this class
+
 import {
   ApplicationMetaData,
   ApplicationMetaDataFields,
   ApplicationMetaDataObject,
 } from "@ostypes/ApplicationTypes";
 import IFileSystem from "@drivers/fileSystem/IFileSystem";
-import { Path } from "@ostypes/KernelTypes";
 import types from "@ostypes/types";
 import IUtils from "./IUtils";
 import { inject, injectable } from "inversify";
+import { Path } from "@common/FileSystem";
 
 @injectable()
 class Utils implements IUtils {

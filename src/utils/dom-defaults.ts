@@ -1,3 +1,5 @@
+import { config } from "@config/javascriptOsConfig";
+
 export const fileIconSelectors = {
   fileIconSelector: "javascript-os-file-icon",
   fileIconFallbackSelector: "javascript-os-fallback-icon",
@@ -24,7 +26,7 @@ export enum windowDataActions {
 
 export const appIcon = `<div class="app javascript-os-file-icon-wrapper">
                 <object class='app ${fileIconSelectors.fileIconSelector}' type="image/png">
-                  <img class='app ${fileIconSelectors.fileIconFallbackSelector}' src='./userFiles/C/Operating system/Icons/default-app-icon.svg'>
+                  <img class='app ${fileIconSelectors.fileIconFallbackSelector}' src='${config.host}/static/C/OperatingSystem/Icons/default-app-icon.svg'>
                 </object>
                 <p id='${fileIconSelectors.fileIconTitle}'></p>
               </div>

@@ -1,15 +1,16 @@
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 import Window from "@drivers/graphic/window/Window";
-import { OpenFile, Path } from "@ostypes/KernelTypes";
+import { OpenFile } from "@ostypes/KernelTypes";
 import { MimeTypes } from "@ostypes/SettingsTypes";
+import { Path } from "@common/FileSystem";
 
 export default interface IAppManager {
   FetchInstalledApps(): Promise<void>;
-  openApplicationWithMimeType(requestingApp: string, props: OpenFile): void;
+  OpenFileWithApplication(requestingApp: string, props: OpenFile): void;
   OpenExecutable(applicationDetails: FileIcon): Window;
   OpenFile(mimeType: MimeTypes, filePath: Path): Window;
-  CheckIfAppExists(appName: string): boolean;
-  CloseApplication(targetWindow: string): void;
+  CheckIfAppIsOpen(appName: string): boolean;
+  CloseExecutable(targetWindow: string): void;
   SendDataToApp<T>(
     app: string,
     data: T,
