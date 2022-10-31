@@ -1,28 +1,42 @@
-//TODO: Document this class
+/* <Class Documentation>
 
-import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
-import ICreateWindow from "./IWindowCreation";
-import IWindow from "./IWindow";
-import { BaseWindowOptions, WindowType } from "@ostypes/WindowTypes";
+  <Class Description>
+    This class handles everyting that has to happen before a window can be created, such as getting the application executable that has to go in the window
+
+  <Method Description>
+    Application(): Gather information about the application it has to render
+    InitWindow(): Takes this gathered information and content and makes a new window out of it.
+
+*/
+
+//DI
 import types from "@ostypes/types";
 import { inject, injectable } from "inversify";
-import window from "./Window";
+
+//Interfaces
+import ICreateWindow from "./IWindowCreation";
+import IUtils from "@utils/IUtils";
+import IWindow from "./IWindow";
+
+//Types
+import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
+import Window from "./Window";
+import { BaseWindowOptions, WindowType } from "@ostypes/WindowTypes";
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import { config } from "@config/javascriptOsConfig";
-import IUtils from "@utils/IUtils";
 
 @injectable()
 class CreateWindow implements ICreateWindow {
   private readonly _window: IWindow;
   private readonly _utils: IUtils;
 
-  private windowContent = "";
   private readonly windowOptions: BaseWindowOptions = {
     windowHeight: 400,
     windowWidth: 700,
     windowType: WindowType.APPLICATION,
   };
 
+  private windowContent = "";
   private windowFileLocation = "";
   private windowTitle = "";
   private windowIconLocation?: string;
@@ -48,7 +62,7 @@ class CreateWindow implements ICreateWindow {
     return this.InitWindow();
   }
 
-  public InitWindow(): window {
+  public InitWindow(): Window {
     const window = this._window.NewWindow({
       windowTitle: this.windowTitle,
       iconLocation: this.windowIconLocation,

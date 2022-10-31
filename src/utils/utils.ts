@@ -1,14 +1,31 @@
-//TODO: document this class
+/* <Class Documentation>
 
+  <Class Description>
+    These are general utilities that can be used by every class
+
+  <Method Descriptions>
+    UpdateTime(): Get the current time and formats it.
+    GenerateUUID(): Generates a UUID
+    ReadFile(): This method calls the file system to read a specific file
+    CheckShortcut(): This method checks if a .thijm file is a shortcut or an actual executable
+    GetAppProperties(): This method extract the properties of an application. For example icon location or mimetypes
+
+*/
+
+//DI
+import { inject, injectable } from "inversify";
+
+//Interfaces
+import IUtils from "./IUtils";
+import IFileSystem from "@drivers/fileSystem/IFileSystem";
+
+//Types
 import {
   ApplicationMetaData,
   ApplicationMetaDataFields,
   ApplicationMetaDataObject,
 } from "@ostypes/ApplicationTypes";
-import IFileSystem from "@drivers/fileSystem/IFileSystem";
 import types from "@ostypes/types";
-import IUtils from "./IUtils";
-import { inject, injectable } from "inversify";
 import { Path } from "@common/FileSystem";
 
 @injectable()

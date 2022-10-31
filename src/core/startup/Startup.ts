@@ -45,6 +45,18 @@ class Startup implements IStartup {
     this._appManager = appManager;
   }
 
+  private async ShowFilesOnDesktop() {
+    this._fileSystem
+      .ShowFilesInDir("C/Desktop")
+      .then((res: Array<Directory>) => {
+        Array.from(res).forEach((file) => {
+          javascriptOs
+            .get<IFileIcon>(types.FileIcon)
+            .ConstructFileIcon(file.filePath);
+        });
+      });
+  }
+
   public InitialiseOperatingSystem() {
     this._appManager.FetchInstalledApps();
     this._kernel.ListenToCommunication();
@@ -63,18 +75,6 @@ class Startup implements IStartup {
     setInterval(() => {
       this._utils.UpdateTime();
     }, 1000);
-  }
-
-  private async ShowFilesOnDesktop() {
-    this._fileSystem
-      .ShowFilesInDir("C/Desktop")
-      .then((res: Array<Directory>) => {
-        Array.from(res).forEach((file) => {
-          javascriptOs
-            .get<IFileIcon>(types.FileIcon)
-            .ConstructFileIcon(file.filePath);
-        });
-      });
   }
 }
 

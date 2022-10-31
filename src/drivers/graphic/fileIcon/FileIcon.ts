@@ -37,9 +37,6 @@ class FileIcon implements IFileIcon {
   private readonly _utils: IUtils;
   private readonly _graphicsUtils: IGraphicsUtils;
 
-  public exeLocation = "";
-  public iconLocation?: string;
-
   private iconContainerElement?: HTMLDivElement;
   private iconImageElement?: HTMLObjectElement;
   private iconTitleElement?: HTMLParagraphElement;
@@ -47,6 +44,8 @@ class FileIcon implements IFileIcon {
   private appHash?: string;
   private mimeType?: MimeTypes;
 
+  public exeLocation = "";
+  public iconLocation?: string;
   public title = "";
 
   constructor(
@@ -57,11 +56,6 @@ class FileIcon implements IFileIcon {
     this._appManager = appManager;
     this._utils = utils;
     this._graphicsUtils = graphicsUtils;
-  }
-
-  public ConstructFileIcon(filePath: string) {
-    this.exeLocation = filePath;
-    this.GetFileConfigurations();
   }
 
   private async GetFileConfigurations() {
@@ -91,10 +85,9 @@ class FileIcon implements IFileIcon {
 
     this.InitIcon();
   }
-
   private InitIcon() {
     this.iconContainerElement =
-      this._graphicsUtils.CreateElementFromHTML(appIcon);
+      this._graphicsUtils.CreateElementFromString(appIcon);
 
     this.iconImageElement = this.iconContainerElement.querySelector(
       `.${fileIconSelectors.fileIconSelector}`
@@ -109,7 +102,6 @@ class FileIcon implements IFileIcon {
     this.Render();
     this.InitBehaviour();
   }
-
   private InitBehaviour() {
     const openFile = (ev: Event) => this.OpenFile(ev, this);
 
@@ -132,14 +124,18 @@ class FileIcon implements IFileIcon {
       .getElementById("main-application-container")!
       .appendChild(this.iconContainerElement!);
   }
-
   private OpenFile(_ev: Event, icon: FileIcon) {
     if (this.mimeType === MimeTypes.thijm)
       this._appManager.OpenExecutable(icon);
     else this._appManager.OpenFile(this.mimeType!, this.exeLocation);
   }
+
   public Destory() {
     this.iconContainerElement!.remove();
+  }
+  public ConstructFileIcon(filePath: string) {
+    this.exeLocation = filePath;
+    this.GetFileConfigurations();
   }
 }
 
