@@ -1,0 +1,29 @@
+.fatal-blue-screen-error {
+  z-index: 1000;
+  background: blue;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fatal-blue-screen-error span {
+  color: white;
+}
+.fatal-blue-screen-error > .errorMessageContainer {
+  display: flex;
+  flex-direction: column;
+}
+.errorMessageContainer > .errorEmoji {
+  font-size: 3em;
+}
+.errorMessageContainer > .error-header {
+  font-size: 2em;
+}
+.errorMessageContainer > .error-body {
+  font-size: 1em;
+}

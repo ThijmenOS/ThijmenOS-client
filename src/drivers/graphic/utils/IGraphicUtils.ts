@@ -4,7 +4,7 @@ export default interface IGraphicsUtils {
   MainAppContainer: HTMLElement;
   CreateElementFromString<T>(htmlString: string): T;
   GetElementByClass<T>(element: HTMLElement, selector: string): T;
-  AddElement(targetElement: HTMLElement, element: HTMLElement): void;
+  AddElement(element: HTMLElement, targetElement?: HTMLElement): void;
   AddOrRemoveClass(
     targetElement: Array<HTMLElement>,
     classes: Array<string>,

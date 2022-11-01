@@ -46,9 +46,7 @@ class AppManagerUtils {
       (app) => app.windowOptions.windowIdentifier === target
     );
 
-    if (targetApp === undefined) {
-      //TODO: Provide the app that wanted to find a app with the information it could not be found. Also provide a prompt that this error occured
-      this._errorManager.RaiseError("");
+    if (!targetApp) {
       throw new Error("the app could not be found!");
     }
 

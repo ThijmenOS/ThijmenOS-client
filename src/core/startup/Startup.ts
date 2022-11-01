@@ -62,7 +62,6 @@ class Startup implements IStartup {
   }
 
   public async InitialiseOperatingSystem() {
-    //TODO: If something in these methods go wrong, throw mayor error or try again
     await this._settings.Initialise();
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();

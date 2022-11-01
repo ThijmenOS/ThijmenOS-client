@@ -37,7 +37,8 @@ class GraphicsUtils implements IGraphicsUtils {
   public GetElementByClass<T>(element: HTMLElement, selector: string): T {
     return element.querySelector("." + selector) as T;
   }
-  public AddElement(targetElement: HTMLElement, element: HTMLElement): void {
+  public AddElement(element: HTMLElement, targetElement?: HTMLElement): void {
+    if (!targetElement) targetElement = this.MainAppContainer;
     targetElement.append(element);
   }
   public AddOrRemoveClass(

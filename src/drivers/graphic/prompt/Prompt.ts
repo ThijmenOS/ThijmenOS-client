@@ -56,13 +56,10 @@ class Prompt implements IPrompt {
       promptSelectors.promptBody
     );
 
-    this._graphicsUtils.AddElement(this.promptBody, content);
+    this._graphicsUtils.AddElement(content, this.promptBody);
   }
   private Render(): void {
-    this._graphicsUtils.AddElement(
-      this._graphicsUtils.MainAppContainer,
-      this.promptElement
-    );
+    this._graphicsUtils.AddElement(this.promptElement);
   }
 
   public Prompt(location?: Location): Prompt {

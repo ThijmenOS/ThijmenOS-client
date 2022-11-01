@@ -156,7 +156,6 @@ class Kernel implements IKernel {
     };
   }
 
-  //TODO: Other kernel method implementation
   /*
     For every method there is a class.
     This class then knows the implementation of the method. This class has a property which knows if it has to send data back to the app

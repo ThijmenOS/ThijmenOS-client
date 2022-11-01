@@ -14,8 +14,8 @@
 
 /* app styles */
 @import "./desktop-app.css";
-
-:root {
+@import "./fatal-error.css";
+:root  {
   --appZIndex: 10;
 }
 

@@ -72,7 +72,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
     let prompt = javascriptOs.get<Prompt>(types.Prompt);
 
     if (!resultTitles.length) {
-      prompt.Prompt().NoAppForFileType();
+      this._errorManager.FileTypeNotSupportedError();
       return;
     }
 

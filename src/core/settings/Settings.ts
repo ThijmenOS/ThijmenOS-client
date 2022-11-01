@@ -20,23 +20,32 @@ import ISettings from "./ISettings";
 //Types
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import { MimeTypes, OSSettings } from "@ostypes/SettingsTypes";
+import IErrorManager from "@core/errorManager/IErrorManager";
 
 @injectable()
 class Settings implements ISettings {
   private readonly _fileSystem: IFileSystem;
+  private readonly _errorManager: IErrorManager;
 
   private _settings!: OSSettings;
   public get settings(): OSSettings {
     return this._settings;
   }
 
-  constructor(@inject(types.FileSystem) fileSystem: IFileSystem) {
+  constructor(
+    @inject(types.FileSystem) fileSystem: IFileSystem,
+    @inject(types.ErrorManager) errorManager: IErrorManager
+  ) {
     this._fileSystem = fileSystem;
+    this._errorManager = errorManager;
   }
 
   public async Initialise(): Promise<void> {
-    //TODO: If the settings could not be fetched. Throw blue screen
-    this._settings = await this._fileSystem.FetchSettings();
+    const settings = await this._fileSystem
+      .FetchSettings()
+      .catch((err) => this._errorManager.FatalError());
+
+    if (settings) this._settings = settings;
   }
   DefaultApplication(mimeType: MimeTypes): ApplicationMetaData | undefined {
     return this._settings.apps.installedApps.find(
