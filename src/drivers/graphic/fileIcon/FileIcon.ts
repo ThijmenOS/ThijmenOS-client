@@ -127,7 +127,11 @@ class FileIcon implements IFileIcon {
   private OpenFile(_ev: Event, icon: FileIcon) {
     if (this.mimeType === MimeTypes.thijm)
       this._appManager.OpenExecutable(icon);
-    else this._appManager.OpenFile(this.mimeType!, this.exeLocation);
+    else
+      this._appManager.OpenFile({
+        filePath: this.exeLocation,
+        mimeType: this.mimeType!,
+      });
   }
 
   public Destory() {

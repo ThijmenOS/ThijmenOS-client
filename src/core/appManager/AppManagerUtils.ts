@@ -26,7 +26,7 @@ import { MimeTypes } from "@ostypes/SettingsTypes";
 
 @injectable()
 class AppManagerUtils {
-  private _errorManager: IErrorManager;
+  protected readonly _errorManager: IErrorManager;
 
   protected openApps: Array<Window> = new Array<Window>();
   protected installedApps: Array<ApplicationMetaData> =
@@ -47,6 +47,7 @@ class AppManagerUtils {
     );
 
     if (targetApp === undefined) {
+      //TODO: Provide the app that wanted to find a app with the information it could not be found. Also provide a prompt that this error occured
       this._errorManager.RaiseError("");
       throw new Error("the app could not be found!");
     }

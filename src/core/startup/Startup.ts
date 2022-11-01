@@ -25,6 +25,7 @@ import IAppManager from "@core/appManager/IAppManager";
 
 //Types
 import { Directory } from "@common/FileSystem";
+import ISettings from "@core/settings/ISettings";
 
 @injectable()
 class Startup implements IStartup {
@@ -32,17 +33,20 @@ class Startup implements IStartup {
   private readonly _kernel: IKernel;
   private readonly _utils: IUtils;
   private readonly _appManager: IAppManager;
+  private readonly _settings: ISettings;
 
   constructor(
     @inject(types.FileSystem) fileSystem: IFileSystem,
     @inject(types.Kernel) kernel: IKernel,
     @inject(types.Utils) utils: IUtils,
-    @inject(types.AppManager) appManager: IAppManager
+    @inject(types.AppManager) appManager: IAppManager,
+    @inject(types.Settings) settings: ISettings
   ) {
     this._fileSystem = fileSystem;
     this._kernel = kernel;
     this._utils = utils;
     this._appManager = appManager;
+    this._settings = settings;
   }
 
   private async ShowFilesOnDesktop() {
@@ -57,9 +61,11 @@ class Startup implements IStartup {
       });
   }
 
-  public InitialiseOperatingSystem() {
-    this._appManager.FetchInstalledApps();
+  public async InitialiseOperatingSystem() {
+    //TODO: If something in these methods go wrong, throw mayor error or try again
+    await this._settings.Initialise();
     this._kernel.ListenToCommunication();
+    this._appManager.FetchInstalledApps();
 
     this._utils.UpdateTime();
 

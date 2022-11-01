@@ -1,4 +1,5 @@
 export enum ApplicationMetaDataFields {
+  applicationIdentifier = "applicationIdentifier",
   title = "title",
   iconLocation = "iconLocation",
   exeLocation = "exeLocation",
@@ -6,6 +7,7 @@ export enum ApplicationMetaDataFields {
 }
 
 export type ApplicationMetaData = {
+  applicationIdentifier: string;
   title: string;
   iconLocation: string;
   exeLocation: string;

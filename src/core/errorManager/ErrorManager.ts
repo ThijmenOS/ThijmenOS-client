@@ -6,7 +6,10 @@
 */
 
 //DI
-import { injectable } from "inversify";
+import IPrompt from "@drivers/graphic/prompt/IPrompt";
+import types from "@ostypes/types";
+import { inject, injectable } from "inversify";
+import javascriptOs from "../../../inversify.config";
 
 //Interfaces
 import IErrorManager from "./IErrorManager";
@@ -15,6 +18,9 @@ import IErrorManager from "./IErrorManager";
 class ErrorManager implements IErrorManager {
   public RaiseError(error: string) {
     throw new Error(error);
+  }
+  public FileTypeNotSupportedError() {
+    javascriptOs.get<IPrompt>(types.Prompt).Prompt().NoAppForFileType();
   }
 }
 

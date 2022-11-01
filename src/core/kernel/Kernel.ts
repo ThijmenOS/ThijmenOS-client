@@ -41,6 +41,7 @@ class Kernel implements IKernel {
     kernelMethodNotFound: () =>
       this._core.appManager.SendDataToApp<Error>(
         this.origin,
+        //TODO: For development throw. But at the end, notify the application and log the incident
         new Error("The requested kernel method does not exist"),
         system,
         EventName.Error
@@ -132,8 +133,7 @@ class Kernel implements IKernel {
 
     //Window operations
     closeSelf: () => this._core.appManager.CloseExecutable(this.origin),
-    openFile: (props: OpenFile) =>
-      this._core.appManager.OpenFileWithApplication(this.origin, props),
+    openFile: (props: OpenFile) => this._core.appManager.OpenFile(props),
   };
 
   constructor(

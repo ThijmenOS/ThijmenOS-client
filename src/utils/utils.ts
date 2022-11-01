@@ -81,6 +81,7 @@ class Utils implements IUtils {
     tmp.innerHTML = fileContent.substring(0, fileContent.indexOf("</head>"));
 
     const results: ApplicationMetaDataObject = {
+      applicationIdentifier: "",
       exeLocation: "",
       iconLocation: "",
       mimeTypes: [],

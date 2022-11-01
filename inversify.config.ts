@@ -44,7 +44,7 @@ javascriptOs.bind<IWindow>(types.window).to(Window);
 javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<ICore>(types.Core).to(Core);
 javascriptOs.bind<IPrompt>(types.Prompt).to(Prompt);
-javascriptOs.bind<ISettings>(types.Settings).to(Settings);
+javascriptOs.bind<ISettings>(types.Settings).to(Settings).inSingletonScope();
 javascriptOs.bind<IErrorManager>(types.ErrorManager).to(ErrorManager);
 
 export default javascriptOs;

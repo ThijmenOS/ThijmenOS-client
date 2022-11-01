@@ -32,15 +32,17 @@ class Settings implements ISettings {
 
   constructor(@inject(types.FileSystem) fileSystem: IFileSystem) {
     this._fileSystem = fileSystem;
-
-    this.Initialise();
   }
 
   public async Initialise(): Promise<void> {
+    //TODO: If the settings could not be fetched. Throw blue screen
     this._settings = await this._fileSystem.FetchSettings();
   }
-  DefaultApplication(mimeType: MimeTypes): ApplicationMetaData {
-    return this._settings?.apps.defaultApps[mimeType];
+  DefaultApplication(mimeType: MimeTypes): ApplicationMetaData | undefined {
+    return this._settings.apps.installedApps.find(
+      (app) =>
+        app.applicationIdentifier === this._settings.apps.defaultApps[mimeType]
+    );
   }
 }
 

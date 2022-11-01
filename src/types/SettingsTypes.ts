@@ -9,7 +9,7 @@ export type SystemSettings = { sounds: any; notifications: any; storage: any };
 export type PersonalisationSettings = { background: string };
 export type AppSettings = {
   installedApps: Array<ApplicationMetaData>;
-  defaultApps: { [key in MimeTypes]: ApplicationMetaData };
+  defaultApps: { [key in MimeTypes]: string };
 };
 export type AccountSettings = any;
 

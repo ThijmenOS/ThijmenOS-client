@@ -30,6 +30,7 @@ class Prompt implements IPrompt {
   private readonly _utils: IUtils;
 
   private promptElement!: HTMLElement;
+  private promptBody!: HTMLDivElement;
   private promptIdentifier?: string;
 
   constructor(
@@ -49,38 +50,50 @@ class Prompt implements IPrompt {
       promptSelectors.promptHeader
     ).innerHTML = content;
   }
+  private SetBody(content: HTMLElement): void {
+    this.promptBody = this._graphicsUtils.GetElementByClass<HTMLDivElement>(
+      this.promptElement,
+      promptSelectors.promptBody
+    );
 
-  public Prompt(location: Location): Prompt {
+    this._graphicsUtils.AddElement(this.promptBody, content);
+  }
+  private Render(): void {
+    this._graphicsUtils.AddElement(
+      this._graphicsUtils.MainAppContainer,
+      this.promptElement
+    );
+  }
+
+  public Prompt(location?: Location): Prompt {
     this.promptElement = this._graphicsUtils.CreateElementFromString(prompt);
     this.promptIdentifier = this._utils.GenerateUUID();
     this.promptElement.setAttribute("data-id", this.promptIdentifier);
-    this.promptElement.setAttribute(
-      "style",
-      `left: ${location.left}; top: ${location.top}`
-    );
+    if (location)
+      this.promptElement.setAttribute(
+        "style",
+        `left: ${location.left};
+        top: ${location.top}`
+      );
 
     this._graphicsUtils.InitMovement(this.promptIdentifier);
 
     return this;
   }
+
   public SelectApp(content: Array<string>, handler: (a: string) => void): void {
     this.SetHeader("Select an app to open");
-
-    const promptBody = this._graphicsUtils.GetElementByClass<HTMLDivElement>(
-      this.promptElement,
-      promptSelectors.promptBody
-    );
 
     content.map((c) => {
       const constructedElement =
         this._graphicsUtils.CreateElementFromString<HTMLSpanElement>(
           `<span class="javascript-os-prompt-select-app-selectable-value-${c}">${c}</span>`
         );
-      this._graphicsUtils.AddElement(promptBody, constructedElement);
+      this.SetBody(constructedElement);
 
       const appSelectionListElement =
         this._graphicsUtils.GetElementByClass<HTMLSpanElement>(
-          promptBody,
+          this.promptBody,
           `javascript-os-prompt-select-app-selectable-value-${c}`
         );
 
@@ -90,10 +103,19 @@ class Prompt implements IPrompt {
       };
     });
 
-    this._graphicsUtils.AddElement(
-      this._graphicsUtils.MainAppContainer,
-      this.promptElement
-    );
+    this.Render();
+  }
+
+  public NoAppForFileType(): void {
+    this.SetHeader("File type not supported");
+    const errorMessageHTML =
+      this._graphicsUtils.CreateElementFromString<HTMLSpanElement>(
+        "<p>There is no application found that supports this file type!</p>"
+      );
+
+    this.SetBody(errorMessageHTML);
+
+    this.Render();
   }
 }
 

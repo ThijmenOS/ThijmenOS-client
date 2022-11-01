@@ -34,16 +34,14 @@ import Window from "@drivers/graphic/window/Window";
 import AppManagerUtils from "./AppManagerUtils";
 import IAppManager from "./IAppManager";
 import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
-import IPrompt from "@drivers/graphic/prompt/IPrompt";
 
 //Types
 import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
 import { OpenFile } from "@ostypes/KernelTypes";
-import { Path } from "@common/FileSystem";
 import ISettings from "@core/settings/ISettings";
-import { MimeTypes } from "@ostypes/SettingsTypes";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
+import Prompt from "@drivers/graphic/prompt/Prompt";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -61,56 +59,67 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 
   public async FetchInstalledApps(): Promise<void> {
-    await this._settings.Initialise();
     this.installedApps = this._settings.settings.apps.installedApps;
   }
 
-  public OpenFileWithApplication(requestingApp: string, props: OpenFile) {
-    const targetApp = this.FindTargetApp(requestingApp);
-
-    targetApp.Freese();
-
+  public OpenFileWithApplication(file: OpenFile, requestingApp?: string) {
     const installedAppsWithDesiredMimetype = this.FindInstalledAppsWithMimetype(
-      props.mimeType
+      file.mimeType
     );
 
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
 
-    javascriptOs
-      .get<IPrompt>(types.Prompt)
-      .Prompt({
+    let prompt = javascriptOs.get<Prompt>(types.Prompt);
+
+    if (!resultTitles.length) {
+      prompt.Prompt().NoAppForFileType();
+      return;
+    }
+
+    let targetApp: Window;
+
+    if (requestingApp) {
+      targetApp = this.FindTargetApp(requestingApp);
+      targetApp.Freese();
+
+      prompt = prompt.Prompt({
         left: window.getComputedStyle(targetApp!.windowContainerElement).left,
         top: window.getComputedStyle(targetApp!.windowContainerElement).top,
-      })
-      .SelectApp(resultTitles, (selectedApp: string) => {
-        const app = installedAppsWithDesiredMimetype.find(
-          (app) => app.title === selectedApp
-        )!;
-        const openedApp = this.OpenExecutable(app);
-        this.SendDataToApp<string>(
-          openedApp.windowOptions.windowIdentifier,
-          props.filePath,
-          requestingApp,
-          EventName.OpenFile
-        );
-        targetApp.Unfreese();
       });
+    } else {
+      prompt = prompt.Prompt();
+    }
+
+    prompt.SelectApp(resultTitles, (selectedApp: string) => {
+      const app = installedAppsWithDesiredMimetype.find(
+        (app) => app.title === selectedApp
+      )!;
+      const openedApp = this.OpenExecutable(app);
+      this.SendDataToApp<string>(
+        openedApp.windowOptions.windowIdentifier,
+        file.filePath,
+        "system",
+        EventName.OpenFile
+      );
+      if (targetApp) targetApp.Unfreese();
+    });
   }
-  public OpenFile(mimeType: MimeTypes, filePath: Path): Window {
-    const AppToOpen = this._settings.DefaultApplication(mimeType);
+  public OpenFile(file: OpenFile): void {
+    const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 
-    if (!AppToOpen) throw new Error("File type not supported!");
+    if (!DefaultAppToOpen) {
+      this.OpenFileWithApplication(file);
+      return;
+    }
 
-    const application = this.OpenExecutable(AppToOpen);
+    const application = this.OpenExecutable(DefaultAppToOpen);
 
     this.SendDataToApp(
       application.windowOptions.windowIdentifier,
-      filePath,
+      file.filePath,
       system,
       EventName.OpenFile
     );
-
-    return application;
   }
 
   public OpenExecutable(
@@ -139,12 +148,15 @@ class AppManager extends AppManagerUtils implements IAppManager {
 
     if (targetWin) targetWin.Destroy();
   }
+
   public async SendDataToApp<T>(
     app: string,
     data: T,
     sender: string,
     eventName: EventName
   ): Promise<void> {
+    //TODO: In development I can throw. But in the end log the incident with as much information as possible
+    //TODO: Create logger
     if (!sender || !app) throw new Error("No app or sender specified!");
 
     const event: Event<T> = {
