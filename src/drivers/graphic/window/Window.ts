@@ -67,14 +67,14 @@ class Window implements IWindow {
   private dblClick = () => this.DblClick();
   private mouseDown = () => this.MouseDown();
   private RegisterEventListeners() {
-    this.windowContainerElement!.addEventListener("click", this.onclick);
-    this.windowContainerElement!.addEventListener("dblclick", this.dblClick);
-    this.windowContainerElement!.addEventListener("mousedown", this.mouseDown);
+    this.windowContainerElement.addEventListener("click", this.onclick);
+    this.windowContainerElement.addEventListener("dblclick", this.dblClick);
+    this.windowContainerElement.addEventListener("mousedown", this.mouseDown);
   }
   private RemoveEventListeners() {
-    this.windowContainerElement!.removeEventListener("click", this.onclick);
-    this.windowContainerElement!.removeEventListener("dblclick", this.dblClick);
-    this.windowContainerElement!.removeEventListener(
+    this.windowContainerElement.removeEventListener("click", this.onclick);
+    this.windowContainerElement.removeEventListener("dblclick", this.dblClick);
+    this.windowContainerElement.removeEventListener(
       "mousedown",
       this.mouseDown
     );

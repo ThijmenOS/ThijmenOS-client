@@ -26,9 +26,16 @@ class ErrorManager implements IErrorManager {
     this._graphicUtils = graphicUtils;
   }
 
-  public RaiseError(error: string) {
-    throw new Error(error);
+  public RaiseError(): ErrorManager {
+    return this;
   }
+
+  public ApplicationNotFound() {
+    javascriptOs.get<IPrompt>(types.Prompt).Prompt().ApplicationNotFound();
+
+    throw new Error("The application could not be found!");
+  }
+
   public FatalError(): void {
     const errorWindow =
       this._graphicUtils.CreateElementFromString<HTMLDivElement>(fatalError);
@@ -37,6 +44,7 @@ class ErrorManager implements IErrorManager {
 
     throw new Error("Fatal error");
   }
+
   public FileTypeNotSupportedError() {
     javascriptOs.get<IPrompt>(types.Prompt).Prompt().NoAppForFileType();
   }

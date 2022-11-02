@@ -43,7 +43,7 @@ class Settings implements ISettings {
   public async Initialise(): Promise<void> {
     const settings = await this._fileSystem
       .FetchSettings()
-      .catch((err) => this._errorManager.FatalError());
+      .catch(() => this._errorManager.RaiseError().FatalError());
 
     if (settings) this._settings = settings;
   }

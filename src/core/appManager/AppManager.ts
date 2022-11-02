@@ -42,6 +42,7 @@ import { OpenFile } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
 import Prompt from "@drivers/graphic/prompt/Prompt";
+import QuestionPrompt from "@drivers/graphic/prompt/QuestionPrompt";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -72,7 +73,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
     let prompt = javascriptOs.get<Prompt>(types.Prompt);
 
     if (!resultTitles.length) {
-      this._errorManager.FileTypeNotSupportedError();
+      this._errorManager.RaiseError().FileTypeNotSupportedError();
       return;
     }
 
@@ -104,6 +105,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
       if (targetApp) targetApp.Unfreese();
     });
   }
+
   public OpenFile(file: OpenFile): void {
     const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 

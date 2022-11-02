@@ -10,6 +10,7 @@ const types = {
   CreateWindow: Symbol.for("CreateWindow"),
   Core: Symbol.for("Core"),
   Prompt: Symbol.for("Prompt"),
+  ErrorPrompt: Symbol.for("ErrorPrompt"),
   Settings: Symbol.for("Settings"),
   ErrorManager: Symbol.for("ErrorManager"),
 };
