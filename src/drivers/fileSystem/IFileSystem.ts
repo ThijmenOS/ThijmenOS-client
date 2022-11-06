@@ -1,6 +1,6 @@
-import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
+import { ApplicationMetaDataObject } from "@common/Application";
 import { Mkdir } from "@common/FileSystem";
-import { OSSettings } from "@ostypes/SettingsTypes";
+import { OSSettings } from "@common/Settings";
 import { Directory, Path } from "@common/FileSystem";
 
 export default interface IFileSystem {
@@ -12,4 +12,7 @@ export default interface IFileSystem {
   MakeDirectory(props: Mkdir): Promise<string>;
   RemoveDirectory(props: Path): Promise<string>;
   CreateFile(props: string): Promise<string>;
+
+  ChangeBackground(props: Path): Promise<string>;
+  GetBackground(): Promise<string>;
 }

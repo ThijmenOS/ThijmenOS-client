@@ -63,6 +63,7 @@ class Startup implements IStartup {
 
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
+    await this._settings.Background().Get();
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
 

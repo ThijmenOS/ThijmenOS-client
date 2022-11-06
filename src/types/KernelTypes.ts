@@ -1,4 +1,4 @@
-import { MimeTypes } from "./SettingsTypes";
+import { MimeTypes } from "@common/Settings";
 
 export type JsOsCommunicationMessage = {
   origin: string;
@@ -21,6 +21,9 @@ export enum ValidMethods {
   //Window operations
   closeSelf = "closeSelf",
   openFile = "openFile",
+
+  //Settings
+  changeBackground = "changeBackground",
 }
 
 export type kernelMethodNoParams = () => void;

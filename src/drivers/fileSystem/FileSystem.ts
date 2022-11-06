@@ -12,8 +12,8 @@ import { injectable } from "inversify";
 import IFileSystem from "./IFileSystem";
 
 //Types
-import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
-import { OSSettings } from "@ostypes/SettingsTypes";
+import { ApplicationMetaDataObject } from "@common/Application";
+import { OSSettings } from "@common/Settings";
 import { Mkdir } from "@common/FileSystem";
 import { Directory, Path } from "@common/FileSystem";
 import { config } from "@config/javascriptOsConfig";
@@ -47,6 +47,15 @@ class FileSystem implements IFileSystem {
     return await $.post(config.host + "/filesystem/removeDirectory", {
       Path: props,
     });
+  }
+
+  public async ChangeBackground(props: string): Promise<string> {
+    return await $.post(config.host + "/settings/setBackground", {
+      Path: props,
+    });
+  }
+  public async GetBackground(): Promise<string> {
+    return await $.get(config.host + "/settings/getBackground");
   }
 }
 

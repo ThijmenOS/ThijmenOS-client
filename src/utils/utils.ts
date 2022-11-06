@@ -24,7 +24,7 @@ import {
   ApplicationMetaData,
   ApplicationMetaDataFields,
   ApplicationMetaDataObject,
-} from "@ostypes/ApplicationTypes";
+} from "@common/Application";
 import types from "@ostypes/types";
 import { Path } from "@common/FileSystem";
 

@@ -16,18 +16,22 @@ import FileSystem from "drivers/fileSystem/FileSystem";
 import IAppManager from "../appManager/IAppManager";
 import ICore from "./ICore";
 import IFileSystem from "@drivers/fileSystem/IFileSystem";
+import ISettings from "@core/settings/ISettings";
 
 @injectable()
 class Core implements ICore {
   public fileSystem: FileSystem;
   public appManager: IAppManager;
+  public settings: ISettings;
 
   constructor(
     @inject(types.FileSystem) fileSystem: IFileSystem,
-    @inject(types.AppManager) appManager: IAppManager
+    @inject(types.AppManager) appManager: IAppManager,
+    @inject(types.Settings) settings: ISettings
   ) {
     this.fileSystem = fileSystem;
     this.appManager = appManager;
+    this.settings = settings;
   }
 }
 

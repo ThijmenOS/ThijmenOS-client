@@ -18,9 +18,11 @@ import IFileSystem from "@drivers/fileSystem/IFileSystem";
 import ISettings from "./ISettings";
 
 //Types
-import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
-import { MimeTypes, OSSettings } from "@ostypes/SettingsTypes";
+import { MimeTypes, OSSettings } from "@common/Settings";
 import IErrorManager from "@core/errorManager/IErrorManager";
+import { ApplicationMetaData } from "@common/Application";
+import BackgroundOptions from "./BackgroundOptions";
+import javascriptOs from "../../../inversify.config";
 
 @injectable()
 class Settings implements ISettings {
@@ -47,11 +49,16 @@ class Settings implements ISettings {
 
     if (settings) this._settings = settings;
   }
+
   DefaultApplication(mimeType: MimeTypes): ApplicationMetaData | undefined {
     return this._settings.apps.installedApps.find(
       (app) =>
         app.applicationIdentifier === this._settings.apps.defaultApps[mimeType]
     );
+  }
+
+  Background(): BackgroundOptions {
+    return javascriptOs.resolve(BackgroundOptions);
   }
 }
 

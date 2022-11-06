@@ -134,6 +134,10 @@ class Kernel implements IKernel {
     //Window operations
     closeSelf: () => this._core.appManager.CloseExecutable(this.origin),
     openFile: (props: OpenFile) => this._core.appManager.OpenFile(props),
+
+    //Settings
+    changeBackground: (props: Path) =>
+      this._core.settings.Background().Change(props),
   };
 
   constructor(

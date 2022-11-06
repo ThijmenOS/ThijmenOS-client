@@ -28,6 +28,8 @@ import ISettings from "@core/settings/ISettings";
 import Settings from "@core/settings/Settings";
 import IErrorManager from "@core/errorManager/IErrorManager";
 import ErrorManager from "@core/errorManager/ErrorManager";
+import { IBackgroundOptions } from "@ostypes/Settings";
+import BackgroundOptions from "@core/settings/BackgroundOptions";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
@@ -45,6 +47,7 @@ javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<ICore>(types.Core).to(Core);
 javascriptOs.bind<IPrompt>(types.Prompt).to(Prompt);
 javascriptOs.bind<ISettings>(types.Settings).to(Settings).inSingletonScope();
+javascriptOs.bind<IBackgroundOptions>(BackgroundOptions).toSelf();
 javascriptOs.bind<IErrorManager>(types.ErrorManager).to(ErrorManager);
 
 export default javascriptOs;
