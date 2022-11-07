@@ -16,8 +16,7 @@
       "@icon/*": ["fileIcon/*"],
       "@window/*": ["window/*"],
       "@static/*": ["static/*"],
-      "@config/*": ["config/*"],
-      "@common/*": ["../../javascriptOS-common/types/*"]
+      "@config/*": ["config/*"]
     },
     "types": ["node", "jest", "reflect-metadata"],
     "strict": true,

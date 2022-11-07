@@ -28,7 +28,7 @@ import {
   JsOsCommunicationMessage,
   OpenFile,
 } from "@ostypes/KernelTypes";
-import { Mkdir, Directory, Path } from "@common/FileSystem";
+import { Mkdir, Directory, Path } from "javascriptOS-common/types";
 import { EventName, system } from "@ostypes/AppManagerTypes";
 
 @injectable()

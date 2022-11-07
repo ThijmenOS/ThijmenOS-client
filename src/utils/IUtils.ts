@@ -1,4 +1,4 @@
-import { ApplicationMetaDataObject } from "@common/Application";
+import { ApplicationMetaDataObject } from "javascriptOS-common/types";
 
 export default interface IUtils {
   UpdateTime(): void;

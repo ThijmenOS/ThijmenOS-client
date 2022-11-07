@@ -36,7 +36,7 @@ import IAppManager from "./IAppManager";
 import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
 
 //Types
-import { ApplicationMetaData } from "@common/Application";
+import { ApplicationMetaData } from "javascriptos-common/types";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
 import { OpenFile } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";

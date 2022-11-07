@@ -27,9 +27,8 @@ import IGraphicsUtils from "../utils/IGraphicUtils";
 //Types
 import fileIcons from "./fileIcons";
 import { appIcon, fileIconSelectors } from "@utils/dom-defaults";
-import { ApplicationMetaData } from "@common/Application";
-import { config } from "@config/javascriptOsConfig";
-import { MimeTypes } from "@common/Settings";
+import { ApplicationMetaData, MimeTypes } from "javascriptOS-common/types";
+import { config } from "javascriptos-common/config";
 import ErrorManager from "@core/errorManager/ErrorManager";
 import IErrorManager from "@core/errorManager/IErrorManager";
 

@@ -22,8 +22,8 @@ import IWindow from "./IWindow";
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 import Window from "./Window";
 import { BaseWindowOptions, WindowType } from "@ostypes/WindowTypes";
-import { ApplicationMetaData } from "@common/Application";
-import { config } from "@config/javascriptOsConfig";
+import { ApplicationMetaData } from "javascriptOS-common/types";
+import { config } from "javascriptos-common/config";
 
 @injectable()
 class CreateWindow implements ICreateWindow {
