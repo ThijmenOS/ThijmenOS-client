@@ -1,4 +1,4 @@
-import { config } from "@config/javascriptOsConfig";
+import { config } from "javascriptos-common/config";
 
 export const fileIconSelectors = {
   fileIconSelector: "javascript-os-file-icon",
