@@ -36,13 +36,12 @@ import IAppManager from "./IAppManager";
 import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
 
 //Types
-import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
+import { ApplicationMetaData } from "@common/Application";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
 import { OpenFile } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
 import Prompt from "@drivers/graphic/prompt/Prompt";
-import QuestionPrompt from "@drivers/graphic/prompt/QuestionPrompt";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -63,7 +62,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
     this.installedApps = this._settings.settings.apps.installedApps;
   }
 
-  public OpenFileWithApplication(file: OpenFile, requestingApp?: string) {
+  public OpenFileWithApplication(file: OpenFile) {
     const installedAppsWithDesiredMimetype = this.FindInstalledAppsWithMimetype(
       file.mimeType
     );
@@ -77,19 +76,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
       return;
     }
 
-    let targetApp: Window;
-
-    if (requestingApp) {
-      targetApp = this.FindTargetApp(requestingApp);
-      targetApp.Freese();
-
-      prompt = prompt.Prompt({
-        left: window.getComputedStyle(targetApp!.windowContainerElement).left,
-        top: window.getComputedStyle(targetApp!.windowContainerElement).top,
-      });
-    } else {
-      prompt = prompt.Prompt();
-    }
+    prompt = prompt.Prompt();
 
     prompt.SelectApp(resultTitles, (selectedApp: string) => {
       const app = installedAppsWithDesiredMimetype.find(
@@ -102,7 +89,6 @@ class AppManager extends AppManagerUtils implements IAppManager {
         "system",
         EventName.OpenFile
       );
-      if (targetApp) targetApp.Unfreese();
     });
   }
 

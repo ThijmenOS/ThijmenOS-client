@@ -1,4 +1,3 @@
-import { Path } from "@common/FileSystem";
 import { ApplicationMetaData } from "@common/Application";
 import { OSSettings } from "@common/Settings";
 import { IBackgroundOptions } from "@ostypes/Settings";

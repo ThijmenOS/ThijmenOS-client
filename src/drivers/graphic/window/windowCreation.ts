@@ -22,7 +22,7 @@ import IWindow from "./IWindow";
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 import Window from "./Window";
 import { BaseWindowOptions, WindowType } from "@ostypes/WindowTypes";
-import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
+import { ApplicationMetaData } from "@common/Application";
 import { config } from "@config/javascriptOsConfig";
 
 @injectable()

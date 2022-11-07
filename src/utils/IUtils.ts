@@ -1,4 +1,4 @@
-import { ApplicationMetaDataObject } from "@ostypes/ApplicationTypes";
+import { ApplicationMetaDataObject } from "@common/Application";
 
 export default interface IUtils {
   UpdateTime(): void;

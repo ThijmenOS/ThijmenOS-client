@@ -21,8 +21,8 @@ import Window from "@drivers/graphic/window/Window";
 import IErrorManager from "@core/errorManager/IErrorManager";
 
 //Types
-import { ApplicationMetaData } from "@ostypes/ApplicationTypes";
-import { MimeTypes } from "@ostypes/SettingsTypes";
+import { ApplicationMetaData } from "@common/Application";
+import { MimeTypes } from "@common/Settings";
 
 @injectable()
 class AppManagerUtils {
