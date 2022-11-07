@@ -37,6 +37,14 @@ class Kernel implements IKernel {
   private readonly _core: ICore;
   private origin = "";
 
+  constructor(
+    @inject(types.AppManager) appManager: IAppManager,
+    @inject(types.Core) core: ICore
+  ) {
+    this._appManager = appManager;
+    this._core = core;
+  }
+
   private kernelMethods: KernelMethods = {
     kernelMethodNotFound: () =>
       this._core.appManager.SendDataToApp<Error>(
@@ -140,13 +148,6 @@ class Kernel implements IKernel {
       this._core.settings.Background().Change(props),
   };
 
-  constructor(
-    @inject(types.AppManager) appManager: IAppManager,
-    @inject(types.Core) core: ICore
-  ) {
-    this._appManager = appManager;
-    this._core = core;
-  }
   public ListenToCommunication(): void {
     window.onmessage = (event: MessageEvent) => {
       const messageData: JsOsCommunicationMessage = event.data;

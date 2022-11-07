@@ -1,11 +1,14 @@
+import IKernel from "@core/kernel/IKernel";
 import types from "@ostypes/types";
-import IUtils from "@utils/IUtils";
 import javascriptOs from "../inversify.config";
 
 describe("test", () => {
-  const sut: IUtils = javascriptOs.get<IUtils>(types.Utils);
+  test("test", () => {
+    const kernel = javascriptOs.get<IKernel>(types.Kernel);
+    const sut = kernel.ListenToCommunication();
 
-  const result = sut.GenerateUUID();
+    window.top?.postMessage("test", "*");
 
-  expect(typeof result).toBe("string");
+    expect(sut).toBeCalled();
+  });
 });
