@@ -1,5 +1,5 @@
-import { Path } from "javascriptOS-common/types";
-import { config } from "javascriptos-common/config";
+import { Path } from "@thijmenos/common/types";
+import { config } from "@thijmenos/common/config";
 import IFileSystem from "@drivers/fileSystem/IFileSystem";
 import { IBackgroundOptions } from "@ostypes/Settings";
 import types from "@ostypes/types";

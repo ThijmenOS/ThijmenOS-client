@@ -18,8 +18,8 @@ import {
   Mkdir,
   Directory,
   Path,
-} from "javascriptOS-common/types";
-import { config } from "javascriptos-common/config";
+} from "@thijmenos/common/types";
+import { config } from "@thijmenos/common/config";
 
 @injectable()
 class FileSystem implements IFileSystem {

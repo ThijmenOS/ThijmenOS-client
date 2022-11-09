@@ -27,8 +27,8 @@ import IGraphicsUtils from "../utils/IGraphicUtils";
 //Types
 import fileIcons from "./fileIcons";
 import { appIcon, fileIconSelectors } from "@utils/dom-defaults";
-import { ApplicationMetaData, MimeTypes } from "javascriptOS-common/types";
-import { config } from "javascriptos-common/config";
+import { ApplicationMetaData, MimeTypes } from "@thijmenos/common/types";
+import { config } from "@thijmenos/common/config";
 import ErrorManager from "@core/errorManager/ErrorManager";
 import IErrorManager from "@core/errorManager/IErrorManager";
 

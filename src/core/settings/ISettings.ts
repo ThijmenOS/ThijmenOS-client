@@ -1,4 +1,4 @@
-import { ApplicationMetaData, OSSettings } from "javascriptOS-common/types";
+import { ApplicationMetaData, OSSettings } from "@thijmenos/common/types";
 import { IBackgroundOptions } from "@ostypes/Settings";
 
 export default interface ISettings {
