@@ -24,9 +24,9 @@ import {
   ApplicationMetaData,
   ApplicationMetaDataFields,
   ApplicationMetaDataObject,
-} from "@common/Application";
+  Path,
+} from "javascriptOS-common/types";
 import types from "@ostypes/types";
-import { Path } from "@common/FileSystem";
 
 @injectable()
 class Utils implements IUtils {

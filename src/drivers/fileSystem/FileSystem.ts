@@ -12,11 +12,14 @@ import { injectable } from "inversify";
 import IFileSystem from "./IFileSystem";
 
 //Types
-import { ApplicationMetaDataObject } from "@common/Application";
-import { OSSettings } from "@common/Settings";
-import { Mkdir } from "@common/FileSystem";
-import { Directory, Path } from "@common/FileSystem";
-import { config } from "@config/javascriptOsConfig";
+import {
+  ApplicationMetaDataObject,
+  OSSettings,
+  Mkdir,
+  Directory,
+  Path,
+} from "javascriptOS-common/types";
+import { config } from "javascriptos-common/config";
 
 @injectable()
 class FileSystem implements IFileSystem {

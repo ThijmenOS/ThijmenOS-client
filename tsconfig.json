@@ -16,10 +16,9 @@
       "@icon/*": ["fileIcon/*"],
       "@window/*": ["window/*"],
       "@static/*": ["static/*"],
-      "@config/*": ["config/*"],
-      "@common/*": ["../../javascriptOS-common/types/*"]
+      "@config/*": ["config/*"]
     },
-    "types": ["node", "reflect-metadata", "jquery"],
+    "types": ["node", "jest", "reflect-metadata"],
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
@@ -30,6 +29,6 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules"]
 }

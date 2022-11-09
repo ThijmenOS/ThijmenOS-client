@@ -38,7 +38,7 @@ import {
   windowDataActions,
   windowSelectors,
 } from "@utils/dom-defaults";
-import { config } from "@config/javascriptOsConfig";
+import { config } from "javascriptos-common/config";
 
 //Other
 import "jqueryui";

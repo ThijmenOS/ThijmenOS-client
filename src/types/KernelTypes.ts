@@ -1,4 +1,4 @@
-import { MimeTypes } from "@common/Settings";
+import { MimeTypes } from "javascriptOS-common/types";
 
 export type JsOsCommunicationMessage = {
   origin: string;

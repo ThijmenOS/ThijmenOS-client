@@ -1,6 +1,4 @@
-import { Path } from "@common/FileSystem";
-import { ApplicationMetaData } from "@common/Application";
-import { OSSettings } from "@common/Settings";
+import { ApplicationMetaData, OSSettings } from "javascriptOS-common/types";
 import { IBackgroundOptions } from "@ostypes/Settings";
 
 export default interface ISettings {

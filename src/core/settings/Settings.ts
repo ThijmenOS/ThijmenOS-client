@@ -18,9 +18,12 @@ import IFileSystem from "@drivers/fileSystem/IFileSystem";
 import ISettings from "./ISettings";
 
 //Types
-import { MimeTypes, OSSettings } from "@common/Settings";
+import {
+  MimeTypes,
+  OSSettings,
+  ApplicationMetaData,
+} from "javascriptOS-common/types";
 import IErrorManager from "@core/errorManager/IErrorManager";
-import { ApplicationMetaData } from "@common/Application";
 import BackgroundOptions from "./BackgroundOptions";
 import javascriptOs from "../../../inversify.config";
 

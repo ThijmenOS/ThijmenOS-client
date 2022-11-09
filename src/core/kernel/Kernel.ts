@@ -18,7 +18,6 @@ import types from "@ostypes/types";
 
 //Interfaces
 import IKernel from "./IKernel";
-import IAppManager from "@core/appManager/IAppManager";
 import ICore from "@core/core/ICore";
 
 //Types
@@ -28,14 +27,17 @@ import {
   JsOsCommunicationMessage,
   OpenFile,
 } from "@ostypes/KernelTypes";
-import { Mkdir, Directory, Path } from "@common/FileSystem";
+import { Mkdir, Directory, Path } from "javascriptOS-common/types";
 import { EventName, system } from "@ostypes/AppManagerTypes";
 
 @injectable()
 class Kernel implements IKernel {
-  private readonly _appManager: IAppManager;
   private readonly _core: ICore;
   private origin = "";
+
+  constructor(@inject(types.Core) core: ICore) {
+    this._core = core;
+  }
 
   private kernelMethods: KernelMethods = {
     kernelMethodNotFound: () =>
@@ -140,18 +142,11 @@ class Kernel implements IKernel {
       this._core.settings.Background().Change(props),
   };
 
-  constructor(
-    @inject(types.AppManager) appManager: IAppManager,
-    @inject(types.Core) core: ICore
-  ) {
-    this._appManager = appManager;
-    this._core = core;
-  }
   public ListenToCommunication(): void {
     window.onmessage = (event: MessageEvent) => {
       const messageData: JsOsCommunicationMessage = event.data;
 
-      if (!this._appManager.CheckIfAppIsOpen(messageData.origin))
+      if (!this._core.appManager.CheckIfAppIsOpen(messageData.origin))
         throw new Error("Sender app is not known!");
 
       this.origin = messageData.origin;

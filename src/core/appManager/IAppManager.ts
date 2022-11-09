@@ -4,7 +4,7 @@ import { OpenFile } from "@ostypes/KernelTypes";
 
 export default interface IAppManager {
   FetchInstalledApps(): Promise<void>;
-  OpenFileWithApplication(props: OpenFile, requestingApp?: string): void;
+  OpenFileWithApplication(props: OpenFile): void;
   OpenExecutable(applicationDetails: FileIcon): Window;
   OpenFile(file: OpenFile): void;
   CheckIfAppIsOpen(appName: string): boolean;

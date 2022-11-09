@@ -1,7 +1,10 @@
-import { ApplicationMetaDataObject } from "@common/Application";
-import { Mkdir } from "@common/FileSystem";
-import { OSSettings } from "@common/Settings";
-import { Directory, Path } from "@common/FileSystem";
+import {
+  ApplicationMetaDataObject,
+  Mkdir,
+  OSSettings,
+  Directory,
+  Path,
+} from "javascriptOS-common/types";
 
 export default interface IFileSystem {
   ShowFilesInDir(path: string): Promise<Array<Directory>>;
