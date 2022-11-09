@@ -1,5 +1,5 @@
 {
-  "name": "javascriptos",
+  "name": "javascriptos-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -38,5 +38,16 @@
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1"
+  },
+  "author": "Thijmen Brand",
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "parserOptions": {
+      "sourceType": "module"
+    },
+    "extends": "@javascriptos/eslint-config"
   }
 }
