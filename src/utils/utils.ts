@@ -25,7 +25,7 @@ import {
   ApplicationMetaDataFields,
   ApplicationMetaDataObject,
   Path,
-} from "javascriptOS-common/types";
+} from "@thijmenos/common/types";
 import types from "@ostypes/types";
 
 @injectable()

@@ -1,4 +1,4 @@
-import { ApplicationMetaData } from "javascriptOS-common/types";
+import { ApplicationMetaData } from "@thijmenos/common/types";
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 import Window from "@drivers/graphic/window/Window";
 

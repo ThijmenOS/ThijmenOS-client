@@ -22,7 +22,7 @@ import {
   MimeTypes,
   OSSettings,
   ApplicationMetaData,
-} from "javascriptOS-common/types";
+} from "@thijmenos/common/types";
 import IErrorManager from "@core/errorManager/IErrorManager";
 import BackgroundOptions from "./BackgroundOptions";
 import javascriptOs from "../../../inversify.config";

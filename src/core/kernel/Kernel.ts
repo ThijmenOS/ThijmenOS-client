@@ -27,7 +27,7 @@ import {
   JsOsCommunicationMessage,
   OpenFile,
 } from "@ostypes/KernelTypes";
-import { Mkdir, Directory, Path } from "javascriptOS-common/types";
+import { Mkdir, Directory, Path } from "@thijmenos/common/types";
 import { EventName, system } from "@ostypes/AppManagerTypes";
 
 @injectable()

@@ -1,4 +1,4 @@
-import { ApplicationMetaDataObject } from "javascriptOS-common/types";
+import { ApplicationMetaDataObject } from "@thijmenos/common/types";
 
 export default interface IUtils {
   UpdateTime(): void;

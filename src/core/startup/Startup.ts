@@ -24,7 +24,7 @@ import IUtils from "@utils/IUtils";
 import IAppManager from "@core/appManager/IAppManager";
 
 //Types
-import { Directory } from "javascriptOS-common/types";
+import { Directory } from "@thijmenos/common/types";
 import ISettings from "@core/settings/ISettings";
 
 @injectable()

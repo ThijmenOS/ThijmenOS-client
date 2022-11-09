@@ -38,7 +38,7 @@ import {
   windowDataActions,
   windowSelectors,
 } from "@utils/dom-defaults";
-import { config } from "javascriptos-common/config";
+import { config } from "@thijmenos/common/config";
 
 //Other
 import "jqueryui";

@@ -1,4 +1,4 @@
-import { config } from "javascriptos-common/config";
+import { config } from "@thijmenos/common/config";
 
 export const fileIconSelectors = {
   fileIconSelector: "javascript-os-file-icon",

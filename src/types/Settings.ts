@@ -1,4 +1,4 @@
-import { Path } from "javascriptOS-common/types";
+import { Path } from "@thijmenos/common/types";
 
 export interface IBackgroundOptions {
   Change(filePath: Path): Promise<void>;

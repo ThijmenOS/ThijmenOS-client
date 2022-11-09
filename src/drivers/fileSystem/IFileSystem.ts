@@ -4,7 +4,7 @@ import {
   OSSettings,
   Directory,
   Path,
-} from "javascriptOS-common/types";
+} from "@thijmenos/common/types";
 
 export default interface IFileSystem {
   ShowFilesInDir(path: string): Promise<Array<Directory>>;
