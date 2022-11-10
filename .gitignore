@@ -26,4 +26,5 @@ node_modules/
 dist/
 .prettierrc.js
 .eslintrc.js
+.github/
 env.d.ts

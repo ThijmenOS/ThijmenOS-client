@@ -33,4 +33,4 @@ export type KernelMethods = {
   [key in ValidMethods]: kernelMethodNoParams | kernelMethodOneParam;
 };
 
-export type OpenFile = { mimeType: MimeTypes; filePath: string };
+export type OpenFileType = { mimeType: MimeTypes; filePath: string };

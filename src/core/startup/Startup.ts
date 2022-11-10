@@ -18,47 +18,39 @@ import javascriptOs from "../../../inversify.config";
 //Interfaces
 import IFileIcon from "@drivers/graphic/fileIcon/IFileIcon";
 import IStartup from "./IStartup";
-import IFileSystem from "@drivers/fileSystem/IFileSystem";
+import { UpdateTime } from "@thijmenos/utils";
+import { ShowFilesInDir } from "@thijmenos/filesystem";
 import IKernel from "@core/kernel/IKernel";
-import IUtils from "@utils/IUtils";
 import IAppManager from "@core/appManager/IAppManager";
 
 //Types
-import { Directory } from "@thijmenos/common/types";
+import { Directory } from "@thijmenos/common";
 import ISettings from "@core/settings/ISettings";
 
 @injectable()
 class Startup implements IStartup {
-  private readonly _fileSystem: IFileSystem;
   private readonly _kernel: IKernel;
-  private readonly _utils: IUtils;
   private readonly _appManager: IAppManager;
   private readonly _settings: ISettings;
 
   constructor(
-    @inject(types.FileSystem) fileSystem: IFileSystem,
     @inject(types.Kernel) kernel: IKernel,
-    @inject(types.Utils) utils: IUtils,
     @inject(types.AppManager) appManager: IAppManager,
     @inject(types.Settings) settings: ISettings
   ) {
-    this._fileSystem = fileSystem;
     this._kernel = kernel;
-    this._utils = utils;
     this._appManager = appManager;
     this._settings = settings;
   }
 
   private async ShowFilesOnDesktop() {
-    this._fileSystem
-      .ShowFilesInDir("C/Desktop")
-      .then((res: Array<Directory>) => {
-        Array.from(res).forEach((file) => {
-          javascriptOs
-            .get<IFileIcon>(types.FileIcon)
-            .ConstructFileIcon(file.filePath);
-        });
+    ShowFilesInDir("C/Desktop").then((res: Array<Directory>) => {
+      Array.from(res).forEach((file) => {
+        javascriptOs
+          .get<IFileIcon>(types.FileIcon)
+          .ConstructFileIcon(file.filePath);
       });
+    });
   }
 
   public async InitialiseOperatingSystem() {
@@ -67,7 +59,7 @@ class Startup implements IStartup {
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
 
-    this._utils.UpdateTime();
+    UpdateTime();
 
     this.ShowFilesOnDesktop();
 
@@ -79,7 +71,7 @@ class Startup implements IStartup {
       );
     };
     setInterval(() => {
-      this._utils.UpdateTime();
+      UpdateTime();
     }, 1000);
   }
 }
