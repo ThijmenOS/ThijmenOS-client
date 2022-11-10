@@ -18,7 +18,7 @@ import { inject, injectable } from "inversify";
 //Interfaces
 import IPrompt from "./IPrompt";
 import IGraphicsUtils from "../utils/IGraphicUtils";
-import IUtils from "@utils/IUtils";
+import { GenerateUUID } from "@thijmenos/utils";
 
 //Types
 import { prompt, promptSelectors } from "@utils/dom-defaults";
@@ -26,18 +26,13 @@ import { prompt, promptSelectors } from "@utils/dom-defaults";
 @injectable()
 class Prompt implements IPrompt {
   private readonly _graphicsUtils: IGraphicsUtils;
-  private readonly _utils: IUtils;
 
   private promptElement!: HTMLElement;
   private promptBody!: HTMLDivElement;
   private promptIdentifier!: string;
 
-  constructor(
-    @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
-    @inject(types.Utils) utils: IUtils
-  ) {
+  constructor(@inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils) {
     this._graphicsUtils = graphicsUtils;
-    this._utils = utils;
   }
 
   private Close(): void {
@@ -99,7 +94,7 @@ class Prompt implements IPrompt {
 
   public Prompt(): Prompt {
     this.promptElement = this._graphicsUtils.CreateElementFromString(prompt);
-    this.promptIdentifier = this._utils.GenerateUUID();
+    this.promptIdentifier = GenerateUUID();
     this.promptElement.setAttribute("data-id", this.promptIdentifier);
 
     return this;

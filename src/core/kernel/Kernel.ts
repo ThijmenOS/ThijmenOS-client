@@ -19,15 +19,23 @@ import types from "@ostypes/types";
 //Interfaces
 import IKernel from "./IKernel";
 import ICore from "@core/core/ICore";
+import {
+  ShowFilesInDir,
+  OpenFile,
+  ChangeDirectory,
+  MakeDirectory,
+  RemoveDirectory,
+  CreateFile,
+} from "@thijmenos/filesystem";
 
 //Types
 import {
   KernelMethods,
   ValidMethods,
   JsOsCommunicationMessage,
-  OpenFile,
+  OpenFileType,
 } from "@ostypes/KernelTypes";
-import { Mkdir, Directory, Path } from "@thijmenos/common/types";
+import { Mkdir, Directory, Path } from "@thijmenos/common";
 import { EventName, system } from "@ostypes/AppManagerTypes";
 
 @injectable()
@@ -59,83 +67,71 @@ class Kernel implements IKernel {
 
     //FileSystem
     filesInDir: (props: Path) =>
-      this._core.fileSystem
-        .ShowFilesInDir(props)
-        .then((res: Array<Directory>) =>
-          this._core.appManager.SendDataToApp<Array<Directory>>(
-            this.origin,
-            res,
-            system,
-            EventName.SelfInvoked
-          )
-        ),
+      ShowFilesInDir(props).then((res: Array<Directory>) =>
+        this._core.appManager.SendDataToApp<Array<Directory>>(
+          this.origin,
+          res,
+          system,
+          EventName.SelfInvoked
+        )
+      ),
 
     readFile: (props: Path) =>
-      this._core.fileSystem
-        .OpenFile(props)
-        .then((res: string) =>
-          this._core.appManager.SendDataToApp<string>(
-            this.origin,
-            res,
-            system,
-            EventName.SelfInvoked
-          )
-        ),
+      OpenFile(props).then((res: string) =>
+        this._core.appManager.SendDataToApp<string>(
+          this.origin,
+          res,
+          system,
+          EventName.SelfInvoked
+        )
+      ),
 
     changeDir: (props: Path) =>
-      this._core.fileSystem
-        .ChangeDirectory(props)
-        .then((res: string) =>
-          this._core.appManager.SendDataToApp(
-            this.origin,
-            res,
-            system,
-            EventName.SelfInvoked
-          )
-        ),
+      ChangeDirectory(props).then((res: string) =>
+        this._core.appManager.SendDataToApp(
+          this.origin,
+          res,
+          system,
+          EventName.SelfInvoked
+        )
+      ),
 
     mkdir: (props: Mkdir) => {
-      this._core.fileSystem
-        .MakeDirectory(props)
-        .then((res: string) =>
-          this._core.appManager.SendDataToApp<string>(
-            this.origin,
-            res,
-            system,
-            EventName.SelfInvoked
-          )
-        );
+      MakeDirectory(props).then((res: string) =>
+        this._core.appManager.SendDataToApp<string>(
+          this.origin,
+          res,
+          system,
+          EventName.SelfInvoked
+        )
+      );
     },
 
     rmdir: (props: Path) => {
-      this._core.fileSystem
-        .RemoveDirectory(props)
-        .then((res: string) =>
-          this._core.appManager.SendDataToApp<string>(
-            this.origin,
-            res,
-            system,
-            EventName.SelfInvoked
-          )
-        );
+      RemoveDirectory(props).then((res: string) =>
+        this._core.appManager.SendDataToApp<string>(
+          this.origin,
+          res,
+          system,
+          EventName.SelfInvoked
+        )
+      );
     },
 
     touch: (props: Path) => {
-      this._core.fileSystem
-        .CreateFile(props)
-        .then((res: string) =>
-          this._core.appManager.SendDataToApp<string>(
-            this.origin,
-            res,
-            system,
-            EventName.SelfInvoked
-          )
-        );
+      CreateFile(props).then((res: string) =>
+        this._core.appManager.SendDataToApp<string>(
+          this.origin,
+          res,
+          system,
+          EventName.SelfInvoked
+        )
+      );
     },
 
     //Window operations
     closeSelf: () => this._core.appManager.CloseExecutable(this.origin),
-    openFile: (props: OpenFile) => this._core.appManager.OpenFile(props),
+    openFile: (props: OpenFileType) => this._core.appManager.OpenFile(props),
 
     //Settings
     changeBackground: (props: Path) =>

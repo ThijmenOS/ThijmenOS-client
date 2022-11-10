@@ -15,20 +15,18 @@ import { inject, injectable } from "inversify";
 
 //Interfaces
 import ICreateWindow from "./IWindowCreation";
-import IUtils from "@utils/IUtils";
+import { GenerateUUID } from "@thijmenos/utils";
 import IWindow from "./IWindow";
 
 //Types
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 import Window from "./Window";
 import { BaseWindowOptions, WindowType } from "@ostypes/WindowTypes";
-import { ApplicationMetaData } from "@thijmenos/common/types";
-import { config } from "@thijmenos/common/config";
+import { ApplicationMetaData, host } from "@thijmenos/common";
 
 @injectable()
 class CreateWindow implements ICreateWindow {
   private readonly _window: IWindow;
-  private readonly _utils: IUtils;
 
   private readonly windowOptions: BaseWindowOptions = {
     windowHeight: 400,
@@ -42,12 +40,8 @@ class CreateWindow implements ICreateWindow {
   private windowIconLocation?: string;
   private windowId?: string;
 
-  constructor(
-    @inject(types.window) window: IWindow,
-    @inject(types.Utils) utils: IUtils
-  ) {
+  constructor(@inject(types.window) window: IWindow) {
     this._window = window;
-    this._utils = utils;
   }
 
   public Application(fileIcon: FileIcon | ApplicationMetaData) {
@@ -55,9 +49,9 @@ class CreateWindow implements ICreateWindow {
     this.windowTitle = fileIcon.title;
     this.windowIconLocation = fileIcon.iconLocation;
 
-    this.windowId = this._utils.GenerateUUID();
+    this.windowId = GenerateUUID();
 
-    this.windowContent = `<iframe id='${this.windowId}' name='${this.windowId}' class='app-iframe' style="height: ${this.windowOptions.windowHeight}px; width: ${this.windowOptions.windowWidth}px;" src='${config.host}/static/${this.windowFileLocation}'></iframe>`;
+    this.windowContent = `<iframe id='${this.windowId}' name='${this.windowId}' class='app-iframe' style="height: ${this.windowOptions.windowHeight}px; width: ${this.windowOptions.windowWidth}px;" src='${host}/static/${this.windowFileLocation}'></iframe>`;
 
     return this.InitWindow();
   }

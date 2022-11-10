@@ -8,8 +8,6 @@ import IStartup from "@core/startup/IStartup";
 import Startup from "@core/startup/Startup";
 import IAppManager from "@core/appManager/IAppManager";
 import AppManager from "@core/appManager/AppManager";
-import IFileSystem from "@drivers/fileSystem/IFileSystem";
-import FileSystem from "@drivers/fileSystem/FileSystem";
 import IKernel from "@core/kernel/IKernel";
 import Kernel from "@core/kernel/Kernel";
 import IUtils from "@utils/IUtils";
@@ -38,7 +36,6 @@ javascriptOs
   .bind<IAppManager>(types.AppManager)
   .to(AppManager)
   .inSingletonScope();
-javascriptOs.bind<IFileSystem>(types.FileSystem).to(FileSystem);
 javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
 javascriptOs.bind<IUtils>(types.Utils).to(Utils);
 javascriptOs.bind<IGraphicsUtils>(types.GraphicsUtils).to(GraphicsUtils);

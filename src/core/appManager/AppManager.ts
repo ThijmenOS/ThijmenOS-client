@@ -38,7 +38,7 @@ import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
 //Types
 import { ApplicationMetaData } from "@thijmenos/common/types";
 import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
-import { OpenFile } from "@ostypes/KernelTypes";
+import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
 import Prompt from "@drivers/graphic/prompt/Prompt";
@@ -62,7 +62,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
     this.installedApps = this._settings.settings.apps.installedApps;
   }
 
-  public OpenFileWithApplication(file: OpenFile) {
+  public OpenFileWithApplication(file: OpenFileType) {
     const installedAppsWithDesiredMimetype = this.FindInstalledAppsWithMimetype(
       file.mimeType
     );
@@ -92,7 +92,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
     });
   }
 
-  public OpenFile(file: OpenFile): void {
+  public OpenFile(file: OpenFileType): void {
     const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 
     if (!DefaultAppToOpen) {

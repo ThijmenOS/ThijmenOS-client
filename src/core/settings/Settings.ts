@@ -14,22 +14,17 @@ import { inject, injectable } from "inversify";
 import types from "@ostypes/types";
 
 //Interfaces
-import IFileSystem from "@drivers/fileSystem/IFileSystem";
+import { FetchSettings } from "@thijmenos/filesystem";
 import ISettings from "./ISettings";
 
 //Types
-import {
-  MimeTypes,
-  OSSettings,
-  ApplicationMetaData,
-} from "@thijmenos/common/types";
+import { MimeTypes, OSSettings, ApplicationMetaData } from "@thijmenos/common";
 import IErrorManager from "@core/errorManager/IErrorManager";
 import BackgroundOptions from "./BackgroundOptions";
 import javascriptOs from "../../../inversify.config";
 
 @injectable()
 class Settings implements ISettings {
-  private readonly _fileSystem: IFileSystem;
   private readonly _errorManager: IErrorManager;
 
   private _settings!: OSSettings;
@@ -37,18 +32,14 @@ class Settings implements ISettings {
     return this._settings;
   }
 
-  constructor(
-    @inject(types.FileSystem) fileSystem: IFileSystem,
-    @inject(types.ErrorManager) errorManager: IErrorManager
-  ) {
-    this._fileSystem = fileSystem;
+  constructor(@inject(types.ErrorManager) errorManager: IErrorManager) {
     this._errorManager = errorManager;
   }
 
   public async Initialise(): Promise<void> {
-    const settings = await this._fileSystem
-      .FetchSettings()
-      .catch(() => this._errorManager.RaiseError().FatalError());
+    const settings = await FetchSettings().catch(() =>
+      this._errorManager.RaiseError().FatalError()
+    );
 
     if (settings) this._settings = settings;
   }

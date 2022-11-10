@@ -21,21 +21,24 @@ import { inject, injectable } from "inversify";
 //Interfaces
 import IFileIcon from "./IFileIcon";
 import IAppManager from "@core/appManager/IAppManager";
-import IUtils from "@utils/IUtils";
+import { GetAppProperties, GenerateUUID } from "@thijmenos/utils";
 import IGraphicsUtils from "../utils/IGraphicUtils";
 
 //Types
 import fileIcons from "./fileIcons";
 import { appIcon, fileIconSelectors } from "@utils/dom-defaults";
-import { ApplicationMetaData, MimeTypes } from "@thijmenos/common/types";
-import { config } from "@thijmenos/common/config";
+import {
+  ApplicationMetaData,
+  MimeTypes,
+  host,
+  fileIconsPath,
+} from "@thijmenos/common";
 import ErrorManager from "@core/errorManager/ErrorManager";
 import IErrorManager from "@core/errorManager/IErrorManager";
 
 @injectable()
 class FileIcon implements IFileIcon {
   private readonly _appManager: IAppManager;
-  private readonly _utils: IUtils;
   private readonly _graphicsUtils: IGraphicsUtils;
   private readonly _errorManager: IErrorManager;
 
@@ -53,12 +56,10 @@ class FileIcon implements IFileIcon {
 
   constructor(
     @inject(types.AppManager) appManager: IAppManager,
-    @inject(types.Utils) utils: IUtils,
     @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
     @inject(types.ErrorManager) errorManager: IErrorManager
   ) {
     this._appManager = appManager;
-    this._utils = utils;
     this._graphicsUtils = graphicsUtils;
     this._errorManager = errorManager;
   }
@@ -79,19 +80,20 @@ class FileIcon implements IFileIcon {
   }
 
   private FileIcon(mimeType: MimeTypes) {
-    this.iconLocation = `${config.host}${config.fileIconsPath}/file_type_${fileIcons[mimeType]}.svg`;
+    this.iconLocation = `${host}${fileIconsPath}/file_type_${fileIcons[mimeType]}.svg`;
   }
 
   private async ApplicationIcon() {
-    const AppProperties: ApplicationMetaData =
-      await this._utils.GetAppProperties(this.exeLocation);
+    const AppProperties: ApplicationMetaData = await GetAppProperties(
+      this.exeLocation
+    );
 
     if (!AppProperties.exeLocation)
       this.iconHasError = this._errorManager.RaiseError();
 
     this.exeLocation = AppProperties.exeLocation;
     this.title = AppProperties.title;
-    this.iconLocation = `${config.host}/static/` + AppProperties.iconLocation;
+    this.iconLocation = `${host}/static/` + AppProperties.iconLocation;
   }
 
   private InitIcon() {
@@ -104,7 +106,7 @@ class FileIcon implements IFileIcon {
     this.iconTitleElement =
       this.iconContainerElement.querySelector("#file-icon-title")!;
 
-    const appHash = this.title + "-" + this._utils.GenerateUUID();
+    const appHash = this.title + "-" + GenerateUUID();
 
     this.iconContainerElement.setAttribute("data-id", appHash);
 
@@ -124,8 +126,7 @@ class FileIcon implements IFileIcon {
 
   private Render() {
     this.iconImageElement!.data =
-      this.iconLocation ||
-      `${config.host}${config.fileIconsPath}/default-app-icon.svg`;
+      this.iconLocation || `${host}${fileIconsPath}/default-app-icon.svg`;
     this.iconTitleElement!.innerHTML = this.title;
 
     this._graphicsUtils.AddElement(this.iconContainerElement);
