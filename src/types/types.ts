@@ -3,8 +3,6 @@ const types = {
   AppManager: Symbol.for("AppManager"),
   FileIcon: Symbol.for("FileIcon"),
   Kernel: Symbol.for("Kernel"),
-  Utils: Symbol.for("Utils"),
-  GraphicsUtils: Symbol.for("GraphicsUtils"),
   window: Symbol.for("window"),
   CreateWindow: Symbol.for("CreateWindow"),
   Core: Symbol.for("Core"),

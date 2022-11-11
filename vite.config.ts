@@ -1,9 +1,10 @@
 import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
+import nodePolyfills from "vite-plugin-node-stdlib-browser";
 import path from "path";
 
 export default defineConfig({
-  plugins: [eslintPlugin()],
+  plugins: [eslintPlugin(), nodePolyfills()],
   server: {
     cors: false,
   },

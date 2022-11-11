@@ -1,4 +1,4 @@
-import { config } from "@thijmenos/common/config";
+import { host } from "@thijmenos/common";
 
 export const fileIconSelectors = {
   fileIconSelector: "javascript-os-file-icon",
@@ -29,7 +29,7 @@ export enum windowDataActions {
 
 export const appIcon = `<div class="app javascript-os-file-icon-wrapper">
                 <object class='app ${fileIconSelectors.fileIconSelector}' type="image/png">
-                  <img class='app ${fileIconSelectors.fileIconFallbackSelector}' src='${config.host}/static/C/OperatingSystem/Icons/default-app-icon.svg'>
+                  <img class='app ${fileIconSelectors.fileIconFallbackSelector}' src='${host}/static/C/OperatingSystem/Icons/default-app-icon.svg'>
                 </object>
                 <p id='${fileIconSelectors.fileIconTitle}'></p>
               </div>
