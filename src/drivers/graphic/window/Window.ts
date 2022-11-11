@@ -23,12 +23,10 @@
 */
 
 //DI
-import types from "@ostypes/types";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 
 //Interfaces
 import IWindow from "./IWindow";
-import IGraphicsUtils from "../utils/IGraphicUtils";
 
 //Types
 import { WindowOptions } from "@ostypes/WindowTypes";
@@ -38,18 +36,22 @@ import {
   windowDataActions,
   windowSelectors,
 } from "@utils/dom-defaults";
-import { config } from "@thijmenos/common/config";
+import { host } from "@thijmenos/common";
 
 //Other
 import "jqueryui";
+import {
+  AddOrRemoveClass,
+  CreateElementFromString,
+  GetElementByClass,
+  InitMovement,
+} from "@thijmenos/graphics";
 
 let windowCount = 0;
 let lastWindowOnTop: Window;
 
 @injectable()
 class Window implements IWindow {
-  private readonly _graphicsUtils: IGraphicsUtils;
-
   private windowHeaderElement!: HTMLDivElement;
   private windowContentElement!: HTMLDivElement;
   private windowFrozenElement!: HTMLDivElement;
@@ -58,10 +60,6 @@ class Window implements IWindow {
   private fullScreen = false;
 
   public windowOptions!: WindowOptions;
-
-  constructor(@inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils) {
-    this._graphicsUtils = graphicsUtils;
-  }
 
   private onclick = (ev: Event) => this.Click(ev);
   private dblClick = () => this.DblClick();
@@ -80,7 +78,7 @@ class Window implements IWindow {
     );
   }
   private InitMovement(): void {
-    this._graphicsUtils.InitMovement(this.windowOptions.windowIdentifier);
+    InitMovement(this.windowOptions.windowIdentifier);
   }
   private Click(ev: Event) {
     const target: HTMLDivElement = ev.target as HTMLDivElement;
@@ -127,7 +125,7 @@ class Window implements IWindow {
       ? (this.fullScreen = true)
       : (this.fullScreen = false);
 
-    this._graphicsUtils.AddOrRemoveClass(
+    AddOrRemoveClass(
       [this.windowContainerElement, this.windowHeaderElement],
       ["window-full-screen"],
       operation
@@ -140,12 +138,12 @@ class Window implements IWindow {
       this.windowOptions.windowWidth + "px";
   }
   private UpdateUI() {
-    const staticURL = config.host + "/static/";
-    this._graphicsUtils.GetElementByClass<HTMLDivElement>(
+    const staticURL = host + "/static/";
+    GetElementByClass<HTMLDivElement>(
       this.windowContainerElement,
       windowSelectors.windowTitle
     ).innerHTML = this.windowOptions.windowTitle;
-    this._graphicsUtils.GetElementByClass<HTMLDivElement>(
+    GetElementByClass<HTMLDivElement>(
       this.windowContainerElement,
       `${windowSelectors.windowIcon} > div`
     ).style.backgroundImage = `url('${
@@ -179,20 +177,17 @@ class Window implements IWindow {
     return this;
   }
   public InitTemplate(): Window {
-    this.windowContainerElement =
-      this._graphicsUtils.CreateElementFromString(window);
+    this.windowContainerElement = CreateElementFromString(window);
 
-    this.windowHeaderElement =
-      this._graphicsUtils.GetElementByClass<HTMLDivElement>(
-        this.windowContainerElement,
-        windowSelectors.windowHeaderSelector
-      );
-    this.windowContentElement =
-      this._graphicsUtils.GetElementByClass<HTMLDivElement>(
-        this.windowContainerElement,
-        windowSelectors.windowContent
-      );
-    this.windowFrozenElement = this._graphicsUtils.CreateElementFromString(
+    this.windowHeaderElement = GetElementByClass<HTMLDivElement>(
+      this.windowContainerElement,
+      windowSelectors.windowHeaderSelector
+    );
+    this.windowContentElement = GetElementByClass<HTMLDivElement>(
+      this.windowContainerElement,
+      windowSelectors.windowContent
+    );
+    this.windowFrozenElement = CreateElementFromString(
       "<div style='height: 100%;width:100%;background-color:rgba(142,142,142,0.2);position:absolute;'></div>"
     );
 

@@ -9,23 +9,17 @@
 
 //DI
 import IPrompt from "@drivers/graphic/prompt/IPrompt";
-import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
 import types from "@ostypes/types";
 import { fatalError } from "@utils/dom-defaults";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import javascriptOs from "../../../inversify.config";
 
 //Interfaces
 import IErrorManager from "./IErrorManager";
+import { CreateElementFromString, AddElement } from "@thijmenos/graphics";
 
 @injectable()
 class ErrorManager implements IErrorManager {
-  private readonly _graphicUtils: IGraphicsUtils;
-
-  constructor(@inject(types.GraphicsUtils) graphicUtils: IGraphicsUtils) {
-    this._graphicUtils = graphicUtils;
-  }
-
   public RaiseError(): ErrorManager {
     return this;
   }
@@ -37,10 +31,9 @@ class ErrorManager implements IErrorManager {
   }
 
   public FatalError(): void {
-    const errorWindow =
-      this._graphicUtils.CreateElementFromString<HTMLDivElement>(fatalError);
+    const errorWindow = CreateElementFromString<HTMLDivElement>(fatalError);
 
-    this._graphicUtils.AddElement(errorWindow);
+    AddElement(errorWindow);
 
     throw new Error("Fatal error");
   }

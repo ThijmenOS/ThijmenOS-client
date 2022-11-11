@@ -22,7 +22,6 @@ import { inject, injectable } from "inversify";
 import IFileIcon from "./IFileIcon";
 import IAppManager from "@core/appManager/IAppManager";
 import { GetAppProperties, GenerateUUID } from "@thijmenos/utils";
-import IGraphicsUtils from "../utils/IGraphicUtils";
 
 //Types
 import fileIcons from "./fileIcons";
@@ -35,11 +34,15 @@ import {
 } from "@thijmenos/common";
 import ErrorManager from "@core/errorManager/ErrorManager";
 import IErrorManager from "@core/errorManager/IErrorManager";
+import {
+  CreateElementFromString,
+  InitMovement,
+  AddElement,
+} from "@thijmenos/graphics";
 
 @injectable()
 class FileIcon implements IFileIcon {
   private readonly _appManager: IAppManager;
-  private readonly _graphicsUtils: IGraphicsUtils;
   private readonly _errorManager: IErrorManager;
 
   private iconContainerElement!: HTMLDivElement;
@@ -56,11 +59,9 @@ class FileIcon implements IFileIcon {
 
   constructor(
     @inject(types.AppManager) appManager: IAppManager,
-    @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
     @inject(types.ErrorManager) errorManager: IErrorManager
   ) {
     this._appManager = appManager;
-    this._graphicsUtils = graphicsUtils;
     this._errorManager = errorManager;
   }
 
@@ -97,8 +98,7 @@ class FileIcon implements IFileIcon {
   }
 
   private InitIcon() {
-    this.iconContainerElement =
-      this._graphicsUtils.CreateElementFromString(appIcon);
+    this.iconContainerElement = CreateElementFromString(appIcon);
 
     this.iconImageElement = this.iconContainerElement.querySelector(
       `.${fileIconSelectors.fileIconSelector}`
@@ -121,7 +121,7 @@ class FileIcon implements IFileIcon {
 
     const dataId = this.iconContainerElement.getAttribute("data-id")!;
 
-    this._graphicsUtils.InitMovement(dataId);
+    InitMovement(dataId);
   }
 
   private Render() {
@@ -129,7 +129,7 @@ class FileIcon implements IFileIcon {
       this.iconLocation || `${host}${fileIconsPath}/default-app-icon.svg`;
     this.iconTitleElement!.innerHTML = this.title;
 
-    this._graphicsUtils.AddElement(this.iconContainerElement);
+    AddElement(this.iconContainerElement);
   }
 
   private OpenFile(_ev: Event, icon: FileIcon) {

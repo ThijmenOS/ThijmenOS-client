@@ -12,28 +12,26 @@
 */
 
 //DI
-import types from "@ostypes/types";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 
 //Interfaces
 import IPrompt from "./IPrompt";
-import IGraphicsUtils from "../utils/IGraphicUtils";
 import { GenerateUUID } from "@thijmenos/utils";
 
 //Types
 import { prompt, promptSelectors } from "@utils/dom-defaults";
+import {
+  AddElement,
+  CreateElementFromString,
+  GetElementByClass,
+  InitMovement,
+} from "@thijmenos/graphics";
 
 @injectable()
 class Prompt implements IPrompt {
-  private readonly _graphicsUtils: IGraphicsUtils;
-
   private promptElement!: HTMLElement;
   private promptBody!: HTMLDivElement;
   private promptIdentifier!: string;
-
-  constructor(@inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils) {
-    this._graphicsUtils = graphicsUtils;
-  }
 
   private Close(): void {
     this.promptElement.remove();
@@ -42,33 +40,33 @@ class Prompt implements IPrompt {
   }
 
   private SetHeader(headerContent: string, subHeaderContent?: string) {
-    this._graphicsUtils.GetElementByClass<HTMLSpanElement>(
+    GetElementByClass<HTMLSpanElement>(
       this.promptElement,
       promptSelectors.promptHeader
     ).innerHTML = headerContent;
 
     if (subHeaderContent)
-      this._graphicsUtils.GetElementByClass<HTMLSpanElement>(
+      GetElementByClass<HTMLSpanElement>(
         this.promptElement,
         promptSelectors.promptSubHeader
       ).innerHTML = subHeaderContent;
   }
 
   private SetBody(content: HTMLElement): void {
-    this.promptBody = this._graphicsUtils.GetElementByClass<HTMLDivElement>(
+    this.promptBody = GetElementByClass<HTMLDivElement>(
       this.promptElement,
       promptSelectors.promptBody
     );
 
-    this._graphicsUtils.AddElement(content, this.promptBody);
+    AddElement(content, this.promptBody);
   }
 
   private Render(): void {
-    this._graphicsUtils.AddElement(this.promptElement);
+    AddElement(this.promptElement);
   }
 
   private InitMovement() {
-    this._graphicsUtils.InitMovement(this.promptIdentifier);
+    InitMovement(this.promptIdentifier);
   }
 
   private click = (ev: MouseEvent) => this.CloseByClickOutside(ev);
@@ -78,7 +76,7 @@ class Prompt implements IPrompt {
   }
 
   private AllowPromptToBeClosed() {
-    const closePrompt = this._graphicsUtils.GetElementByClass<HTMLDivElement>(
+    const closePrompt = GetElementByClass<HTMLDivElement>(
       this.promptElement,
       promptSelectors.closePrompt
     );
@@ -93,7 +91,7 @@ class Prompt implements IPrompt {
   }
 
   public Prompt(): Prompt {
-    this.promptElement = this._graphicsUtils.CreateElementFromString(prompt);
+    this.promptElement = CreateElementFromString(prompt);
     this.promptIdentifier = GenerateUUID();
     this.promptElement.setAttribute("data-id", this.promptIdentifier);
 
@@ -104,17 +102,15 @@ class Prompt implements IPrompt {
     this.SetHeader("No default app", "Select an app to open this file with");
 
     content.map((c) => {
-      const constructedElement =
-        this._graphicsUtils.CreateElementFromString<HTMLSpanElement>(
-          `<span class="javascript-os-prompt-select-app-selectable-value-${c} javascript-os-prompt-option">${c}</span>`
-        );
+      const constructedElement = CreateElementFromString<HTMLSpanElement>(
+        `<span class="javascript-os-prompt-select-app-selectable-value-${c} javascript-os-prompt-option">${c}</span>`
+      );
       this.SetBody(constructedElement);
 
-      const appSelectionListElement =
-        this._graphicsUtils.GetElementByClass<HTMLSpanElement>(
-          this.promptBody,
-          `javascript-os-prompt-select-app-selectable-value-${c}`
-        );
+      const appSelectionListElement = GetElementByClass<HTMLSpanElement>(
+        this.promptBody,
+        `javascript-os-prompt-select-app-selectable-value-${c}`
+      );
 
       appSelectionListElement.onclick = () => {
         handler(c);
@@ -129,10 +125,9 @@ class Prompt implements IPrompt {
 
   public NoAppForFileType(): void {
     this.SetHeader("File type not supported");
-    const errorMessageHTML =
-      this._graphicsUtils.CreateElementFromString<HTMLSpanElement>(
-        "<p>There is no application found that supports this file type!</p>"
-      );
+    const errorMessageHTML = CreateElementFromString<HTMLSpanElement>(
+      "<p>There is no application found that supports this file type!</p>"
+    );
 
     this.SetBody(errorMessageHTML);
 
@@ -143,10 +138,9 @@ class Prompt implements IPrompt {
 
   public ApplicationNotFound(): void {
     this.SetHeader("Application not found");
-    const errorMessageHTML =
-      this._graphicsUtils.CreateElementFromString<HTMLSpanElement>(
-        "<span>The application could not be found and there for not be executed!</span>"
-      );
+    const errorMessageHTML = CreateElementFromString<HTMLSpanElement>(
+      "<span>The application could not be found and there for not be executed!</span>"
+    );
 
     this.SetBody(errorMessageHTML);
 

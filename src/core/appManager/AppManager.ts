@@ -34,10 +34,10 @@ import Window from "@drivers/graphic/window/Window";
 import AppManagerUtils from "./AppManagerUtils";
 import IAppManager from "./IAppManager";
 import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
+import { WaitForElm } from "@thijmenos/graphics";
 
 //Types
-import { ApplicationMetaData } from "@thijmenos/common/types";
-import IGraphicsUtils from "@drivers/graphic/utils/IGraphicUtils";
+import { ApplicationMetaData } from "@thijmenos/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
@@ -45,16 +45,11 @@ import Prompt from "@drivers/graphic/prompt/Prompt";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
-  private readonly _graphicsUtils: IGraphicsUtils;
   private readonly _settings: ISettings;
 
-  constructor(
-    @inject(types.GraphicsUtils) graphicsUtils: IGraphicsUtils,
-    @inject(types.Settings) settings: ISettings
-  ) {
+  constructor(@inject(types.Settings) settings: ISettings) {
     super();
 
-    this._graphicsUtils = graphicsUtils;
     this._settings = settings;
   }
 
@@ -153,13 +148,11 @@ class AppManager extends AppManagerUtils implements IAppManager {
       eventData: data,
     };
 
-    this._graphicsUtils
-      .WaitForElm<HTMLIFrameElement>(app)
-      .then((res: HTMLIFrameElement) => {
-        setTimeout(() => {
-          res.contentWindow?.postMessage(event, "*");
-        }, 200);
-      });
+    WaitForElm<HTMLIFrameElement>(app).then((res: HTMLIFrameElement) => {
+      setTimeout(() => {
+        res.contentWindow?.postMessage(event, "*");
+      }, 200);
+    });
   }
 }
 
