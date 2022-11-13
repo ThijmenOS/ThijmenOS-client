@@ -118,7 +118,7 @@ class Kernel implements IKernel {
       );
     },
 
-    touch: (props: Path) => {
+    touch: (props: Mkdir) => {
       CreateFile(props).then((res: string) =>
         this._core.appManager.SendDataToApp<string>(
           this.origin,
