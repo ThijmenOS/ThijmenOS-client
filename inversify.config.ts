@@ -10,10 +10,6 @@ import IAppManager from "@core/appManager/IAppManager";
 import AppManager from "@core/appManager/AppManager";
 import IKernel from "@core/kernel/IKernel";
 import Kernel from "@core/kernel/Kernel";
-import IWindow from "@drivers/graphic/window/IWindow";
-import Window from "@drivers/graphic/window/Window";
-import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
-import CreateWindow from "@drivers/graphic/window/windowCreation";
 import Core from "@core/core/Core";
 import ICore from "@core/core/ICore";
 import IPrompt from "@drivers/graphic/prompt/IPrompt";
@@ -33,8 +29,6 @@ javascriptOs
   .to(AppManager)
   .inSingletonScope();
 javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
-javascriptOs.bind<IWindow>(types.window).to(Window);
-javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<ICore>(types.Core).to(Core);
 javascriptOs.bind<IPrompt>(types.Prompt).to(Prompt);
 javascriptOs.bind<ISettings>(types.Settings).to(Settings).inSingletonScope();

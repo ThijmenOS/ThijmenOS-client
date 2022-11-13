@@ -28,12 +28,10 @@ import types from "@ostypes/types";
 
 //Classes
 import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
-import Window from "@drivers/graphic/window/Window";
 
 //DI interfaces
 import AppManagerUtils from "./AppManagerUtils";
 import IAppManager from "./IAppManager";
-import ICreateWindow from "@drivers/graphic/window/IWindowCreation";
 import { WaitForElm } from "@thijmenos/graphics";
 
 //Types
@@ -42,6 +40,7 @@ import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
 import Prompt from "@drivers/graphic/prompt/Prompt";
+import { Window, CreateWindow } from "@thijmenos/window";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -108,9 +107,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
   public OpenExecutable(
     applicationDetails: FileIcon | ApplicationMetaData
   ): Window {
-    const application = javascriptOs
-      .get<ICreateWindow>(types.CreateWindow)
-      .Application(applicationDetails);
+    const application = new CreateWindow().Application(applicationDetails);
 
     this.openApps.push(application);
 

@@ -15,7 +15,7 @@ import javascriptOs from "../../../inversify.config";
 import types from "@ostypes/types";
 
 //Classes
-import Window from "@drivers/graphic/window/Window";
+import { Window } from "@thijmenos/window";
 
 //DI interfaces
 import IErrorManager from "@core/errorManager/IErrorManager";
