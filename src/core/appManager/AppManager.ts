@@ -23,7 +23,6 @@
 
 //DI
 import { inject, injectable } from "inversify";
-import javascriptOs from "../../../inversify.config";
 import types from "@ostypes/types";
 
 //Classes
@@ -39,8 +38,8 @@ import { ApplicationMetaData } from "@thijmenos/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
-import Prompt from "@drivers/graphic/prompt/Prompt";
 import { Window, CreateWindow } from "@thijmenos/window";
+import Prompt from "@thijmenos/prompt";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -63,16 +62,12 @@ class AppManager extends AppManagerUtils implements IAppManager {
 
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
 
-    let prompt = javascriptOs.get<Prompt>(types.Prompt);
-
     if (!resultTitles.length) {
       this._errorManager.RaiseError().FileTypeNotSupportedError();
       return;
     }
 
-    prompt = prompt.Prompt();
-
-    prompt.SelectApp(resultTitles, (selectedApp: string) => {
+    new Prompt.selectApplicationPrompt(resultTitles, (selectedApp: string) => {
       const app = installedAppsWithDesiredMimetype.find(
         (app) => app.title === selectedApp
       )!;
