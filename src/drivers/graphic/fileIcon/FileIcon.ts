@@ -32,24 +32,22 @@ import {
   host,
   fileIconsPath,
 } from "@thijmenos/common";
-import ErrorManager from "@core/errorManager/ErrorManager";
-import IErrorManager from "@core/errorManager/IErrorManager";
 import {
   CreateElementFromString,
   InitMovement,
   AddElement,
 } from "@thijmenos/graphics";
+import ErrorManager from "@thijmenos/errormanager";
 
 @injectable()
 class FileIcon implements IFileIcon {
   private readonly _appManager: IAppManager;
-  private readonly _errorManager: IErrorManager;
 
   private iconContainerElement!: HTMLDivElement;
   private iconImageElement!: HTMLObjectElement;
   private iconTitleElement!: HTMLParagraphElement;
 
-  private iconHasError?: ErrorManager;
+  private iconHasError?: boolean;
 
   private mimeType?: MimeTypes;
 
@@ -57,12 +55,8 @@ class FileIcon implements IFileIcon {
   public iconLocation?: string;
   public title = "";
 
-  constructor(
-    @inject(types.AppManager) appManager: IAppManager,
-    @inject(types.ErrorManager) errorManager: IErrorManager
-  ) {
+  constructor(@inject(types.AppManager) appManager: IAppManager) {
     this._appManager = appManager;
-    this._errorManager = errorManager;
   }
 
   private async GetFileConfigurations() {
@@ -89,8 +83,7 @@ class FileIcon implements IFileIcon {
       this.exeLocation
     );
 
-    if (!AppProperties.exeLocation)
-      this.iconHasError = this._errorManager.RaiseError();
+    if (!AppProperties.exeLocation) this.iconHasError = true;
 
     this.exeLocation = AppProperties.exeLocation;
     this.title = AppProperties.title;
@@ -133,7 +126,7 @@ class FileIcon implements IFileIcon {
   }
 
   private OpenFile(_ev: Event, icon: FileIcon) {
-    if (this.iconHasError) this.iconHasError.ApplicationNotFound();
+    if (this.iconHasError) ErrorManager.applicationNotFoundError();
 
     if (this.mimeType === MimeTypes.thijm)
       this._appManager.OpenExecutable(icon);
