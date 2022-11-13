@@ -6,16 +6,6 @@ export const fileIconSelectors = {
   fileIconTitle: "file-icon-title",
 };
 
-export const promptSelectors = {
-  promptMessage: "javascript-os-prompt-message",
-  closePrompt: "javascript-os-prompt-close",
-  promptHeaderContainer: "javascript-os-prompt-header-container",
-  promptHeader: "javascript-os-prompt-header",
-  promptSubHeader: "javascript-os-prompt-sub-header",
-  promptBody: "javascript-os-prompt-body",
-  promptFooter: "javascript-os-prompt-footer",
-};
-
 export const appIcon = `<div class="app javascript-os-file-icon-wrapper">
                 <object class='app ${fileIconSelectors.fileIconSelector}' type="image/png">
                   <img class='app ${fileIconSelectors.fileIconFallbackSelector}' src='${host}/static/C/OperatingSystem/Icons/default-app-icon.svg'>
@@ -24,17 +14,6 @@ export const appIcon = `<div class="app javascript-os-file-icon-wrapper">
               </div>
             `;
 
-export const prompt = `<div class="${promptSelectors.promptMessage}">
-              <span>
-                <div class="ball red ${promptSelectors.closePrompt}"></div>
-              </span>
-              <span class="${promptSelectors.promptHeaderContainer}">
-              <h3 class="${promptSelectors.promptHeader}"></h3>
-              <p class="${promptSelectors.promptSubHeader}"></p>
-              </span>
-              <div class="${promptSelectors.promptBody}"></div>
-              <span class="${promptSelectors.promptFooter}"></span>
-            </div>`;
 export const fatalError = `<div class='fatal-blue-screen-error'>
               <span class='errorMessageContainer'>
                 <span class='errorEmoji'>╚(•⌂•)╝</span>

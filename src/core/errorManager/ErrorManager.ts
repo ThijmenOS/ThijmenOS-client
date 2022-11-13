@@ -8,11 +8,9 @@
 */
 
 //DI
-import IPrompt from "@drivers/graphic/prompt/IPrompt";
-import types from "@ostypes/types";
+import Prompt from "@thijmenos/prompt";
 import { fatalError } from "@utils/dom-defaults";
 import { injectable } from "inversify";
-import javascriptOs from "../../../inversify.config";
 
 //Interfaces
 import IErrorManager from "./IErrorManager";
@@ -25,7 +23,7 @@ class ErrorManager implements IErrorManager {
   }
 
   public ApplicationNotFound() {
-    javascriptOs.get<IPrompt>(types.Prompt).Prompt().ApplicationNotFound();
+    new Prompt.applicationNotFound();
 
     throw new Error("The application could not be found!");
   }
@@ -39,7 +37,7 @@ class ErrorManager implements IErrorManager {
   }
 
   public FileTypeNotSupportedError() {
-    javascriptOs.get<IPrompt>(types.Prompt).Prompt().NoAppForFileType();
+    new Prompt.noAppForFiletype();
   }
 }
 
