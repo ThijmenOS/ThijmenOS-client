@@ -40,6 +40,7 @@ import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
 import { Window, CreateWindow } from "@thijmenos/window";
 import Prompt from "@thijmenos/prompt";
+import ErrorManager from "@thijmenos/errormanager";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -63,7 +64,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
 
     if (!resultTitles.length) {
-      this._errorManager.RaiseError().FileTypeNotSupportedError();
+      ErrorManager.noApplicationForFiletypeError();
       return;
     }
 

@@ -11,29 +11,18 @@
 
 //DI
 import { injectable } from "inversify";
-import javascriptOs from "../../../inversify.config";
-import types from "@ostypes/types";
 
 //Classes
 import { Window } from "@thijmenos/window";
-
-//DI interfaces
-import IErrorManager from "@core/errorManager/IErrorManager";
 
 //Types
 import { ApplicationMetaData, MimeTypes } from "@thijmenos/common";
 
 @injectable()
 class AppManagerUtils {
-  protected readonly _errorManager: IErrorManager;
-
   protected openApps: Array<Window> = new Array<Window>();
   protected installedApps: Array<ApplicationMetaData> =
     new Array<ApplicationMetaData>();
-
-  constructor() {
-    this._errorManager = javascriptOs.get<IErrorManager>(types.ErrorManager);
-  }
 
   protected FindInstalledAppsWithMimetype = (
     mimeType: MimeTypes

@@ -10,35 +10,28 @@
 */
 
 //DI
-import { inject, injectable } from "inversify";
-import types from "@ostypes/types";
+import { injectable } from "inversify";
 
 //Interfaces
 import { FetchSettings } from "@thijmenos/filesystem";
 import ISettings from "./ISettings";
+import ErrorManager from "@thijmenos/errormanager";
 
 //Types
 import { MimeTypes, OSSettings, ApplicationMetaData } from "@thijmenos/common";
-import IErrorManager from "@core/errorManager/IErrorManager";
 import BackgroundOptions from "./BackgroundOptions";
 import javascriptOs from "../../../inversify.config";
 
 @injectable()
 class Settings implements ISettings {
-  private readonly _errorManager: IErrorManager;
-
   private _settings!: OSSettings;
   public get settings(): OSSettings {
     return this._settings;
   }
 
-  constructor(@inject(types.ErrorManager) errorManager: IErrorManager) {
-    this._errorManager = errorManager;
-  }
-
   public async Initialise(): Promise<void> {
     const settings = await FetchSettings().catch(() =>
-      this._errorManager.RaiseError().FatalError()
+      ErrorManager.fatalError()
     );
 
     if (settings) this._settings = settings;

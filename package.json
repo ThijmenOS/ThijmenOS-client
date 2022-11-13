@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@thijmenos/common": "^2.0.5",
+    "@thijmenos/errormanager": "^1.0.2",
     "@thijmenos/eslint-config": "^1.0.0",
     "@thijmenos/filesystem": "^1.0.8",
     "@thijmenos/graphics": "^1.0.2",
