@@ -21,16 +21,16 @@ import { inject, injectable } from "inversify";
 //Interfaces
 import IFileIcon from "./IFileIcon";
 import IAppManager from "@core/appManager/IAppManager";
-import { GetAppProperties, GenerateUUID } from "@thijmenos/utils";
+import { GetShortcutProperties, GenerateUUID } from "@thijmenos/utils";
 
 //Types
 import fileIcons from "./fileIcons";
 import { appIcon, fileIconSelectors } from "@utils/dom-defaults";
 import {
-  ApplicationMetaData,
   MimeTypes,
   host,
   fileIconsPath,
+  IconMetadataShape,
 } from "@thijmenos/common";
 import {
   CreateElementFromString,
@@ -52,8 +52,8 @@ class FileIcon implements IFileIcon {
   private mimeType?: MimeTypes;
 
   public exeLocation = "";
-  public iconLocation?: string;
-  public title = "";
+  public icon?: string;
+  public name = "";
 
   constructor(@inject(types.AppManager) appManager: IAppManager) {
     this._appManager = appManager;
@@ -62,8 +62,6 @@ class FileIcon implements IFileIcon {
   private async GetFileConfigurations() {
     const fileName: string = this.exeLocation.split("/").at(-1)!;
     this.mimeType = fileName.split(".").at(-1)! as MimeTypes;
-
-    this.title = fileName;
 
     if (this.mimeType !== MimeTypes.thijm) {
       this.FileIcon(this.mimeType);
@@ -75,19 +73,19 @@ class FileIcon implements IFileIcon {
   }
 
   private FileIcon(mimeType: MimeTypes) {
-    this.iconLocation = `${host}${fileIconsPath}/file_type_${fileIcons[mimeType]}.svg`;
+    this.icon = `${host}${fileIconsPath}/file_type_${fileIcons[mimeType]}.svg`;
   }
 
   private async ApplicationIcon() {
-    const AppProperties: ApplicationMetaData = await GetAppProperties(
+    const AppProperties: IconMetadataShape = await GetShortcutProperties(
       this.exeLocation
     );
 
     if (!AppProperties.exeLocation) this.iconHasError = true;
 
     this.exeLocation = AppProperties.exeLocation;
-    this.title = AppProperties.title;
-    this.iconLocation = `${host}/static/` + AppProperties.iconLocation;
+    this.name = AppProperties.name;
+    this.icon = `${host}/static/` + AppProperties.icon;
   }
 
   private InitIcon() {
@@ -99,7 +97,7 @@ class FileIcon implements IFileIcon {
     this.iconTitleElement =
       this.iconContainerElement.querySelector("#file-icon-title")!;
 
-    const appHash = this.title + "-" + GenerateUUID();
+    const appHash = this.name + "-" + GenerateUUID();
 
     this.iconContainerElement.setAttribute("data-id", appHash);
 
@@ -108,7 +106,7 @@ class FileIcon implements IFileIcon {
   }
 
   private InitBehaviour() {
-    const openFile = (ev: Event) => this.OpenFile(ev, this);
+    const openFile = (ev: Event) => this.OpenFile();
 
     this.iconContainerElement.addEventListener("dblclick", openFile);
 
@@ -119,17 +117,21 @@ class FileIcon implements IFileIcon {
 
   private Render() {
     this.iconImageElement!.data =
-      this.iconLocation || `${host}${fileIconsPath}/default-app-icon.svg`;
-    this.iconTitleElement!.innerHTML = this.title;
+      this.icon || `${host}${fileIconsPath}/default-app-icon.svg`;
+    this.iconTitleElement!.innerHTML = this.name;
 
     AddElement(this.iconContainerElement);
   }
 
-  private OpenFile(_ev: Event, icon: FileIcon) {
+  private OpenFile() {
     if (this.iconHasError) ErrorManager.applicationNotFoundError();
 
     if (this.mimeType === MimeTypes.thijm)
-      this._appManager.OpenExecutable(icon);
+      this._appManager.OpenExecutable({
+        exeLocation: this.exeLocation,
+        name: this.name,
+        icon: this.icon,
+      });
     else
       this._appManager.OpenFile({
         filePath: this.exeLocation,
