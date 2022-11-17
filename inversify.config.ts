@@ -2,8 +2,8 @@ import "reflect-metadata";
 
 import { Container } from "inversify";
 import types from "@ostypes/types";
-import IFileIcon from "@drivers/graphic/fileIcon/IFileIcon";
-import FileIcon from "./src/drivers/graphic/fileIcon/FileIcon";
+import IFileIcon from "@core/fileIcon/IFileIcon";
+import FileIcon from "./src/core/fileIcon/FileIcon";
 import IStartup from "@core/startup/IStartup";
 import Startup from "@core/startup/Startup";
 import IAppManager from "@core/appManager/IAppManager";

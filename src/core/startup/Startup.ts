@@ -16,7 +16,7 @@ import types from "@ostypes/types";
 import javascriptOs from "../../../inversify.config";
 
 //Interfaces
-import IFileIcon from "@drivers/graphic/fileIcon/IFileIcon";
+import IFileIcon from "@core/fileIcon/IFileIcon";
 import IStartup from "./IStartup";
 import { UpdateTime } from "@thijmenos/utils";
 import { ShowFilesInDir } from "@thijmenos/filesystem";

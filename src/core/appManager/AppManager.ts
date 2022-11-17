@@ -26,7 +26,6 @@ import { inject, injectable } from "inversify";
 import types from "@ostypes/types";
 
 //Classes
-import FileIcon from "@drivers/graphic/fileIcon/FileIcon";
 
 //DI interfaces
 import AppManagerUtils from "./AppManagerUtils";
@@ -34,7 +33,7 @@ import IAppManager from "./IAppManager";
 import { WaitForElm } from "@thijmenos/graphics";
 
 //Types
-import { ApplicationMetaData } from "@thijmenos/common";
+import { ApplicationMetaData, IconMetadata } from "@thijmenos/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
@@ -56,12 +55,12 @@ class AppManager extends AppManagerUtils implements IAppManager {
     this.installedApps = this._settings.settings.apps.installedApps;
   }
 
-  public OpenFileWithApplication(file: OpenFileType) {
+  public OpenFileWithApplication(file: OpenFileType): void {
     const installedAppsWithDesiredMimetype = this.FindInstalledAppsWithMimetype(
       file.mimeType
     );
 
-    const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.title);
+    const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.name);
 
     if (!resultTitles.length) {
       ErrorManager.noApplicationForFiletypeError();
@@ -70,7 +69,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
 
     new Prompt.selectApplicationPrompt(resultTitles, (selectedApp: string) => {
       const app = installedAppsWithDesiredMimetype.find(
-        (app) => app.title === selectedApp
+        (app) => app.name === selectedApp
       )!;
       const openedApp = this.OpenExecutable(app);
       this.SendDataToApp<string>(
@@ -100,10 +99,10 @@ class AppManager extends AppManagerUtils implements IAppManager {
     );
   }
 
-  public OpenExecutable(
-    applicationDetails: FileIcon | ApplicationMetaData
-  ): Window {
-    const application = new CreateWindow().Application(applicationDetails);
+  public OpenExecutable(IconMetadata: IconMetadata): Window {
+    // eslint-disable-next-line no-debugger
+    console.log(IconMetadata);
+    const application = new CreateWindow().Application(IconMetadata);
 
     this.openApps.push(application);
 
