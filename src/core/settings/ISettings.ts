@@ -1,5 +1,5 @@
 import { ApplicationMetaData, OSSettings } from "@thijmenos/common";
-import { IBackgroundOptions } from "@ostypes/Settings";
+import { IBackgroundOptions } from "./IBackgroundOptions";
 
 export default interface ISettings {
   get settings(): OSSettings;

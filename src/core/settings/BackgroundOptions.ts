@@ -1,6 +1,6 @@
 import { Path, host } from "@thijmenos/common";
 import { ChangeBackground, GetBackground } from "@thijmenos/filesystem";
-import { IBackgroundOptions } from "@ostypes/Settings";
+import { IBackgroundOptions } from "./IBackgroundOptions";
 import { injectable } from "inversify";
 
 @injectable()

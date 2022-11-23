@@ -1,4 +1,4 @@
-import { MimeTypes } from "@thijmenos/common/types";
+import { MimeTypes } from "@thijmenos/common";
 
 export type JsOsCommunicationMessage = {
   origin: string;

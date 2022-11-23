@@ -63,6 +63,8 @@ class FileIcon implements IFileIcon {
     const fileName: string = this.exeLocation.split("/").at(-1)!;
     this.mimeType = fileName.split(".").at(-1)! as MimeTypes;
 
+    this.name = fileName;
+
     if (this.mimeType !== MimeTypes.thijm) {
       this.FileIcon(this.mimeType);
     } else {
