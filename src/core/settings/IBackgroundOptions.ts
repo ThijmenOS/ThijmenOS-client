@@ -1,4 +1,4 @@
-import { Path } from "@thijmenos/common/types";
+import { Path } from "@thijmenos/common";
 
 export interface IBackgroundOptions {
   Change(filePath: Path): Promise<void>;
