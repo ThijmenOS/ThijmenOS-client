@@ -13,18 +13,14 @@
 import "reflect-metadata";
 import { injectable, inject } from "inversify";
 import types from "@ostypes/types";
-import javascriptOs from "../../../inversify.config";
 
 //Interfaces
-import IFileIcon from "@core/fileIcon/IFileIcon";
 import IStartup from "./IStartup";
-import { UpdateTime } from "@thijmenos/utils";
-import { ShowFilesInDir } from "@thijmenos/filesystem";
+import { UpdateTime } from "@thijmen-os/utils";
 import IKernel from "@core/kernel/IKernel";
 import IAppManager from "@core/appManager/IAppManager";
 
 //Types
-import { Directory } from "@thijmenos/common";
 import ISettings from "@core/settings/ISettings";
 
 @injectable()
@@ -43,25 +39,14 @@ class Startup implements IStartup {
     this._settings = settings;
   }
 
-  private async ShowFilesOnDesktop() {
-    ShowFilesInDir("C/Desktop").then((res: Array<Directory>) => {
-      Array.from(res).forEach((file) => {
-        javascriptOs
-          .get<IFileIcon>(types.FileIcon)
-          .ConstructFileIcon(file.filePath);
-      });
-    });
-  }
-
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
     await this._settings.Background().Get();
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
+    this._appManager.ShowFilesOnDesktop();
 
     UpdateTime();
-
-    this.ShowFilesOnDesktop();
 
     onresize = () => {
       const pageWidth = window.innerWidth;

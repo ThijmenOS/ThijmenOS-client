@@ -1,5 +1,5 @@
-import { Path, host } from "@thijmenos/common";
-import { ChangeBackground, GetBackground } from "@thijmenos/filesystem";
+import { Path, host } from "@thijmen-os/common";
+import { ChangeBackground, GetBackground } from "@thijmen-os/filesystem";
 import { IBackgroundOptions } from "./IBackgroundOptions";
 import { injectable } from "inversify";
 

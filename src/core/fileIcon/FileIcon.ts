@@ -21,7 +21,7 @@ import { inject, injectable } from "inversify";
 //Interfaces
 import IFileIcon from "./IFileIcon";
 import IAppManager from "@core/appManager/IAppManager";
-import { GetShortcutProperties, GenerateUUID } from "@thijmenos/utils";
+import { GetShortcutProperties, GenerateUUID } from "@thijmen-os/utils";
 
 //Types
 import fileIcons from "./fileIcons";
@@ -31,13 +31,13 @@ import {
   host,
   fileIconsPath,
   IconMetadataShape,
-} from "@thijmenos/common";
+} from "@thijmen-os/common";
 import {
   CreateElementFromString,
   InitMovement,
   AddElement,
-} from "@thijmenos/graphics";
-import ErrorManager from "@thijmenos/errormanager";
+} from "@thijmen-os/graphics";
+import ErrorManager from "@thijmen-os/errormanager";
 
 @injectable()
 class FileIcon implements IFileIcon {
@@ -108,7 +108,7 @@ class FileIcon implements IFileIcon {
   }
 
   private InitBehaviour() {
-    const openFile = (ev: Event) => this.OpenFile();
+    const openFile = () => this.OpenFile();
 
     this.iconContainerElement.addEventListener("dblclick", openFile);
 

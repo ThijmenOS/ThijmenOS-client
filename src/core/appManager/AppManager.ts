@@ -30,29 +30,56 @@ import types from "@ostypes/types";
 //DI interfaces
 import AppManagerUtils from "./AppManagerUtils";
 import IAppManager from "./IAppManager";
-import { WaitForElm } from "@thijmenos/graphics";
+import { WaitForElm } from "@thijmen-os/graphics";
 
 //Types
-import { ApplicationMetaData, IconMetadata } from "@thijmenos/common";
+import { Directory, IconMetadata } from "@thijmen-os/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
-import { Window, CreateWindow } from "@thijmenos/window";
-import Prompt from "@thijmenos/prompt";
-import ErrorManager from "@thijmenos/errormanager";
+import { Window, CreateWindow } from "@thijmen-os/window";
+import Prompt from "@thijmen-os/prompt";
+import ErrorManager from "@thijmen-os/errormanager";
+import { ShowFilesInDir } from "@thijmen-os/filesystem";
+import ICache from "@core/cache/ICache";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
   private readonly _settings: ISettings;
+  private readonly _cache: ICache;
 
-  constructor(@inject(types.Settings) settings: ISettings) {
+  constructor(
+    @inject(types.Settings) settings: ISettings,
+    @inject(types.Cache) cache: ICache
+  ) {
     super();
 
     this._settings = settings;
+    this._cache = cache;
   }
 
   public async FetchInstalledApps(): Promise<void> {
     this.installedApps = this._settings.settings.apps.installedApps;
+  }
+
+  public async ShowFilesOnDesktop() {
+    const desktopFiles = await ShowFilesInDir("C/Desktop");
+
+    this._cache.saveToCache<Array<Directory>>("desktopFiles", desktopFiles);
+
+    this.RenderIcon(desktopFiles);
+  }
+
+  public async RefreshDesktopApps() {
+    const cacheFiles =
+      this._cache.loadFromCache<Array<Directory>>("desktopFiles");
+    const allFiles = await ShowFilesInDir("C/Desktop");
+
+    const newFiles = allFiles.filter(
+      (x) => !cacheFiles.find((y) => x.filePath === y.filePath)
+    );
+
+    this.RenderIcon(newFiles);
   }
 
   public OpenFileWithApplication(file: OpenFileType): void {
@@ -100,8 +127,6 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 
   public OpenExecutable(IconMetadata: IconMetadata): Window {
-    // eslint-disable-next-line no-debugger
-    console.log(IconMetadata);
     const application = new CreateWindow().Application(IconMetadata);
 
     this.openApps.push(application);

@@ -1,4 +1,4 @@
-import { host } from "@thijmenos/common";
+import { host } from "@thijmen-os/common";
 
 export const fileIconSelectors = {
   fileIconSelector: "javascript-os-file-icon",

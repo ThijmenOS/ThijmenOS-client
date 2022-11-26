@@ -11,14 +11,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@ostypes": path.resolve(__dirname, "./src/types/"),
-      "@drivers": path.resolve(__dirname, "./src/drivers/"),
       "@core": path.resolve(__dirname, "./src/core/"),
       "@utils": path.resolve(__dirname, "./src/utils/"),
-      "@fileIcon": path.resolve(__dirname, "./src/fileIcon/"),
-      "@window": path.resolve(__dirname, "./src/window/"),
-      "@static": path.resolve(__dirname, "./src/static/"),
-      "@config": path.resolve(__dirname, "./src/config"),
-      "@icon": path.resolve(__dirname, "./src/fileIcon"),
+      "@inversify": path.resolve(__dirname, "./"),
     },
   },
 });

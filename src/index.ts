@@ -1,4 +1,4 @@
-//TODO: create NPX tool to start developing an thijmenos application - it creates config file and index files.
+//TODO: create NPX tool to start developing an thijmen-os application - it creates config file and index files.
 
 import "reflect-metadata";
 import javascriptOs from "../inversify.config";

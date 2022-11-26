@@ -13,12 +13,12 @@
 import { injectable } from "inversify";
 
 //Interfaces
-import { FetchSettings } from "@thijmenos/filesystem";
+import { FetchSettings } from "@thijmen-os/filesystem";
 import ISettings from "./ISettings";
-import ErrorManager from "@thijmenos/errormanager";
+import ErrorManager from "@thijmen-os/errormanager";
 
 //Types
-import { MimeTypes, OSSettings, ApplicationMetaData } from "@thijmenos/common";
+import { MimeTypes, OSSettings, ApplicationMetaData } from "@thijmen-os/common";
 import BackgroundOptions from "./BackgroundOptions";
 import javascriptOs from "../../../inversify.config";
 

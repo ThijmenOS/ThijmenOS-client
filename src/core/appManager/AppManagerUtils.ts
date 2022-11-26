@@ -13,10 +13,13 @@
 import { injectable } from "inversify";
 
 //Classes
-import { Window } from "@thijmenos/window";
+import { Window } from "@thijmen-os/window";
 
 //Types
-import { ApplicationMetaData, MimeTypes } from "@thijmenos/common";
+import { ApplicationMetaData, Directory, MimeTypes } from "@thijmen-os/common";
+import javascriptOs from "@inversify/inversify.config";
+import IFileIcon from "@core/fileIcon/IFileIcon";
+import types from "@ostypes/types";
 
 @injectable()
 class AppManagerUtils {
@@ -40,6 +43,13 @@ class AppManagerUtils {
 
     return targetApp;
   };
+  protected RenderIcon(content: Array<Directory>) {
+    content.forEach((file) =>
+      javascriptOs
+        .get<IFileIcon>(types.FileIcon)
+        .ConstructFileIcon(file.filePath)
+    );
+  }
 }
 
 export default AppManagerUtils;
