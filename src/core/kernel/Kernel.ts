@@ -26,7 +26,7 @@ import {
   MakeDirectory,
   RemoveDirectory,
   CreateFile,
-} from "@thijmenos/filesystem";
+} from "@thijmen-os/filesystem";
 
 //Types
 import {
@@ -35,7 +35,7 @@ import {
   JsOsCommunicationMessage,
   OpenFileType,
 } from "@ostypes/KernelTypes";
-import { Mkdir, Directory, Path } from "@thijmenos/common";
+import { Mkdir, Directory, Path } from "@thijmen-os/common";
 import { EventName, system } from "@ostypes/AppManagerTypes";
 
 @injectable()

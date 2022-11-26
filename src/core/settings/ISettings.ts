@@ -1,4 +1,4 @@
-import { ApplicationMetaData, OSSettings } from "@thijmenos/common";
+import { ApplicationMetaData, OSSettings } from "@thijmen-os/common";
 import { IBackgroundOptions } from "./IBackgroundOptions";
 
 export default interface ISettings {

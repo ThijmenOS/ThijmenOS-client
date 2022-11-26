@@ -30,16 +30,19 @@ import types from "@ostypes/types";
 //DI interfaces
 import AppManagerUtils from "./AppManagerUtils";
 import IAppManager from "./IAppManager";
-import { WaitForElm } from "@thijmenos/graphics";
+import { WaitForElm, ClearElement } from "@thijmen-os/graphics";
 
 //Types
-import { ApplicationMetaData, IconMetadata } from "@thijmenos/common";
+import { Directory, IconMetadata } from "@thijmen-os/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/ISettings";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
-import { Window, CreateWindow } from "@thijmenos/window";
-import Prompt from "@thijmenos/prompt";
-import ErrorManager from "@thijmenos/errormanager";
+import { Window, CreateWindow } from "@thijmen-os/window";
+import Prompt from "@thijmen-os/prompt";
+import ErrorManager from "@thijmen-os/errormanager";
+import { ShowFilesInDir } from "@thijmen-os/filesystem";
+import javascriptOs from "../../../inversify.config";
+import IFileIcon from "@core/fileIcon/IFileIcon";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
@@ -53,6 +56,19 @@ class AppManager extends AppManagerUtils implements IAppManager {
 
   public async FetchInstalledApps(): Promise<void> {
     this.installedApps = this._settings.settings.apps.installedApps;
+  }
+
+  //TODO: Todo, keep track of which files there are on the desktop. and render new onces instead of refreshing the whole thing
+  public async ShowFilesOnDesktop() {
+    ClearElement();
+
+    ShowFilesInDir("C/Desktop").then((res: Array<Directory>) => {
+      Array.from(res).forEach((file) => {
+        javascriptOs
+          .get<IFileIcon>(types.FileIcon)
+          .ConstructFileIcon(file.filePath);
+      });
+    });
   }
 
   public OpenFileWithApplication(file: OpenFileType): void {
@@ -100,8 +116,6 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 
   public OpenExecutable(IconMetadata: IconMetadata): Window {
-    // eslint-disable-next-line no-debugger
-    console.log(IconMetadata);
     const application = new CreateWindow().Application(IconMetadata);
 
     this.openApps.push(application);

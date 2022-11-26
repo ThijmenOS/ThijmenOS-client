@@ -13,7 +13,7 @@ const config: Config.InitialOptions = {
     "^@window/(.*)$": "<rootDir>/src/window/$1",
     "^@static/(.*)$": "<rootDir>/src/static/$1",
     "^@config/(.*)$": "<rootDir>/src/config/$1",
-    "^@common/(.*)$": "<rootDir>/../@thijmenos/common/types/$1",
+    "^@common/(.*)$": "<rootDir>/../@thijmen-os/common/types/$1",
   },
   verbose: true,
   transform: {

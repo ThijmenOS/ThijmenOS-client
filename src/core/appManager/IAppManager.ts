@@ -1,9 +1,10 @@
-import { Window } from "@thijmenos/window";
+import { Window } from "@thijmen-os/window";
 import { OpenFileType } from "@ostypes/KernelTypes";
-import { IconMetadata } from "@thijmenos/common";
+import { IconMetadata } from "@thijmen-os/common";
 
 export default interface IAppManager {
   FetchInstalledApps(): Promise<void>;
+  ShowFilesOnDesktop(): Promise<void>;
   OpenFileWithApplication(props: OpenFileType): void;
   OpenExecutable(applicationDetails: IconMetadata): Window;
   OpenFile(file: OpenFileType): void;

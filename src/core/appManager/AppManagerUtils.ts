@@ -13,10 +13,10 @@
 import { injectable } from "inversify";
 
 //Classes
-import { Window } from "@thijmenos/window";
+import { Window } from "@thijmen-os/window";
 
 //Types
-import { ApplicationMetaData, MimeTypes } from "@thijmenos/common";
+import { ApplicationMetaData, MimeTypes } from "@thijmen-os/common";
 
 @injectable()
 class AppManagerUtils {
