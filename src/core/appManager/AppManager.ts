@@ -41,8 +41,6 @@ import { Window, CreateWindow } from "@thijmen-os/window";
 import Prompt from "@thijmen-os/prompt";
 import ErrorManager from "@thijmen-os/errormanager";
 import { ShowFilesInDir } from "@thijmen-os/filesystem";
-import javascriptOs from "../../../inversify.config";
-import IFileIcon from "@core/fileIcon/IFileIcon";
 import ICache from "@core/cache/ICache";
 
 @injectable()

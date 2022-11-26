@@ -6,7 +6,7 @@ import ICache from "./ICache";
 class Cache implements ICache {
   cacheData: cacheObject = {};
 
-  saveToCache<T>(key: string, object: T, localStorage = false): void {
+  saveToCache<T>(key: string, object: T): void {
     this.cacheData[key] = object;
   }
 

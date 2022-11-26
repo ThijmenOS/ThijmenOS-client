@@ -1,5 +1,5 @@
 import { MimeTypes } from "@thijmen-os/common";
-import ICommand, { Class } from "./CommandTypes";
+import { Class, ICommand } from "./CommandTypes";
 
 export type JsOsCommunicationMessage = {
   origin: string;

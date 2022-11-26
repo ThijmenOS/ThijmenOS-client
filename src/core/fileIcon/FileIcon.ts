@@ -108,7 +108,7 @@ class FileIcon implements IFileIcon {
   }
 
   private InitBehaviour() {
-    const openFile = (ev: Event) => this.OpenFile();
+    const openFile = () => this.OpenFile();
 
     this.iconContainerElement.addEventListener("dblclick", openFile);
 
