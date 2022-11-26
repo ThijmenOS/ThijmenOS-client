@@ -10,13 +10,9 @@
     "baseUrl": "./src/",
     "paths": {
       "@ostypes/*": ["types/*"],
-      "@drivers/*": ["drivers/*"],
       "@core/*": ["core/*"],
       "@utils/*": ["utils/*"],
-      "@icon/*": ["fileIcon/*"],
-      "@window/*": ["window/*"],
-      "@static/*": ["static/*"],
-      "@config/*": ["config/*"]
+      "@inversify/*": ["../*"]
     },
     "types": ["node", "jest", "reflect-metadata"],
     "strict": true,

@@ -14,8 +14,10 @@ import Core from "@core/core/Core";
 import ICore from "@core/core/ICore";
 import ISettings from "@core/settings/ISettings";
 import Settings from "@core/settings/Settings";
-import { IBackgroundOptions } from "@ostypes/Settings";
+import { IBackgroundOptions } from "@core/settings/IBackgroundOptions";
 import BackgroundOptions from "@core/settings/BackgroundOptions";
+import ICache from "@core/cache/ICache";
+import Cache from "@core/cache/cache";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
@@ -28,5 +30,6 @@ javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
 javascriptOs.bind<ICore>(types.Core).to(Core);
 javascriptOs.bind<ISettings>(types.Settings).to(Settings).inSingletonScope();
 javascriptOs.bind<IBackgroundOptions>(BackgroundOptions).toSelf();
+javascriptOs.bind<ICache>(types.Cache).to(Cache);
 
 export default javascriptOs;

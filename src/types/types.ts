@@ -10,6 +10,7 @@ const types = {
   ErrorPrompt: Symbol.for("ErrorPrompt"),
   Settings: Symbol.for("Settings"),
   ErrorManager: Symbol.for("ErrorManager"),
+  Cache: Symbol.for("Cache"),
 };
 
 export default types;

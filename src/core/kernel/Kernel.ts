@@ -19,24 +19,25 @@ import types from "@ostypes/types";
 //Interfaces
 import IKernel from "./IKernel";
 import ICore from "@core/core/ICore";
-import {
-  ShowFilesInDir,
-  OpenFile,
-  ChangeDirectory,
-  MakeDirectory,
-  RemoveDirectory,
-  CreateFile,
-} from "@thijmen-os/filesystem";
 
 //Types
 import {
   KernelMethods,
   ValidMethods,
   JsOsCommunicationMessage,
-  OpenFileType,
 } from "@ostypes/KernelTypes";
-import { Mkdir, Directory, Path } from "@thijmen-os/common";
-import { EventName, system } from "@ostypes/AppManagerTypes";
+import Mediator from "./commands/Mediator";
+import TouchCommand from "./commands/filesystem/TouchCommand";
+import rmdirCommand from "./commands/filesystem/rmdirCommand";
+import mkdirCommand from "./commands/filesystem/mkdirCommand";
+import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
+import ReadFileCommand from "./commands/filesystem/readFileCommand";
+import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
+import CloseSelfCommand from "./commands/application/closeSelfCommand";
+import OpenFileCommand from "./commands/application/openFileCommand";
+import ChangeBackgroundCommand from "./commands/settings/changeBackgroundCommand";
+import { system } from "@ostypes/AppManagerTypes";
+import { CommandReturn } from "@ostypes/CommandTypes";
 
 @injectable()
 class Kernel implements IKernel {
@@ -48,94 +49,33 @@ class Kernel implements IKernel {
   }
 
   private kernelMethods: KernelMethods = {
-    kernelMethodNotFound: () =>
-      this._core.appManager.SendDataToApp<Error>(
-        this.origin,
-        //TODO: For development throw. But at the end, notify the application and log the incident
-        new Error("The requested kernel method does not exist"),
-        system,
-        EventName.Error
-      ),
+    // kernelMethodNotFound: () =>
+    //   this._core.appManager.SendDataToApp<Error>(
+    //     this.origin,
+    //     //TODO: For development throw. But at the end, notify the application and log the incident
+    //     new Error("The requested kernel method does not exist"),
+    //     system,
+    //     EventName.Error
+    //   ),
 
-    testCommand: (): void =>
-      this._core.appManager.SendDataToApp<string>(
-        this.origin,
-        "test123",
-        system,
-        EventName.TestCommand
-      ),
+    filesInDir: ShowFilesInDirCommand,
 
-    //FileSystem
-    filesInDir: (props: Path) =>
-      ShowFilesInDir(props).then((res: Array<Directory>) =>
-        this._core.appManager.SendDataToApp<Array<Directory>>(
-          this.origin,
-          res,
-          system,
-          EventName.SelfInvoked
-        )
-      ),
+    readFile: ReadFileCommand,
 
-    readFile: (props: Path) =>
-      OpenFile(props).then((res: string) =>
-        this._core.appManager.SendDataToApp<string>(
-          this.origin,
-          res,
-          system,
-          EventName.SelfInvoked
-        )
-      ),
+    changeDir: ChangeDirCommand,
 
-    changeDir: (props: Path) =>
-      ChangeDirectory(props).then((res: string) =>
-        this._core.appManager.SendDataToApp(
-          this.origin,
-          res,
-          system,
-          EventName.SelfInvoked
-        )
-      ),
+    mkdir: mkdirCommand,
 
-    mkdir: (props: Mkdir) => {
-      MakeDirectory(props).then((res: string) =>
-        this._core.appManager.SendDataToApp<string>(
-          this.origin,
-          res,
-          system,
-          EventName.SelfInvoked
-        )
-      );
-    },
+    rmdir: rmdirCommand,
 
-    rmdir: (props: Path) => {
-      RemoveDirectory(props).then((res: string) =>
-        this._core.appManager.SendDataToApp<string>(
-          this.origin,
-          res,
-          system,
-          EventName.SelfInvoked
-        )
-      );
-    },
-
-    touch: (props: Mkdir) => {
-      CreateFile(props).then((res: string) =>
-        this._core.appManager.SendDataToApp<string>(
-          this.origin,
-          res,
-          system,
-          EventName.SelfInvoked
-        )
-      );
-    },
+    touch: TouchCommand,
 
     //Window operations
-    closeSelf: () => this._core.appManager.CloseExecutable(this.origin),
-    openFile: (props: OpenFileType) => this._core.appManager.OpenFile(props),
+    closeSelf: CloseSelfCommand,
+    openFile: OpenFileCommand,
 
     //Settings
-    changeBackground: (props: Path) =>
-      this._core.settings.Background().Change(props),
+    changeBackground: ChangeBackgroundCommand,
   };
 
   public ListenToCommunication(): void {
@@ -151,17 +91,22 @@ class Kernel implements IKernel {
     };
   }
 
-  /*
-    For every method there is a class.
-    This class then knows the implementation of the method. This class has a property which knows if it has to send data back to the app
-    if this property is true the class will set another property on itself with the data that has to go back to the app.
-    The this processMethod will send the data on that property to the app.
-  */
-  private ProcessMethod(props: JsOsCommunicationMessage) {
+  private async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
-      this.kernelMethods[props.method as ValidMethods](props.params);
+      const command = this.kernelMethods[props.method as ValidMethods];
+
+      const result = await Mediator.send(new command(props.params));
+
+      if (result instanceof CommandReturn) {
+        this._core.appManager.SendDataToApp(
+          this.origin,
+          result.data,
+          system,
+          result.event
+        );
+      }
     } catch (error) {
-      this.kernelMethods.kernelMethodNotFound;
+      console.log(error);
     }
   }
 }

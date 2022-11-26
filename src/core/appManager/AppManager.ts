@@ -30,7 +30,7 @@ import types from "@ostypes/types";
 //DI interfaces
 import AppManagerUtils from "./AppManagerUtils";
 import IAppManager from "./IAppManager";
-import { WaitForElm, ClearElement } from "@thijmen-os/graphics";
+import { WaitForElm } from "@thijmen-os/graphics";
 
 //Types
 import { Directory, IconMetadata } from "@thijmen-os/common";
@@ -43,32 +43,45 @@ import ErrorManager from "@thijmen-os/errormanager";
 import { ShowFilesInDir } from "@thijmen-os/filesystem";
 import javascriptOs from "../../../inversify.config";
 import IFileIcon from "@core/fileIcon/IFileIcon";
+import ICache from "@core/cache/ICache";
 
 @injectable()
 class AppManager extends AppManagerUtils implements IAppManager {
   private readonly _settings: ISettings;
+  private readonly _cache: ICache;
 
-  constructor(@inject(types.Settings) settings: ISettings) {
+  constructor(
+    @inject(types.Settings) settings: ISettings,
+    @inject(types.Cache) cache: ICache
+  ) {
     super();
 
     this._settings = settings;
+    this._cache = cache;
   }
 
   public async FetchInstalledApps(): Promise<void> {
     this.installedApps = this._settings.settings.apps.installedApps;
   }
 
-  //TODO: Todo, keep track of which files there are on the desktop. and render new onces instead of refreshing the whole thing
   public async ShowFilesOnDesktop() {
-    ClearElement();
+    const desktopFiles = await ShowFilesInDir("C/Desktop");
 
-    ShowFilesInDir("C/Desktop").then((res: Array<Directory>) => {
-      Array.from(res).forEach((file) => {
-        javascriptOs
-          .get<IFileIcon>(types.FileIcon)
-          .ConstructFileIcon(file.filePath);
-      });
-    });
+    this._cache.saveToCache<Array<Directory>>("desktopFiles", desktopFiles);
+
+    this.RenderIcon(desktopFiles);
+  }
+
+  public async RefreshDesktopApps() {
+    const cacheFiles =
+      this._cache.loadFromCache<Array<Directory>>("desktopFiles");
+    const allFiles = await ShowFilesInDir("C/Desktop");
+
+    const newFiles = allFiles.filter(
+      (x) => !cacheFiles.find((y) => x.filePath === y.filePath)
+    );
+
+    this.RenderIcon(newFiles);
   }
 
   public OpenFileWithApplication(file: OpenFileType): void {

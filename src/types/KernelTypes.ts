@@ -1,4 +1,5 @@
 import { MimeTypes } from "@thijmen-os/common";
+import ICommand, { Class } from "./CommandTypes";
 
 export type JsOsCommunicationMessage = {
   origin: string;
@@ -7,9 +8,6 @@ export type JsOsCommunicationMessage = {
 };
 
 export enum ValidMethods {
-  kernelMethodNotFound = "kernelMethodNotFound",
-  testCommand = "testCommand",
-
   //File system
   filesInDir = "filesInDir",
   readFile = "readFile",
@@ -26,11 +24,6 @@ export enum ValidMethods {
   changeBackground = "changeBackground",
 }
 
-export type kernelMethodNoParams = () => void;
-export type kernelMethodOneParam = (args: any) => void;
-
-export type KernelMethods = {
-  [key in ValidMethods]: kernelMethodNoParams | kernelMethodOneParam;
-};
+export type KernelMethods = { [key in ValidMethods]: Class<ICommand> };
 
 export type OpenFileType = { mimeType: MimeTypes; filePath: string };
