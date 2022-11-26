@@ -1,36 +1,14 @@
-name: Node.js CI
+name: Development
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: ["production"]
     types:
       - opened
       - edited
       - synchronize
       - reopened
-  workflow_call:
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-
-    steps:
-    - name: "checkout repo"
-      uses: actions/checkout@v3
-      
-    - name: "install nodejs"
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
-    - name: "install npm@latest"
-      run: npm i -g npm@latest
-        
-    - name: "run tests"
-      run: npm run test --if-present
+  publish:
+    uses: thijmenos/thijmenos-common/.github/workflows/develop.yml@production
