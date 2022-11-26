@@ -17,7 +17,7 @@ import Settings from "@core/settings/Settings";
 import { IBackgroundOptions } from "@core/settings/IBackgroundOptions";
 import BackgroundOptions from "@core/settings/BackgroundOptions";
 import ICache from "@core/cache/ICache";
-import Cache from "@core/cache/cache";
+import Cache from "@core/cache/Cache";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
