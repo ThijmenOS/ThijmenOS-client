@@ -18,4 +18,4 @@ Then the desktop files will be rendered and when you click an icon the app manag
 
 Then when it is time to open the actual application the window module is called with the request to build a window for the application (for more details on application windows see the @thijmen-os/window repository).
 The last component in this module is the kernel. This is the communication between applications and the operating system. When an application wants to do something, for example read files or talk to other applications, it asks the kernel to do so. Then the kernel will handle everything and callback the application with the correct infomation.
-![thijmen-os uml class diagram](https://github.com/thijmen-os/.github/blob/main/profile/thijmen-os-client.png?raw=true)
+![thijmen-os uml class diagram](https://github.com/thijmen-os/.github/blob/production/profile/thijmen-os-client.png?raw=true)
