@@ -1,18 +1,18 @@
 import { cacheObject } from "@ostypes/CacheTypes";
 import { injectable } from "inversify";
-import ICache from "./ICache";
+import MemoryMethodShape from "./memoryMethodShape";
 
 @injectable()
-class Cache implements ICache {
+class Memory implements MemoryMethodShape {
   cacheData: cacheObject = {};
 
-  saveToCache<T>(key: string, object: T): void {
+  saveToMemory<T>(key: string, object: T): void {
     this.cacheData[key] = object;
   }
 
-  loadFromCache<T>(key: string): T {
+  loadFromMemory<T>(key: string): T {
     return this.cacheData[key] as T;
   }
 }
 
-export default Cache;
+export default Memory;

@@ -1,9 +1,9 @@
 import { Mkdir } from "@thijmen-os/common";
-import { CreateFile } from "@thijmen-os/filesystem";
 import { ICommand } from "@ostypes/CommandTypes";
-import IAppManager from "@core/appManager/IAppManager";
+import IAppManager from "@core/applicationManager/applicationManagerMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
+import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
 
 class TouchCommand implements ICommand {
   private appManager: IAppManager = javascriptOs.get<IAppManager>(

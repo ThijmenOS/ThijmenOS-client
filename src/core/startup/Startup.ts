@@ -15,24 +15,24 @@ import { injectable, inject } from "inversify";
 import types from "@ostypes/types";
 
 //Interfaces
-import IStartup from "./IStartup";
-import { UpdateTime } from "@thijmen-os/utils";
-import IKernel from "@core/kernel/IKernel";
-import IAppManager from "@core/appManager/IAppManager";
+import UpdateTime from "@utils/updateTime";
+import Kernel from "@core/kernel/kernelMethodShape";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 //Types
-import ISettings from "@core/settings/ISettings";
+import Settings from "@core/settings/settingsMethodShape";
+import StartupMethodShape from "./startupMethodShape";
 
 @injectable()
-class Startup implements IStartup {
-  private readonly _kernel: IKernel;
-  private readonly _appManager: IAppManager;
-  private readonly _settings: ISettings;
+class Startup implements StartupMethodShape {
+  private readonly _kernel: Kernel;
+  private readonly _appManager: ApplicationManager;
+  private readonly _settings: Settings;
 
   constructor(
-    @inject(types.Kernel) kernel: IKernel,
-    @inject(types.AppManager) appManager: IAppManager,
-    @inject(types.Settings) settings: ISettings
+    @inject(types.Kernel) kernel: Kernel,
+    @inject(types.AppManager) appManager: ApplicationManager,
+    @inject(types.Settings) settings: Settings
   ) {
     this._kernel = kernel;
     this._appManager = appManager;

@@ -28,34 +28,43 @@ import types from "@ostypes/types";
 //Classes
 
 //DI interfaces
-import AppManagerUtils from "./AppManagerUtils";
-import IAppManager from "./IAppManager";
+import ApplicationManagerPrivateMethods from "./applicationManagerPrivateMethods";
+import ApplicationManagerMethodShape from "./applicationManagerMethodShape";
 import { WaitForElm } from "@thijmen-os/graphics";
 
 //Types
 import { Directory, IconMetadata } from "@thijmen-os/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
-import ISettings from "@core/settings/ISettings";
+import ISettings from "@core/settings/settingsMethodShape";
 import { Event, EventName, system } from "@ostypes/AppManagerTypes";
-import { Window, CreateWindow } from "@thijmen-os/window";
-import Prompt from "@thijmen-os/prompt";
+import { SelectApplication } from "@thijmen-os/prompt";
 import ErrorManager from "@thijmen-os/errormanager";
-import { ShowFilesInDir } from "@thijmen-os/filesystem";
-import ICache from "@core/cache/ICache";
+import ICache from "@core/memory/memoryMethodShape";
+import ApplicationWindow from "@core/applicationWindow/applicationWindow";
+import CreateApplicationWindow from "@core/applicationWindow/interfaces/createApplicationWindowMethodShape";
+import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 
 @injectable()
-class AppManager extends AppManagerUtils implements IAppManager {
+class ApplicationManager
+  extends ApplicationManagerPrivateMethods
+  implements ApplicationManagerMethodShape
+{
   private readonly _settings: ISettings;
   private readonly _cache: ICache;
+  private readonly _window: CreateApplicationWindow;
+
+  private readonly desktopPath = "C/Desktop";
 
   constructor(
     @inject(types.Settings) settings: ISettings,
-    @inject(types.Cache) cache: ICache
+    @inject(types.Cache) cache: ICache,
+    @inject(types.CreateWindow) createWindow: CreateApplicationWindow
   ) {
     super();
 
     this._settings = settings;
     this._cache = cache;
+    this._window = createWindow;
   }
 
   public async FetchInstalledApps(): Promise<void> {
@@ -63,17 +72,17 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 
   public async ShowFilesOnDesktop() {
-    const desktopFiles = await ShowFilesInDir("C/Desktop");
+    const desktopFiles = await ShowFilesInDir(this.desktopPath);
 
-    this._cache.saveToCache<Array<Directory>>("desktopFiles", desktopFiles);
+    this._cache.saveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
 
     this.RenderIcon(desktopFiles);
   }
 
   public async RefreshDesktopApps() {
     const cacheFiles =
-      this._cache.loadFromCache<Array<Directory>>("desktopFiles");
-    const allFiles = await ShowFilesInDir("C/Desktop");
+      this._cache.loadFromMemory<Array<Directory>>("desktopFiles");
+    const allFiles = await ShowFilesInDir(this.desktopPath);
 
     const newFiles = allFiles.filter(
       (x) => !cacheFiles.find((y) => x.filePath === y.filePath)
@@ -94,7 +103,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
       return;
     }
 
-    new Prompt.selectApplicationPrompt(resultTitles, (selectedApp: string) => {
+    new SelectApplication(resultTitles, (selectedApp: string) => {
       const app = installedAppsWithDesiredMimetype.find(
         (app) => app.name === selectedApp
       )!;
@@ -126,8 +135,8 @@ class AppManager extends AppManagerUtils implements IAppManager {
     );
   }
 
-  public OpenExecutable(IconMetadata: IconMetadata): Window {
-    const application = new CreateWindow().Application(IconMetadata);
+  public OpenExecutable(IconMetadata: IconMetadata): ApplicationWindow {
+    const application = this._window.Application(IconMetadata);
 
     this.openApps.push(application);
 
@@ -142,7 +151,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
 
   public CloseExecutable(targetWindow: string): void {
     const targetWin = this.openApps.find(
-      (window: Window): boolean =>
+      (window: ApplicationWindow): boolean =>
         window.windowOptions.windowTitle === targetWindow
     );
 
@@ -173,4 +182,4 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 }
 
-export default AppManager;
+export default ApplicationManager;

@@ -1,6 +1,6 @@
 import { Path } from "@thijmen-os/common";
 
-export interface IBackgroundOptions {
+export default interface BackgroundSettingsMethodShape {
   Change(filePath: Path): Promise<void>;
   Get(): Promise<void>;
 }

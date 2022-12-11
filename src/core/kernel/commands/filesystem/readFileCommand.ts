@@ -1,7 +1,7 @@
 import { Path } from "@thijmen-os/common";
-import { OpenFile } from "@thijmen-os/filesystem";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/AppManagerTypes";
+import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 
 class ReadFileCommand implements ICommand {
   private props: Path;

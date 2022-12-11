@@ -13,17 +13,17 @@
 import { injectable } from "inversify";
 
 //Classes
-import { Window } from "@thijmen-os/window";
+import ApplicationWindow from "@core/applicationWindow/applicationWindow";
 
 //Types
 import { ApplicationMetaData, Directory, MimeTypes } from "@thijmen-os/common";
 import javascriptOs from "@inversify/inversify.config";
-import IFileIcon from "@core/fileIcon/IFileIcon";
+import IFileIcon from "@core/fileIcon/fileIconMethodShape";
 import types from "@ostypes/types";
 
 @injectable()
-class AppManagerUtils {
-  protected openApps: Array<Window> = new Array<Window>();
+class AppManagerPrivateMethods {
+  protected openApps: Array<ApplicationWindow> = new Array<ApplicationWindow>();
   protected installedApps: Array<ApplicationMetaData> =
     new Array<ApplicationMetaData>();
 
@@ -32,7 +32,7 @@ class AppManagerUtils {
   ): Array<ApplicationMetaData> =>
     this.installedApps.filter((app) => app.mimeTypes.includes(mimeType));
 
-  protected FindTargetApp = (target: string): Window => {
+  protected FindTargetApp = (target: string): ApplicationWindow => {
     const targetApp = this.openApps.find(
       (app) => app.windowOptions.windowIdentifier === target
     );
@@ -52,4 +52,4 @@ class AppManagerUtils {
   }
 }
 
-export default AppManagerUtils;
+export default AppManagerPrivateMethods;

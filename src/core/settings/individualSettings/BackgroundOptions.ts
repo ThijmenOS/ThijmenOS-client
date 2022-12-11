@@ -1,10 +1,13 @@
 import { Path, host } from "@thijmen-os/common";
-import { ChangeBackground, GetBackground } from "@thijmen-os/filesystem";
-import { IBackgroundOptions } from "./IBackgroundOptions";
+import backgroundSettingsMethodShape from "./backgroundSettingsMethodShape";
 import { injectable } from "inversify";
+import {
+  ChangeBackground,
+  GetBackground,
+} from "@providers/filesystemEndpoints/settings";
 
 @injectable()
-class BackgroundOptions implements IBackgroundOptions {
+class BackgroundSettings implements backgroundSettingsMethodShape {
   private backgroundPath?: Path;
 
   public async Change(filePath: string): Promise<void> {
@@ -23,4 +26,4 @@ class BackgroundOptions implements IBackgroundOptions {
   }
 }
 
-export default BackgroundOptions;
+export default BackgroundSettings;

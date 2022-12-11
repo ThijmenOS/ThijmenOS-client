@@ -19,12 +19,11 @@ import types from "@ostypes/types";
 import { inject, injectable } from "inversify";
 
 //Interfaces
-import IFileIcon from "./IFileIcon";
-import IAppManager from "@core/appManager/IAppManager";
-import { GetShortcutProperties, GenerateUUID } from "@thijmen-os/utils";
+import IFileIcon from "./fileIconMethodShape";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 //Types
-import fileIcons from "./fileIcons";
+import fileIcons from "./mimetypeFIleNameMap";
 import { appIcon, fileIconSelectors } from "@utils/dom-defaults";
 import {
   MimeTypes,
@@ -38,59 +37,93 @@ import {
   AddElement,
 } from "@thijmen-os/graphics";
 import ErrorManager from "@thijmen-os/errormanager";
+import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
+import GenerateUUID from "@utils/generateUUID";
 
 @injectable()
 class FileIcon implements IFileIcon {
-  private readonly _appManager: IAppManager;
+  private readonly _applicationManager: ApplicationManager;
 
   private iconContainerElement!: HTMLDivElement;
   private iconImageElement!: HTMLObjectElement;
   private iconTitleElement!: HTMLParagraphElement;
 
-  private iconHasError?: boolean;
+  private iconHasError = false;
 
-  private mimeType?: MimeTypes;
+  public metaData: IconMetadataShape = {
+    name: "",
+    exeLocation: "",
+    icon: "",
+  };
 
-  public exeLocation = "";
-  public icon?: string;
-  public name = "";
-
-  constructor(@inject(types.AppManager) appManager: IAppManager) {
-    this._appManager = appManager;
+  constructor(
+    @inject(types.AppManager) applicationManager: ApplicationManager
+  ) {
+    this._applicationManager = applicationManager;
   }
 
-  private async GetFileConfigurations() {
-    const fileName: string = this.exeLocation.split("/").at(-1)!;
-    this.mimeType = fileName.split(".").at(-1)! as MimeTypes;
-
-    this.name = fileName;
-
-    if (this.mimeType !== MimeTypes.thijm) {
-      this.FileIcon(this.mimeType);
-    } else {
-      await this.ApplicationIcon();
+  private async GetFileConfigurations(
+    location: string
+  ): Promise<IconMetadataShape | null> {
+    const fileName: string | undefined = location.split("/").at(-1);
+    if (!fileName) {
+      return null;
     }
 
-    this.InitIcon();
+    const fileExtension = fileName.split(".").at(-1) as MimeTypes;
+
+    if (!fileExtension) {
+      return null;
+    }
+
+    if (fileExtension === MimeTypes.thijm) {
+      return await this.ApplicationIcon(location);
+    }
+
+    return {
+      name: fileName,
+      exeLocation: location,
+      icon: this.FileIcon(fileExtension),
+      mimeType: fileExtension,
+    };
   }
 
-  private FileIcon(mimeType: MimeTypes) {
-    this.icon = `${host}${fileIconsPath}/file_type_${fileIcons[mimeType]}.svg`;
+  private FileIcon(mimeType: MimeTypes): string {
+    return `${host}${fileIconsPath}/file_type_${fileIcons[mimeType]}.svg`;
   }
 
-  private async ApplicationIcon() {
-    const AppProperties: IconMetadataShape = await GetShortcutProperties(
-      this.exeLocation
-    );
+  private async GetShortcutProperties(
+    path: string
+  ): Promise<IconMetadataShape | null> {
+    if (!path || !path.length) {
+      return null;
+    }
 
-    if (!AppProperties.exeLocation) this.iconHasError = true;
+    const file = await OpenFile(path);
+    const iconMetadata: IconMetadataShape = JSON.parse(file);
 
-    this.exeLocation = AppProperties.exeLocation;
-    this.name = AppProperties.name;
-    this.icon = `${host}/static/` + AppProperties.icon;
+    return iconMetadata;
   }
 
-  private InitIcon() {
+  private async ApplicationIcon(
+    location: string
+  ): Promise<IconMetadataShape | null> {
+    const applicationProperties = await this.GetShortcutProperties(location);
+
+    if (!applicationProperties || !applicationProperties.exeLocation) {
+      this.iconHasError = true;
+      return null;
+    }
+
+    return {
+      name: applicationProperties.name,
+      exeLocation: applicationProperties.exeLocation,
+      icon: `${host}/static/` + applicationProperties.icon,
+      mimeType: MimeTypes.thijm,
+    };
+  }
+
+  private InitialiseIconElements(): string {
     this.iconContainerElement = CreateElementFromString(appIcon);
 
     this.iconImageElement = this.iconContainerElement.querySelector(
@@ -99,55 +132,80 @@ class FileIcon implements IFileIcon {
     this.iconTitleElement =
       this.iconContainerElement.querySelector("#file-icon-title")!;
 
-    const appHash = this.name + "-" + GenerateUUID();
+    const iconIdentifier = GenerateUUID();
 
-    this.iconContainerElement.setAttribute("data-id", appHash);
+    this.iconContainerElement.setAttribute("data-id", iconIdentifier);
 
-    this.Render();
-    this.InitBehaviour();
+    return iconIdentifier;
   }
 
-  private InitBehaviour() {
-    const openFile = () => this.OpenFile();
+  private InitialiseIconBehaviour(
+    iconIdentifier: string,
+    iconMetadata: IconMetadataShape
+  ) {
+    let clickCount = 0;
+    const listenToClick = () => {
+      clickCount++;
+      if (clickCount === 2) {
+        this.OpenFile(iconMetadata);
+        clickCount = 0;
+      }
+    };
 
-    this.iconContainerElement.addEventListener("dblclick", openFile);
+    this.iconContainerElement.addEventListener("click", listenToClick);
 
-    const dataId = this.iconContainerElement.getAttribute("data-id")!;
-
-    InitMovement(dataId);
+    InitMovement(iconIdentifier);
   }
 
-  private Render() {
-    this.iconImageElement!.data =
-      this.icon || `${host}${fileIconsPath}/default-app-icon.svg`;
-    this.iconTitleElement!.innerHTML = this.name;
+  private RenderIcon(iconName: string, iconImageSource?: string) {
+    this.iconImageElement.data =
+      iconImageSource || `${host}${fileIconsPath}/default-app-icon.svg`;
+    this.iconTitleElement!.innerHTML = iconName;
 
     AddElement(this.iconContainerElement);
   }
 
-  private OpenFile() {
+  private OpenFile(metadata: IconMetadataShape) {
     if (this.iconHasError) ErrorManager.applicationNotFoundError();
 
-    if (this.mimeType === MimeTypes.thijm)
-      this._appManager.OpenExecutable({
-        exeLocation: this.exeLocation,
-        name: this.name,
-        icon: this.icon,
+    if (metadata.mimeType === MimeTypes.thijm) {
+      this._applicationManager.OpenExecutable({
+        exeLocation: metadata.exeLocation,
+        name: metadata.name,
+        icon: metadata.icon,
       });
-    else
-      this._appManager.OpenFile({
-        filePath: this.exeLocation,
-        mimeType: this.mimeType!,
-      });
+
+      return;
+    }
+
+    if (!metadata.mimeType) {
+      //TODO: add mimetypeinvalid error
+      ErrorManager.applicationNotFoundError();
+      return;
+    }
+
+    this._applicationManager.OpenFile({
+      filePath: metadata.exeLocation,
+      mimeType: metadata.mimeType,
+    });
   }
 
   public Destory() {
     this.iconContainerElement.remove();
   }
 
-  public ConstructFileIcon(filePath: string) {
-    this.exeLocation = filePath;
-    this.GetFileConfigurations();
+  public async ConstructFileIcon(filePath: string) {
+    const iconMetaData = await this.GetFileConfigurations(filePath);
+
+    if (!iconMetaData) {
+      //TODO: implement Couldnt get config error
+      this.iconHasError = true;
+      return;
+    }
+
+    const iconIdentifier = this.InitialiseIconElements();
+    this.RenderIcon(iconMetaData.name, iconMetaData.icon);
+    this.InitialiseIconBehaviour(iconIdentifier, iconMetaData);
   }
 }
 

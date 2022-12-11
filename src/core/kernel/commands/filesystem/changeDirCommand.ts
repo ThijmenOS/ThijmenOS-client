@@ -1,7 +1,7 @@
 import { Path } from "@thijmen-os/common";
-import { ChangeDirectory } from "@thijmen-os/filesystem";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/AppManagerTypes";
+import { ChangeDirectory } from "@providers/filesystemEndpoints/filesystem";
 
 class ChangeDirCommand implements ICommand {
   private props: Path;

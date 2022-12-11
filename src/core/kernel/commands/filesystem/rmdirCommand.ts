@@ -1,6 +1,6 @@
 import { Path } from "@thijmen-os/common";
-import { RemoveDirectory } from "@thijmen-os/filesystem";
 import { ICommand } from "@ostypes/CommandTypes";
+import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
 
 class rmdirCommand implements ICommand {
   private props: Path;

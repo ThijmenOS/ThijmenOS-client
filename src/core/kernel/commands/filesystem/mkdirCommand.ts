@@ -1,6 +1,6 @@
 import { Mkdir } from "@thijmen-os/common";
-import { MakeDirectory } from "@thijmen-os/filesystem";
 import { ICommand } from "@ostypes/CommandTypes";
+import { MakeDirectory } from "@providers/filesystemEndpoints/filesystem";
 
 class mkdirCommand implements ICommand {
   private props: Mkdir;
