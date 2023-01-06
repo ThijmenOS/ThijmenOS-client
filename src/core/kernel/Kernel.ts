@@ -32,7 +32,7 @@ import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
 import CloseSelfCommand from "./commands/application/closeSelfCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
 import ChangeBackgroundCommand from "./commands/settings/changeBackgroundCommand";
-import { system } from "@ostypes/AppManagerTypes";
+import { EventName, system } from "@ostypes/AppManagerTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
@@ -40,12 +40,15 @@ import ApplicationManager from "@core/applicationManager/applicationManagerMetho
 @injectable()
 class Kernel implements KernelMethodShape {
   private readonly _applicationManager: ApplicationManager;
+  private readonly _mediator: Mediator;
   private origin = "";
 
   constructor(
-    @inject(types.AppManager) applicationManager: ApplicationManager
+    @inject(types.AppManager) applicationManager: ApplicationManager,
+    @inject(types.Mediator) mediator: Mediator
   ) {
     this._applicationManager = applicationManager;
+    this._mediator = mediator;
   }
 
   private kernelMethods: KernelMethods = {
@@ -93,9 +96,17 @@ class Kernel implements KernelMethodShape {
 
   private async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
+      const applicationId =
+        this._applicationManager.FindCorrespondingAppWithWindowHash(
+          props.origin
+        );
+
       const command = this.kernelMethods[props.method as ValidMethods];
 
-      const result = await Mediator.send(new command(props.params));
+      const result = await this._mediator.send(
+        new command(props.params),
+        applicationId
+      );
 
       if (result instanceof CommandReturn) {
         this._applicationManager.SendDataToApp(

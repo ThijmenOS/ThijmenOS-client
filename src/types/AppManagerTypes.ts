@@ -1,3 +1,5 @@
+import ApplicationWindow from "@core/applicationWindow/applicationWindow";
+
 export type Event<T> = { eventName: string; eventSender: string; eventData: T };
 
 export enum EventName {
@@ -6,6 +8,12 @@ export enum EventName {
   OpenFile = "openFile",
   DirectoryCreated = "directoryCreated",
   Error = "error",
+}
+
+export interface ApplicationInstance {
+  instanceId: string;
+  applicationId: string;
+  applicationWindows: Array<ApplicationWindow>;
 }
 
 export const system = "system";

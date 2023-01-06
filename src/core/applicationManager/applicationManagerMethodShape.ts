@@ -5,6 +5,7 @@ import { IconMetadata } from "@thijmen-os/common";
 interface ApplicationManager {
   FetchInstalledApps(): Promise<void>;
   ShowFilesOnDesktop(): Promise<void>;
+  FindCorrespondingAppWithWindowHash(target: string): string;
   RefreshDesktopApps(): Promise<void>;
   OpenFileWithApplication(props: OpenFileType): void;
   OpenExecutable(applicationDetails: IconMetadata): ApplicationWindow;

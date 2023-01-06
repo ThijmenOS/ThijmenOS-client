@@ -20,6 +20,7 @@ import Window from "@core/applicationWindow/applicationWindow";
 import CreateWindow from "@core/applicationWindow/createApplicationWindow";
 import IWindow from "@core/applicationWindow/interfaces/applicationWindowMethodShape";
 import ICreateWindow from "@core/applicationWindow/interfaces/createApplicationWindowMethodShape";
+import Mediator from "@core/kernel/commands/Mediator";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
@@ -34,5 +35,6 @@ javascriptOs.bind<IBackgroundOptions>(BackgroundOptions).toSelf();
 javascriptOs.bind<ICache>(types.Cache).to(Cache);
 javascriptOs.bind<IWindow>(types.window).to(Window);
 javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
+javascriptOs.bind<Mediator>(types.Mediator).to(Mediator);
 
 export default javascriptOs;

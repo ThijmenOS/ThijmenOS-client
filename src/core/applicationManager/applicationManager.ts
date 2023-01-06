@@ -36,13 +36,19 @@ import { WaitForElm } from "@thijmen-os/graphics";
 import { Directory, IconMetadata } from "@thijmen-os/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
 import ISettings from "@core/settings/settingsMethodShape";
-import { Event, EventName, system } from "@ostypes/AppManagerTypes";
+import {
+  ApplicationInstance,
+  Event,
+  EventName,
+  system,
+} from "@ostypes/AppManagerTypes";
 import { SelectApplication } from "@thijmen-os/prompt";
 import ErrorManager from "@thijmen-os/errormanager";
 import ICache from "@core/memory/memoryMethodShape";
 import ApplicationWindow from "@core/applicationWindow/applicationWindow";
 import CreateApplicationWindow from "@core/applicationWindow/interfaces/createApplicationWindowMethodShape";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
+import GenerateUUID from "@utils/generateUUID";
 
 @injectable()
 class ApplicationManager
@@ -77,6 +83,20 @@ class ApplicationManager
     this._cache.saveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
 
     this.RenderIcon(desktopFiles);
+  }
+
+  public FindCorrespondingAppWithWindowHash(target: string): string {
+    const targetApp = this.openApps.find((app) =>
+      app.applicationWindows.find(
+        (window) => window.windowOptions.windowIdentifier === target
+      )
+    );
+
+    if (!targetApp) {
+      throw new Error("the app could not be found!");
+    }
+
+    return targetApp.applicationId;
   }
 
   public async RefreshDesktopApps() {
@@ -135,27 +155,75 @@ class ApplicationManager
     );
   }
 
-  public OpenExecutable(IconMetadata: IconMetadata): ApplicationWindow {
-    const application = this._window.Application(IconMetadata);
+  public OpenExecutable(iconMetadata: IconMetadata): ApplicationWindow {
+    const targetedApplication = this._settings.settings.apps.installedApps.find(
+      (x) => x.exeLocation === iconMetadata.exeLocation
+    );
 
-    this.openApps.push(application);
+    if (!targetedApplication) {
+      ErrorManager.applicationNotFoundError();
+      throw new Error();
+    }
+    const applicationWindow = this._window.Application(iconMetadata);
 
-    return application;
+    const applicationInstance = this.openApps.find(
+      (instance) =>
+        instance.applicationId === targetedApplication.applicationIdentifier
+    );
+    if (applicationInstance) {
+      applicationInstance.applicationWindows.push(applicationWindow);
+    } else {
+      const instance: ApplicationInstance = {
+        instanceId: GenerateUUID(),
+        applicationId: targetedApplication.applicationIdentifier,
+        applicationWindows: [applicationWindow],
+      };
+
+      this.openApps.push(instance);
+    }
+
+    console.log(this.openApps);
+
+    return applicationWindow;
   }
 
-  public CheckIfAppIsOpen(origin: string): boolean {
-    return this.openApps.some(
-      (win) => win.windowOptions.windowIdentifier === origin
+  public CheckIfAppIsOpen(windowHash: string): boolean {
+    return this.openApps.some((app) =>
+      app.applicationWindows.some(
+        (window) => window.windowOptions.windowIdentifier === windowHash
+      )
     );
   }
 
-  public CloseExecutable(targetWindow: string): void {
-    const targetWin = this.openApps.find(
-      (window: ApplicationWindow): boolean =>
-        window.windowOptions.windowTitle === targetWindow
+  public CloseExecutable(targetWindowHash: string): void {
+    const targetApplicationInstanceIndex = this.openApps.findIndex((instance) =>
+      instance.applicationWindows.some(
+        (window) => window.windowOptions.windowIdentifier === targetWindowHash
+      )
+    );
+    const targetWindowIndex = this.openApps[
+      targetApplicationInstanceIndex
+    ].applicationWindows.findIndex(
+      (window) => window.windowOptions.windowIdentifier === targetWindowHash
     );
 
-    if (targetWin) targetWin.Destroy();
+    if (targetWindowIndex !== -1)
+      this.openApps[targetApplicationInstanceIndex].applicationWindows[
+        targetWindowIndex
+      ].Destroy();
+
+    this.openApps[targetApplicationInstanceIndex].applicationWindows.splice(
+      targetWindowIndex,
+      1
+    );
+
+    if (
+      !this.openApps[targetApplicationInstanceIndex].applicationWindows.length
+    ) {
+      this.openApps.splice(targetApplicationInstanceIndex, 1);
+    }
+
+    console.log(this.openApps);
   }
 
   public async SendDataToApp<T>(

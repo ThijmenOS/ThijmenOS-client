@@ -26,6 +26,7 @@
 
 //Interfaces
 import ApplicationWindowMethodShape from "./interfaces/applicationWindowMethodShape";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 //Types
 import { window, windowDataActions, windowSelectors } from "./defaults";
@@ -38,13 +39,18 @@ import {
   GetElementByClass,
   InitMovement,
 } from "@thijmen-os/graphics";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import types from "@ostypes/types";
+import javascriptOs from "@inversify/inversify.config";
 
 let windowCount = 0;
 let lastWindowOnTop: ApplicationWindow;
 
 @injectable()
 class ApplicationWindow implements ApplicationWindowMethodShape {
+  private readonly _applicationManager: ApplicationManager =
+    javascriptOs.get<ApplicationManager>(types.AppManager);
+
   private windowHeaderElement!: HTMLDivElement;
   private windowContentElement!: HTMLDivElement;
   private windowFrozenElement!: HTMLDivElement;
@@ -89,7 +95,10 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
         "data-action"
       ) as windowDataActions;
 
-      if (action === windowDataActions.Close) this.Destroy();
+      if (action === windowDataActions.Close)
+        this._applicationManager.CloseExecutable(
+          this.windowOptions.windowIdentifier
+        );
       if (action === windowDataActions.Maximize)
         this.MaxOrMin(ClassOperation.ADD);
       if (action === windowDataActions.Minimize)
