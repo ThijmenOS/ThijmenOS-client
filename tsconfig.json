@@ -12,6 +12,7 @@
       "@ostypes/*": ["types/*"],
       "@core/*": ["core/*"],
       "@utils/*": ["utils/*"],
+      "@providers/*": ["providers/*"],
       "@inversify/*": ["../*"]
     },
     "types": ["node", "jest", "reflect-metadata"],

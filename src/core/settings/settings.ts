@@ -13,17 +13,17 @@
 import { injectable } from "inversify";
 
 //Interfaces
-import { FetchSettings } from "@thijmen-os/filesystem";
-import ISettings from "./ISettings";
 import ErrorManager from "@thijmen-os/errormanager";
 
 //Types
 import { MimeTypes, OSSettings, ApplicationMetaData } from "@thijmen-os/common";
-import BackgroundOptions from "./BackgroundOptions";
+import BackgroundOptions from "./individualSettings/BackgroundOptions";
 import javascriptOs from "../../../inversify.config";
+import SettingsMethodShape from "./settingsMethodShape";
+import { FetchSettings } from "@providers/filesystemEndpoints/settings";
 
 @injectable()
-class Settings implements ISettings {
+class Settings implements SettingsMethodShape {
   private _settings!: OSSettings;
   public get settings(): OSSettings {
     return this._settings;

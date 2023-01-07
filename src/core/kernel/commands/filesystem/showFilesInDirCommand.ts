@@ -1,10 +1,12 @@
-import { Directory, Path } from "@thijmen-os/common";
-import { ShowFilesInDir } from "@thijmen-os/filesystem";
+import { Directory, Path, Permissions } from "@thijmen-os/common";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/AppManagerTypes";
+import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 
 class ShowFilesInDirCommand implements ICommand {
   private props: Path;
+
+  public readonly requiredPermission = Permissions.fileSystem;
 
   constructor(props: Path) {
     this.props = props;

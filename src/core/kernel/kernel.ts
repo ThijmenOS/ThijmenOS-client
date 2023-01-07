@@ -16,10 +16,6 @@
 import { inject, injectable } from "inversify";
 import types from "@ostypes/types";
 
-//Interfaces
-import IKernel from "./IKernel";
-import ICore from "@core/core/ICore";
-
 //Types
 import {
   KernelMethods,
@@ -27,7 +23,7 @@ import {
   JsOsCommunicationMessage,
 } from "@ostypes/KernelTypes";
 import Mediator from "./commands/Mediator";
-import TouchCommand from "./commands/filesystem/TouchCommand";
+import TouchCommand from "./commands/filesystem/touchCommand";
 import rmdirCommand from "./commands/filesystem/rmdirCommand";
 import mkdirCommand from "./commands/filesystem/mkdirCommand";
 import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
@@ -38,14 +34,21 @@ import OpenFileCommand from "./commands/application/openFileCommand";
 import ChangeBackgroundCommand from "./commands/settings/changeBackgroundCommand";
 import { system } from "@ostypes/AppManagerTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
+import KernelMethodShape from "./kernelMethodShape";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 @injectable()
-class Kernel implements IKernel {
-  private readonly _core: ICore;
+class Kernel implements KernelMethodShape {
+  private readonly _applicationManager: ApplicationManager;
+  private readonly _mediator: Mediator;
   private origin = "";
 
-  constructor(@inject(types.Core) core: ICore) {
-    this._core = core;
+  constructor(
+    @inject(types.AppManager) applicationManager: ApplicationManager,
+    @inject(types.Mediator) mediator: Mediator
+  ) {
+    this._applicationManager = applicationManager;
+    this._mediator = mediator;
   }
 
   private kernelMethods: KernelMethods = {
@@ -82,7 +85,7 @@ class Kernel implements IKernel {
     window.onmessage = (event: MessageEvent) => {
       const messageData: JsOsCommunicationMessage = event.data;
 
-      if (!this._core.appManager.CheckIfAppIsOpen(messageData.origin))
+      if (!this._applicationManager.CheckIfAppIsOpen(messageData.origin))
         throw new Error("Sender app is not known!");
 
       this.origin = messageData.origin;
@@ -93,12 +96,20 @@ class Kernel implements IKernel {
 
   private async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
+      const applicationId =
+        this._applicationManager.FindCorrespondingAppWithWindowHash(
+          props.origin
+        );
+
       const command = this.kernelMethods[props.method as ValidMethods];
 
-      const result = await Mediator.send(new command(props.params));
+      const result = await this._mediator.send(
+        new command(props.params),
+        applicationId
+      );
 
       if (result instanceof CommandReturn) {
-        this._core.appManager.SendDataToApp(
+        this._applicationManager.SendDataToApp(
           this.origin,
           result.data,
           system,

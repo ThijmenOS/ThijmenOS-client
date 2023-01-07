@@ -1,6 +1,8 @@
+import { Permissions } from "@thijmen-os/common";
 import { EventName } from "./AppManagerTypes";
 
 export interface ICommand {
+  requiredPermission?: Permissions;
   Handle(): Promise<CommandReturn<unknown>> | Promise<void> | void;
 }
 

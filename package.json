@@ -27,14 +27,11 @@
     "vite-plugin-node-stdlib-browser": "^0.1.1"
   },
   "dependencies": {
-    "@thijmen-os/common": "^1.0.2",
+    "@thijmen-os/common": "^2.0.9",
     "@thijmen-os/errormanager": "^1.0.2",
     "@thijmen-os/eslint-config": "^1.0.0",
-    "@thijmen-os/filesystem": "^1.0.3",
     "@thijmen-os/graphics": "^2.0.3",
-    "@thijmen-os/prompt": "^1.0.2",
-    "@thijmen-os/utils": "^1.0.1",
-    "@thijmen-os/window": "^1.0.2",
+    "@thijmen-os/prompt": "^1.0.8",
     "@types/jqueryui": "^1.12.16",
     "cors": "^2.8.5",
     "eslint-plugin-import": "^2.26.0",

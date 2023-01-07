@@ -1,10 +1,11 @@
-import ICore from "@core/core/ICore";
 import { ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 class CloseSelfCommand implements ICommand {
-  private readonly _core: ICore = javascriptOs.get<ICore>(types.Core);
+  private readonly _applicationManager: ApplicationManager =
+    javascriptOs.get<ApplicationManager>(types.AppManager);
   private readonly target: string;
 
   constructor(target: string) {
@@ -12,7 +13,7 @@ class CloseSelfCommand implements ICommand {
   }
 
   Handle(): void {
-    this._core.appManager.CloseExecutable(this.target);
+    this._applicationManager.CloseExecutable(this.target);
   }
 }
 

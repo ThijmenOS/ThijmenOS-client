@@ -13,17 +13,18 @@
 import { injectable } from "inversify";
 
 //Classes
-import { Window } from "@thijmen-os/window";
 
 //Types
 import { ApplicationMetaData, Directory, MimeTypes } from "@thijmen-os/common";
 import javascriptOs from "@inversify/inversify.config";
-import IFileIcon from "@core/fileIcon/IFileIcon";
+import IFileIcon from "@core/fileIcon/fileIconMethodShape";
 import types from "@ostypes/types";
+import { ApplicationInstance } from "@ostypes/AppManagerTypes";
 
 @injectable()
-class AppManagerUtils {
-  protected openApps: Array<Window> = new Array<Window>();
+class AppManagerPrivateMethods {
+  protected openApps: Array<ApplicationInstance> =
+    new Array<ApplicationInstance>();
   protected installedApps: Array<ApplicationMetaData> =
     new Array<ApplicationMetaData>();
 
@@ -32,17 +33,6 @@ class AppManagerUtils {
   ): Array<ApplicationMetaData> =>
     this.installedApps.filter((app) => app.mimeTypes.includes(mimeType));
 
-  protected FindTargetApp = (target: string): Window => {
-    const targetApp = this.openApps.find(
-      (app) => app.windowOptions.windowIdentifier === target
-    );
-
-    if (!targetApp) {
-      throw new Error("the app could not be found!");
-    }
-
-    return targetApp;
-  };
   protected RenderIcon(content: Array<Directory>) {
     content.forEach((file) =>
       javascriptOs
@@ -52,4 +42,4 @@ class AppManagerUtils {
   }
 }
 
-export default AppManagerUtils;
+export default AppManagerPrivateMethods;

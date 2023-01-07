@@ -28,34 +28,49 @@ import types from "@ostypes/types";
 //Classes
 
 //DI interfaces
-import AppManagerUtils from "./AppManagerUtils";
-import IAppManager from "./IAppManager";
+import ApplicationManagerPrivateMethods from "./applicationManagerPrivateMethods";
+import ApplicationManagerMethodShape from "./applicationManagerMethodShape";
 import { WaitForElm } from "@thijmen-os/graphics";
 
 //Types
 import { Directory, IconMetadata } from "@thijmen-os/common";
 import { OpenFileType } from "@ostypes/KernelTypes";
-import ISettings from "@core/settings/ISettings";
-import { Event, EventName, system } from "@ostypes/AppManagerTypes";
-import { Window, CreateWindow } from "@thijmen-os/window";
-import Prompt from "@thijmen-os/prompt";
+import ISettings from "@core/settings/settingsMethodShape";
+import {
+  ApplicationInstance,
+  Event,
+  EventName,
+  system,
+} from "@ostypes/AppManagerTypes";
+import { SelectApplication } from "@thijmen-os/prompt";
 import ErrorManager from "@thijmen-os/errormanager";
-import { ShowFilesInDir } from "@thijmen-os/filesystem";
-import ICache from "@core/cache/ICache";
+import ICache from "@core/memory/memoryMethodShape";
+import ApplicationWindow from "@core/applicationWindow/applicationWindow";
+import CreateApplicationWindow from "@core/applicationWindow/interfaces/createApplicationWindowMethodShape";
+import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
+import GenerateUUID from "@utils/generateUUID";
 
 @injectable()
-class AppManager extends AppManagerUtils implements IAppManager {
+class ApplicationManager
+  extends ApplicationManagerPrivateMethods
+  implements ApplicationManagerMethodShape
+{
   private readonly _settings: ISettings;
   private readonly _cache: ICache;
+  private readonly _window: CreateApplicationWindow;
+
+  private readonly desktopPath = "C/Desktop";
 
   constructor(
     @inject(types.Settings) settings: ISettings,
-    @inject(types.Cache) cache: ICache
+    @inject(types.Cache) cache: ICache,
+    @inject(types.CreateWindow) createWindow: CreateApplicationWindow
   ) {
     super();
 
     this._settings = settings;
     this._cache = cache;
+    this._window = createWindow;
   }
 
   public async FetchInstalledApps(): Promise<void> {
@@ -63,17 +78,31 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 
   public async ShowFilesOnDesktop() {
-    const desktopFiles = await ShowFilesInDir("C/Desktop");
+    const desktopFiles = await ShowFilesInDir(this.desktopPath);
 
-    this._cache.saveToCache<Array<Directory>>("desktopFiles", desktopFiles);
+    this._cache.saveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
 
     this.RenderIcon(desktopFiles);
   }
 
+  public FindCorrespondingAppWithWindowHash(target: string): string {
+    const targetApp = this.openApps.find((app) =>
+      app.applicationWindows.find(
+        (window) => window.windowOptions.windowIdentifier === target
+      )
+    );
+
+    if (!targetApp) {
+      throw new Error("the app could not be found!");
+    }
+
+    return targetApp.applicationId;
+  }
+
   public async RefreshDesktopApps() {
     const cacheFiles =
-      this._cache.loadFromCache<Array<Directory>>("desktopFiles");
-    const allFiles = await ShowFilesInDir("C/Desktop");
+      this._cache.loadFromMemory<Array<Directory>>("desktopFiles");
+    const allFiles = await ShowFilesInDir(this.desktopPath);
 
     const newFiles = allFiles.filter(
       (x) => !cacheFiles.find((y) => x.filePath === y.filePath)
@@ -94,7 +123,7 @@ class AppManager extends AppManagerUtils implements IAppManager {
       return;
     }
 
-    new Prompt.selectApplicationPrompt(resultTitles, (selectedApp: string) => {
+    new SelectApplication(resultTitles, (selectedApp: string) => {
       const app = installedAppsWithDesiredMimetype.find(
         (app) => app.name === selectedApp
       )!;
@@ -126,27 +155,75 @@ class AppManager extends AppManagerUtils implements IAppManager {
     );
   }
 
-  public OpenExecutable(IconMetadata: IconMetadata): Window {
-    const application = new CreateWindow().Application(IconMetadata);
+  public OpenExecutable(iconMetadata: IconMetadata): ApplicationWindow {
+    const targetedApplication = this._settings.settings.apps.installedApps.find(
+      (x) => x.exeLocation === iconMetadata.exeLocation
+    );
 
-    this.openApps.push(application);
+    if (!targetedApplication) {
+      ErrorManager.applicationNotFoundError();
+      throw new Error();
+    }
+    const applicationWindow = this._window.Application(iconMetadata);
 
-    return application;
+    const applicationInstance = this.openApps.find(
+      (instance) =>
+        instance.applicationId === targetedApplication.applicationIdentifier
+    );
+    if (applicationInstance) {
+      applicationInstance.applicationWindows.push(applicationWindow);
+    } else {
+      const instance: ApplicationInstance = {
+        instanceId: GenerateUUID(),
+        applicationId: targetedApplication.applicationIdentifier,
+        applicationWindows: [applicationWindow],
+      };
+
+      this.openApps.push(instance);
+    }
+
+    console.log(this.openApps);
+
+    return applicationWindow;
   }
 
-  public CheckIfAppIsOpen(origin: string): boolean {
-    return this.openApps.some(
-      (win) => win.windowOptions.windowIdentifier === origin
+  public CheckIfAppIsOpen(windowHash: string): boolean {
+    return this.openApps.some((app) =>
+      app.applicationWindows.some(
+        (window) => window.windowOptions.windowIdentifier === windowHash
+      )
     );
   }
 
-  public CloseExecutable(targetWindow: string): void {
-    const targetWin = this.openApps.find(
-      (window: Window): boolean =>
-        window.windowOptions.windowTitle === targetWindow
+  public CloseExecutable(targetWindowHash: string): void {
+    const targetApplicationInstanceIndex = this.openApps.findIndex((instance) =>
+      instance.applicationWindows.some(
+        (window) => window.windowOptions.windowIdentifier === targetWindowHash
+      )
+    );
+    const targetWindowIndex = this.openApps[
+      targetApplicationInstanceIndex
+    ].applicationWindows.findIndex(
+      (window) => window.windowOptions.windowIdentifier === targetWindowHash
     );
 
-    if (targetWin) targetWin.Destroy();
+    if (targetWindowIndex !== -1)
+      this.openApps[targetApplicationInstanceIndex].applicationWindows[
+        targetWindowIndex
+      ].Destroy();
+
+    this.openApps[targetApplicationInstanceIndex].applicationWindows.splice(
+      targetWindowIndex,
+      1
+    );
+
+    if (
+      !this.openApps[targetApplicationInstanceIndex].applicationWindows.length
+    ) {
+      this.openApps.splice(targetApplicationInstanceIndex, 1);
+    }
+
+    console.log(this.openApps);
   }
 
   public async SendDataToApp<T>(
@@ -173,4 +250,4 @@ class AppManager extends AppManagerUtils implements IAppManager {
   }
 }
 
-export default AppManager;
+export default ApplicationManager;

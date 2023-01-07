@@ -1,11 +1,13 @@
-import ICore from "@core/core/ICore";
 import { ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { Path } from "@thijmen-os/common";
+import Settings from "@core/settings/settingsMethodShape";
 
 class ChangeBackgroundCommand implements ICommand {
-  private readonly _core: ICore = javascriptOs.get<ICore>(types.Core);
+  private readonly _settings: Settings = javascriptOs.get<Settings>(
+    types.Settings
+  );
   private readonly props: Path;
 
   constructor(props: Path) {
@@ -13,7 +15,7 @@ class ChangeBackgroundCommand implements ICommand {
   }
 
   Handle(): void {
-    this._core.settings.Background().Change(this.props);
+    this._settings.Background().Change(this.props);
   }
 }
 

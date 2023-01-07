@@ -1,11 +1,12 @@
-import ICore from "@core/core/ICore";
 import { ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { OpenFileType } from "@ostypes/KernelTypes";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 class OpenFileCommand implements ICommand {
-  private readonly _core: ICore = javascriptOs.get<ICore>(types.Core);
+  private readonly _applicationManager: ApplicationManager =
+    javascriptOs.get<ApplicationManager>(types.AppManager);
   private readonly props: OpenFileType;
 
   constructor(props: OpenFileType) {
@@ -13,7 +14,7 @@ class OpenFileCommand implements ICommand {
   }
 
   Handle(): void {
-    this._core.appManager.OpenFile(this.props);
+    this._applicationManager.OpenFile(this.props);
   }
 }
 

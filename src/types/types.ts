@@ -11,6 +11,7 @@ const types = {
   Settings: Symbol.for("Settings"),
   ErrorManager: Symbol.for("ErrorManager"),
   Cache: Symbol.for("Cache"),
+  Mediator: Symbol.for("Mediator"),
 };
 
 export default types;

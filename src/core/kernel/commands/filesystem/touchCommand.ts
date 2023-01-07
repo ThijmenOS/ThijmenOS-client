@@ -1,15 +1,19 @@
-import { Mkdir } from "@thijmen-os/common";
-import { CreateFile } from "@thijmen-os/filesystem";
+import { Mkdir, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import IAppManager from "@core/appManager/IAppManager";
+import IAppManager from "@core/applicationManager/applicationManagerMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
+import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
 
 class TouchCommand implements ICommand {
   private appManager: IAppManager = javascriptOs.get<IAppManager>(
     types.AppManager
   );
+
   private props: Mkdir;
+
+  readonly requiredPermission = Permissions.fileSystem;
+
   constructor(props: Mkdir) {
     this.props = props;
   }

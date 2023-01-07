@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       "@ostypes": path.resolve(__dirname, "./src/types/"),
       "@core": path.resolve(__dirname, "./src/core/"),
+      "@providers": path.resolve(__dirname, "./src/providers"),
       "@utils": path.resolve(__dirname, "./src/utils/"),
       "@inversify": path.resolve(__dirname, "./"),
     },
