@@ -13,7 +13,6 @@
 import { injectable } from "inversify";
 
 //Classes
-import ApplicationWindow from "@core/applicationWindow/applicationWindow";
 
 //Types
 import { ApplicationMetaData, Directory, MimeTypes } from "@thijmen-os/common";

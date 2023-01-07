@@ -54,6 +54,7 @@ class FileIcon implements IFileIcon {
     name: "",
     exeLocation: "",
     icon: "",
+    mimeType: MimeTypes.thijm,
   };
 
   constructor(
@@ -169,11 +170,7 @@ class FileIcon implements IFileIcon {
     if (this.iconHasError) ErrorManager.applicationNotFoundError();
 
     if (metadata.mimeType === MimeTypes.thijm) {
-      this._applicationManager.OpenExecutable({
-        exeLocation: metadata.exeLocation,
-        name: metadata.name,
-        icon: metadata.icon,
-      });
+      this._applicationManager.OpenExecutable(metadata);
 
       return;
     }

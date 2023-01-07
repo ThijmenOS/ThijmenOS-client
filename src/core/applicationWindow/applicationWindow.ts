@@ -39,7 +39,7 @@ import {
   GetElementByClass,
   InitMovement,
 } from "@thijmen-os/graphics";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import types from "@ostypes/types";
 import javascriptOs from "@inversify/inversify.config";
 

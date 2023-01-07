@@ -32,7 +32,7 @@ import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
 import CloseSelfCommand from "./commands/application/closeSelfCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
 import ChangeBackgroundCommand from "./commands/settings/changeBackgroundCommand";
-import { EventName, system } from "@ostypes/AppManagerTypes";
+import { system } from "@ostypes/AppManagerTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
