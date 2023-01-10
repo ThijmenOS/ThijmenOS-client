@@ -1,5 +1,5 @@
 import ApplicationWindow from "@core/applicationWindow/applicationWindow";
-import { OpenFileType } from "@ostypes/KernelTypes";
+import { OpenFileType } from "@core/kernel/kernelTypes";
 import { IconMetadata } from "@thijmen-os/common";
 
 interface ApplicationManager {

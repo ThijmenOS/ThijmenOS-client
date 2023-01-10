@@ -29,6 +29,18 @@ class Api {
 
     return response.json();
   }
+
+  public async delete(url: string, data?: object) {
+    const response = await fetch(this._baseURL + url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    return response.json();
+  }
 }
 
 const api = new Api({ baseURL: host });

@@ -21,7 +21,7 @@ import {
   KernelMethods,
   ValidMethods,
   JsOsCommunicationMessage,
-} from "@ostypes/KernelTypes";
+} from "@core/kernel/kernelTypes";
 import Mediator from "./commands/Mediator";
 import TouchCommand from "./commands/filesystem/touchCommand";
 import rmdirCommand from "./commands/filesystem/rmdirCommand";
@@ -36,6 +36,7 @@ import { system } from "@ostypes/AppManagerTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
+import AskPermissionCommand from "./commands/settings/askPermissionCommand";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -79,6 +80,7 @@ class Kernel implements KernelMethodShape {
 
     //Settings
     changeBackground: ChangeBackgroundCommand,
+    askPermission: AskPermissionCommand,
   };
 
   public ListenToCommunication(): void {

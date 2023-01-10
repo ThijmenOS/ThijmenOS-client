@@ -1,5 +1,5 @@
 import { MimeTypes } from "@thijmen-os/common";
-import { Class, ICommand } from "./CommandTypes";
+import { Class, ICommand } from "../../types/CommandTypes";
 
 export type JsOsCommunicationMessage = {
   origin: string;
@@ -22,6 +22,7 @@ export enum ValidMethods {
 
   //Settings
   changeBackground = "changeBackground",
+  askPermission = "askPermission",
 }
 
 export type KernelMethods = { [key in ValidMethods]: Class<ICommand> };

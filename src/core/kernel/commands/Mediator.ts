@@ -12,39 +12,50 @@ import { injectable } from "inversify";
 class Mediator {
   private readonly _settings = javascriptOs.get<Settings>(types.Settings);
 
-  public send(command: ICommand, requestingApplicationId: string) {
+  public async send(command: ICommand, requestingApplicationId: string) {
     if (command.requiredPermission === undefined) {
       return command.Handle();
     }
 
-    const applicationCanExecuteCommand = this.validatePermission(
+    const applicationCanExecuteCommand = await this.validatePermission(
       command.requiredPermission,
       requestingApplicationId
     );
 
-    if (!applicationCanExecuteCommand) {
+    if (!applicationCanExecuteCommand)
       return new CommandReturn<string>(
         `No permission to execute ${command.requiredPermission}`,
         EventName.Error
       );
-    }
 
     return command.Handle();
   }
 
-  private validatePermission(
+  private async validatePermission(
     permissionToValidate: Permissions,
     applicationId: string
-  ): boolean | undefined {
+  ): Promise<boolean> {
     const targetApplication = this._settings.settings.apps.installedApps.find(
       (app) => app.applicationIdentifier === applicationId
     );
 
-    console.log(targetApplication);
+    if (!targetApplication) return false;
 
-    const hasValidPermissions = targetApplication?.permissions.some(
+    let hasValidPermissions = targetApplication.permissions.some(
       (permission) => permission === permissionToValidate
     );
+
+    if (!hasValidPermissions) {
+      const Timeout = new Promise<boolean>((response) => {
+        setTimeout(() => {
+          const validPermissions = targetApplication.permissions.some(
+            (permission) => permission === permissionToValidate
+          );
+          response(validPermissions);
+        }, 1000);
+      });
+      hasValidPermissions = await Timeout;
+    }
 
     return hasValidPermissions;
   }

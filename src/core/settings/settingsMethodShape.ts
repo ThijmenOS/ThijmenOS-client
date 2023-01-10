@@ -4,6 +4,7 @@ import BackgroundSettingsMethodShape from "./individualSettings/backgroundSettin
 export default interface Settings {
   get settings(): OSSettings;
   Initialise(): Promise<void>;
+  RefreshSettings(): Promise<void>;
   DefaultApplication(mimeType: string): ApplicationMetaData | undefined;
   Background(): BackgroundSettingsMethodShape;
 }
