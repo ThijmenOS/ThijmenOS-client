@@ -33,7 +33,7 @@ import ApplicationManagerMethodShape from "./applicationManagerMethodShape";
 import { WaitForElm } from "@thijmen-os/graphics";
 
 //Types
-import { Directory, IconMetadata } from "@thijmen-os/common";
+import { ApplicationMetaData, Directory } from "@thijmen-os/common";
 import { OpenFileType } from "@core/kernel/kernelTypes";
 import ISettings from "@core/settings/settingsMethodShape";
 import {
@@ -155,7 +155,7 @@ class ApplicationManager
     );
   }
 
-  public OpenExecutable(iconMetadata: IconMetadata): ApplicationWindow {
+  public OpenExecutable(iconMetadata: ApplicationMetaData): ApplicationWindow {
     const targetedApplication = this._settings.settings.apps.installedApps.find(
       (x) => x.exeLocation === iconMetadata.exeLocation
     );
@@ -181,8 +181,6 @@ class ApplicationManager
 
       this.openApps.push(instance);
     }
-
-    console.log(this.openApps);
 
     return applicationWindow;
   }

@@ -37,6 +37,8 @@ import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 import AskPermissionCommand from "./commands/settings/askPermissionCommand";
+import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
+import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -81,6 +83,8 @@ class Kernel implements KernelMethodShape {
     //Settings
     changeBackground: ChangeBackgroundCommand,
     askPermission: AskPermissionCommand,
+    revokeAllPermissions: RevokeAllPermissionCommand,
+    revokePermission: RevokePermissionCommand,
   };
 
   public ListenToCommunication(): void {
@@ -105,8 +109,13 @@ class Kernel implements KernelMethodShape {
 
       const command = this.kernelMethods[props.method as ValidMethods];
 
+      const commandProps = {
+        applicationId: applicationId,
+        ...props.params,
+      };
+
       const result = await this._mediator.send(
-        new command(props.params),
+        new command(commandProps),
         applicationId
       );
 

@@ -8,8 +8,8 @@ class ChangeDirCommand implements ICommand {
 
   readonly requiredPermission = Permissions.fileSystem;
 
-  constructor(props: Path) {
-    this.props = props;
+  constructor(props: { path: Path }) {
+    this.props = props.path;
   }
 
   public async Handle(): Promise<CommandReturn<string>> {

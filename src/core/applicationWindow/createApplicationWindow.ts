@@ -10,7 +10,7 @@
 */
 
 import CreateApplicationWindowMethodShape from "./interfaces/createApplicationWindowMethodShape";
-import { IconMetadataShape, host } from "@thijmen-os/common";
+import { host, ApplicationMetaData } from "@thijmen-os/common";
 import ApplicationWindow from "./applicationWindow";
 import { windowOptions } from "./defaults";
 import { injectable } from "inversify";
@@ -24,10 +24,10 @@ class CreateWindow implements CreateApplicationWindowMethodShape {
   private windowIconLocation?: string;
   private windowId?: string;
 
-  public Application(fileIcon: IconMetadataShape) {
+  public Application(fileIcon: ApplicationMetaData) {
     this.windowFileLocation = fileIcon.exeLocation;
     this.windowTitle = fileIcon.name;
-    this.windowIconLocation = fileIcon.icon;
+    this.windowIconLocation = fileIcon.iconLocation;
 
     this.windowId = GenerateUUID();
 

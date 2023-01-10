@@ -7,8 +7,8 @@ class rmdirCommand implements ICommand {
 
   readonly requiredPermission = Permissions.fileSystem;
 
-  constructor(props: Path) {
-    this.props = props;
+  constructor(props: { path: Path }) {
+    this.props = props.path;
   }
 
   public Handle(): void {
