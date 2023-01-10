@@ -16,11 +16,21 @@ import { injectable } from "inversify";
 import ErrorManager from "@thijmen-os/errormanager";
 
 //Types
-import { MimeTypes, OSSettings, ApplicationMetaData } from "@thijmen-os/common";
+import {
+  MimeTypes,
+  OSSettings,
+  ApplicationMetaData,
+  PermissionRequestDto,
+} from "@thijmen-os/common";
 import BackgroundOptions from "./individualSettings/BackgroundOptions";
 import javascriptOs from "../../../inversify.config";
 import SettingsMethodShape from "./settingsMethodShape";
-import { FetchSettings } from "@providers/filesystemEndpoints/settings";
+import {
+  FetchSettings,
+  GrantApplicationPermission,
+  RevokeAllApplicationPermissions,
+  RevokeApplicationPermission,
+} from "@providers/filesystemEndpoints/settings";
 
 @injectable()
 class Settings implements SettingsMethodShape {
@@ -37,6 +47,10 @@ class Settings implements SettingsMethodShape {
     if (settings) this._settings = settings;
   }
 
+  public async RefreshSettings(): Promise<void> {
+    this.Initialise();
+  }
+
   DefaultApplication(mimeType: MimeTypes): ApplicationMetaData | undefined {
     return this._settings.apps.installedApps.find(
       (app) =>
@@ -46,6 +60,16 @@ class Settings implements SettingsMethodShape {
 
   Background(): BackgroundOptions {
     return javascriptOs.resolve(BackgroundOptions);
+  }
+
+  public async GrantPermissionsToApplication(props: PermissionRequestDto) {
+    await GrantApplicationPermission(props);
+  }
+  public async RevokeApplicationPermission(props: PermissionRequestDto) {
+    await RevokeApplicationPermission(props);
+  }
+  public async RevokeAllApplicationPermissions(applicationId: string) {
+    await RevokeAllApplicationPermissions(applicationId);
   }
 }
 

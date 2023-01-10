@@ -1,5 +1,10 @@
 import api from "./api";
-import { ApplicationMetaDataObject, OSSettings } from "@thijmen-os/common";
+import {
+  ApplicationMetaDataObject,
+  OSSettings,
+  PermissionRequestDto,
+  Permissions,
+} from "@thijmen-os/common";
 
 export async function FetchInstalledApplications(): Promise<
   Array<ApplicationMetaDataObject>
@@ -22,5 +27,22 @@ export async function ChangeBackground(props: string): Promise<string> {
 
 export async function GetBackground(): Promise<string> {
   const { data } = await api.get("/settings/getBackground");
+  return data;
+}
+
+export async function GrantApplicationPermission(props: PermissionRequestDto) {
+  const { data } = await api.post("/settings/grantPermission", props);
+  return data;
+}
+
+export async function RevokeApplicationPermission(props: PermissionRequestDto) {
+  const { data } = await api.delete("/settings/grantPermission", props);
+  return data;
+}
+
+export async function RevokeAllApplicationPermissions(applicationId: string) {
+  const { data } = await api.delete("/settings/allPermissions", {
+    applicationId: applicationId,
+  });
   return data;
 }

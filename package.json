@@ -31,7 +31,7 @@
     "@thijmen-os/errormanager": "^1.0.2",
     "@thijmen-os/eslint-config": "^1.0.0",
     "@thijmen-os/graphics": "^2.0.3",
-    "@thijmen-os/prompt": "^1.0.8",
+    "@thijmen-os/prompt": "^1.0.10",
     "@types/jqueryui": "^1.12.16",
     "cors": "^2.8.5",
     "eslint-plugin-import": "^2.26.0",

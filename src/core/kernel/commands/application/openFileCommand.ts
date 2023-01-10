@@ -1,7 +1,7 @@
 import { ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import { OpenFileType } from "@ostypes/KernelTypes";
+import { OpenFileType } from "@core/kernel/kernelTypes";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 class OpenFileCommand implements ICommand {

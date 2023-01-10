@@ -34,7 +34,7 @@ import { WaitForElm } from "@thijmen-os/graphics";
 
 //Types
 import { Directory, IconMetadata } from "@thijmen-os/common";
-import { OpenFileType } from "@ostypes/KernelTypes";
+import { OpenFileType } from "@core/kernel/kernelTypes";
 import ISettings from "@core/settings/settingsMethodShape";
 import {
   ApplicationInstance,

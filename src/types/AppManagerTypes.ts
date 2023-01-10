@@ -8,6 +8,11 @@ export enum EventName {
   OpenFile = "openFile",
   DirectoryCreated = "directoryCreated",
   Error = "error",
+
+  PermissionGranted = "permissionGranted",
+  PermissionNotGranted = "permissionNotGranted",
+
+  PermissionRevoked = "permissionRevoked",
 }
 
 export interface ApplicationInstance {
