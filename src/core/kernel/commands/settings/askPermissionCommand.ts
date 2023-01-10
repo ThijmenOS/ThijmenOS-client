@@ -26,6 +26,8 @@ class AskPermissionCommand implements ICommand {
       (permission) => permission === this.props.permission
     );
 
+    console.log(this.props.permission);
+
     if (permissionAlreadyGranted)
       return new CommandReturn(true, EventName.PermissionGranted);
 

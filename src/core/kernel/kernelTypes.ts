@@ -23,6 +23,8 @@ export enum ValidMethods {
   //Settings
   changeBackground = "changeBackground",
   askPermission = "askPermission",
+  revokePermission = "revokePermission",
+  revokeAllPermissions = "revokeAllPermissions",
 }
 
 export type KernelMethods = { [key in ValidMethods]: Class<ICommand> };
