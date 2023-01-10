@@ -25,7 +25,6 @@ class CreateWindow implements CreateApplicationWindowMethodShape {
   private windowId?: string;
 
   public Application(fileIcon: ApplicationMetaData) {
-    console.log(fileIcon);
     this.windowFileLocation = fileIcon.exeLocation;
     this.windowTitle = fileIcon.name;
     this.windowIconLocation = fileIcon.iconLocation;
