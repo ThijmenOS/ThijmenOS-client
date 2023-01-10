@@ -53,7 +53,7 @@ class FileIcon implements IFileIcon {
   public metaData: IconMetadataShape = {
     name: "",
     exeLocation: "",
-    icon: "",
+    iconLocation: "",
     mimeType: MimeTypes.thijm,
   };
 
@@ -84,7 +84,7 @@ class FileIcon implements IFileIcon {
     return {
       name: fileName,
       exeLocation: location,
-      icon: this.FileIcon(fileExtension),
+      iconLocation: this.FileIcon(fileExtension),
       mimeType: fileExtension,
     };
   }
@@ -119,7 +119,7 @@ class FileIcon implements IFileIcon {
     return {
       name: applicationProperties.name,
       exeLocation: applicationProperties.exeLocation,
-      icon: `${host}/static/` + applicationProperties.icon,
+      iconLocation: `${host}/static/` + applicationProperties.iconLocation,
       mimeType: MimeTypes.thijm,
     };
   }
@@ -201,7 +201,7 @@ class FileIcon implements IFileIcon {
     }
 
     const iconIdentifier = this.InitialiseIconElements();
-    this.RenderIcon(iconMetaData.name, iconMetaData.icon);
+    this.RenderIcon(iconMetaData.name, iconMetaData.iconLocation);
     this.InitialiseIconBehaviour(iconIdentifier, iconMetaData);
   }
 }

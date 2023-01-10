@@ -37,7 +37,6 @@ import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 import AskPermissionCommand from "./commands/settings/askPermissionCommand";
-import { RevokeApplicationPermission } from "@providers/filesystemEndpoints/settings";
 import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
 import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 
