@@ -3,7 +3,6 @@ import {
   ApplicationMetaDataObject,
   OSSettings,
   PermissionRequestDto,
-  Permissions,
 } from "@thijmen-os/common";
 
 export async function FetchInstalledApplications(): Promise<
