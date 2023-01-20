@@ -137,12 +137,12 @@ class ApplicationManager
     });
   }
 
-  public OpenFile(file: OpenFileType): void {
+  public OpenFile(file: OpenFileType): boolean {
     const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 
     if (!DefaultAppToOpen) {
       this.OpenFileWithApplication(file);
-      return;
+      return false;
     }
 
     const application = this.OpenExecutable(DefaultAppToOpen);
@@ -153,6 +153,8 @@ class ApplicationManager
       system,
       EventName.OpenFile
     );
+
+    return true;
   }
 
   public OpenExecutable(iconMetadata: ApplicationMetaData): ApplicationWindow {
@@ -166,20 +168,20 @@ class ApplicationManager
     }
     const applicationWindow = this._window.Application(iconMetadata);
 
-    const applicationInstance = this.openApps.find(
-      (instance) =>
-        instance.applicationId === targetedApplication.applicationIdentifier
+    const applicationInstance = this.getApplicationFromOpenApps(
+      targetedApplication.applicationIdentifier
     );
-    if (applicationInstance) {
+
+    if (applicationInstance instanceof ApplicationInstance) {
       applicationInstance.applicationWindows.push(applicationWindow);
     } else {
-      const instance: ApplicationInstance = {
-        instanceId: GenerateUUID(),
-        applicationId: targetedApplication.applicationIdentifier,
-        applicationWindows: [applicationWindow],
-      };
-
-      this.openApps.push(instance);
+      this.openApps.push(
+        new ApplicationInstance({
+          instanceId: GenerateUUID(),
+          applicationId: targetedApplication.applicationIdentifier,
+          applicationWindows: [applicationWindow],
+        })
+      );
     }
 
     return applicationWindow;
@@ -193,7 +195,7 @@ class ApplicationManager
     );
   }
 
-  public CloseExecutable(targetWindowHash: string): void {
+  public CloseExecutable(targetWindowHash: string) {
     const targetApplicationInstanceIndex = this.openApps.findIndex((instance) =>
       instance.applicationWindows.some(
         (window) => window.windowOptions.windowIdentifier === targetWindowHash
@@ -205,10 +207,11 @@ class ApplicationManager
       (window) => window.windowOptions.windowIdentifier === targetWindowHash
     );
 
-    if (targetWindowIndex !== -1)
+    if (targetWindowIndex !== -1) {
       this.openApps[targetApplicationInstanceIndex].applicationWindows[
         targetWindowIndex
       ].Destroy();
+    }
 
     this.openApps[targetApplicationInstanceIndex].applicationWindows.splice(
       targetWindowIndex,
@@ -220,8 +223,6 @@ class ApplicationManager
     ) {
       this.openApps.splice(targetApplicationInstanceIndex, 1);
     }
-
-    console.log(this.openApps);
   }
 
   public async SendDataToApp<T>(

@@ -11,14 +11,27 @@ export enum EventName {
 
   PermissionGranted = "permissionGranted",
   PermissionNotGranted = "permissionNotGranted",
-
   PermissionRevoked = "permissionRevoked",
+
+  OpenedExternalApplication = "OpenedExternalApplication",
 }
 
-export interface ApplicationInstance {
+interface ApplicationInstanceShape {
   instanceId: string;
   applicationId: string;
   applicationWindows: Array<ApplicationWindow>;
+}
+
+export class ApplicationInstance implements ApplicationInstanceShape {
+  instanceId: string;
+  applicationId: string;
+  applicationWindows: Array<ApplicationWindow>;
+
+  constructor(props: ApplicationInstance) {
+    this.applicationId = props.applicationId;
+    this.instanceId = props.instanceId;
+    this.applicationWindows = props.applicationWindows;
+  }
 }
 
 export const system = "system";

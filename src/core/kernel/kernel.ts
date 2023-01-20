@@ -109,13 +109,8 @@ class Kernel implements KernelMethodShape {
 
       const command = this.kernelMethods[props.method as ValidMethods];
 
-      const commandProps = {
-        applicationId: applicationId,
-        ...props.params,
-      };
-
       const result = await this._mediator.send(
-        new command(commandProps),
+        new command(props.params),
         applicationId
       );
 
