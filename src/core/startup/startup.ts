@@ -28,19 +28,25 @@ class Startup implements StartupMethodShape {
   private readonly _kernel: Kernel;
   private readonly _appManager: ApplicationManager;
   private readonly _settings: Settings;
+  private readonly _authenticationGuiProvider: AuthenticationGuiShape;
 
   constructor(
     @inject(types.Kernel) kernel: Kernel,
     @inject(types.AppManager) appManager: ApplicationManager,
-    @inject(types.Settings) settings: Settings
+    @inject(types.Settings) settings: Settings,
+    @inject(types.AuthorizationGui) authenticationGui: AuthenticationGuiShape
   ) {
     this._kernel = kernel;
     this._appManager = appManager;
     this._settings = settings;
+    this._authenticationGuiProvider = authenticationGui;
   }
 
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
+
+    this._authenticationGuiProvider.InitialiseHtml();
+
     await this._settings.Background().Get();
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();

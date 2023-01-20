@@ -1,0 +1,25 @@
+.thijmen-os-login-page {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: 100;
+  background-color: aliceblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username-field-hidden {
+  display: none;
+}
+
+.user-authenticated {
+  animation: authenticated 0.1s ease-in-out 0s 1 normal forwards;
+}
+
+@keyframes authenticated {
+  to {
+    opacity: 0;
+    display: none;
+  }
+}

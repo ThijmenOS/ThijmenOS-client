@@ -1,0 +1,3 @@
+interface AuthenticationGuiShape {
+  InitialiseHtml(): void;
+}

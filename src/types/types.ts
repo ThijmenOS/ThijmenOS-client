@@ -12,6 +12,8 @@ const types = {
   ErrorManager: Symbol.for("ErrorManager"),
   Cache: Symbol.for("Cache"),
   Mediator: Symbol.for("Mediator"),
+  Authorization: Symbol.for("Authorization"),
+  AuthorizationGui: Symbol.for("AuthorizationGui"),
 };
 
 export default types;
