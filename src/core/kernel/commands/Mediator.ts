@@ -14,7 +14,7 @@ class Mediator {
 
   public async send(command: ICommand, requestingApplicationId: string) {
     if (command.requiredPermission === undefined) {
-      return command.Handle();
+      return command.Handle(requestingApplicationId);
     }
 
     const applicationCanExecuteCommand = await this.validatePermission(
@@ -28,7 +28,7 @@ class Mediator {
         EventName.Error
       );
 
-    return command.Handle();
+    return command.Handle(requestingApplicationId);
   }
 
   private async validatePermission(

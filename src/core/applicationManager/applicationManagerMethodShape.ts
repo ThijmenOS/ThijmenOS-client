@@ -9,7 +9,7 @@ interface ApplicationManager {
   RefreshDesktopApps(): Promise<void>;
   OpenFileWithApplication(props: OpenFileType): void;
   OpenExecutable(applicationDetails: IconMetadata): ApplicationWindow;
-  OpenFile(file: OpenFileType): void;
+  OpenFile(file: OpenFileType): boolean;
   CheckIfAppIsOpen(appName: string): boolean;
   CloseExecutable(targetWindow: string): void;
   SendDataToApp<T>(

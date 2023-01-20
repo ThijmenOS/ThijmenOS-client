@@ -40,6 +40,17 @@ class AppManagerPrivateMethods {
         .ConstructFileIcon(file.filePath)
     );
   }
+
+  protected getApplicationFromOpenApps(
+    applicationId: string
+  ): ApplicationInstance | boolean {
+    const applicationInstance = this.openApps.find(
+      (instance) => instance.applicationId === applicationId
+    );
+
+    if (applicationInstance) return applicationInstance;
+    else return false;
+  }
 }
 
 export default AppManagerPrivateMethods;

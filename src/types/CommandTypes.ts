@@ -3,7 +3,9 @@ import { EventName } from "./AppManagerTypes";
 
 export interface ICommand {
   requiredPermission?: Permissions;
-  Handle():
+  Handle(
+    applicationId?: string
+  ):
     | CommandReturn<unknown>
     | Promise<CommandReturn<unknown>>
     | Promise<void>
