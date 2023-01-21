@@ -1,161 +1,48 @@
 import types from "@ostypes/types";
 import AuthorizationMethodShape from "@providers/authentication/authenticationMethodShape";
-import {
-  AuthenticationMethods,
-  singinAction,
-  UserClass,
-} from "@providers/authentication/user";
+import { SigninActionShape } from "@providers/authentication/user";
 import { ClassOperation } from "@thijmen-os/common";
-import {
-  AddElement,
-  AddOrRemoveClass,
-  CreateElementFromString,
-  GetElementByClass,
-} from "@thijmen-os/graphics";
+import { AddOrRemoveClass } from "@thijmen-os/graphics";
 import { inject } from "inversify";
 import { injectable } from "inversify/lib/annotation/injectable";
-import formTemplate from "./template";
-import ErrorManager from "@thijmen-os/errormanager";
+import { AuthenticationForm } from "./authenticationFromElement";
 
 @injectable()
 class AuthenticationGui implements AuthenticationGuiShape {
   private readonly _authorization: AuthorizationMethodShape;
 
-  private authorizationFormContainerElement?: HTMLDivElement;
-  private authorizationFormElement?: HTMLFormElement;
-  private usernameField?: HTMLInputElement;
-  private passwordField?: HTMLInputElement;
-  private usernametextField?: HTMLParagraphElement;
-  private authentciationSelectorElement?: HTMLParagraphElement;
-  private authenticationStateMessage?: HTMLParagraphElement;
-
-  private authenticationMethod: AuthenticationMethods =
-    AuthenticationMethods.Password;
+  private readonly authenticationForm: AuthenticationForm;
 
   constructor(
     @inject(types.Authentication) authorization: AuthorizationMethodShape
   ) {
     this._authorization = authorization;
+    this.authenticationForm = new AuthenticationForm();
   }
 
   public Authenticate() {
-    this.InitialiseElements();
-
+    this.authenticationForm.SwitchSigninMethod();
+    this.authenticationForm.SubmitEvent((signInAction: SigninActionShape) =>
+      this.SigninSubmitted(signInAction)
+    );
     this.HideUsernameIfOneUser();
-    this.InitialiseSubmitBehaviour();
-    this.InitialiseAuthenticationMethodBehaviour();
 
-    this.AddElementToDom();
-  }
-
-  private InitialiseElements() {
-    this.authorizationFormContainerElement =
-      CreateElementFromString<HTMLDivElement>(formTemplate);
-
-    this.authorizationFormElement = GetElementByClass<HTMLFormElement>(
-      this.authorizationFormContainerElement,
-      "authorization-form"
-    );
-
-    this.usernameField = GetElementByClass<HTMLInputElement>(
-      this.authorizationFormContainerElement,
-      "authorization-username-field"
-    );
-
-    this.passwordField = GetElementByClass<HTMLInputElement>(
-      this.authorizationFormElement,
-      "authorization-password-field"
-    );
-
-    this.usernametextField = GetElementByClass<HTMLInputElement>(
-      this.authorizationFormContainerElement,
-      "authorization-form-username"
-    );
-
-    this.authentciationSelectorElement =
-      GetElementByClass<HTMLParagraphElement>(
-        this.authorizationFormElement,
-        "authentication-method-selector"
-      );
-
-    this.authenticationStateMessage = GetElementByClass<HTMLParagraphElement>(
-      this.authorizationFormContainerElement,
-      "authorization-failed"
-    );
-  }
-
-  private AddElementToDom() {
     const parentElement = document.getElementById("thijmen-os-login-page");
 
     if (!parentElement) throw new Error();
 
-    AddElement(this.authorizationFormContainerElement!, parentElement);
-  }
-
-  private InitialiseSubmitBehaviour() {
-    if (!this.authorizationFormElement) {
-      ErrorManager.fatalError();
-      return;
-    }
-
-    this.authorizationFormElement.addEventListener(
-      "submit",
-      (event: SubmitEvent) => this.SigninSubmitted(event)
-    );
-  }
-
-  private InitialiseAuthenticationMethodBehaviour() {
-    if (!this.authentciationSelectorElement) {
-      return;
-    }
-
-    this.authentciationSelectorElement.addEventListener("click", () =>
-      this.SwitchAuthenticationMethod()
-    );
-  }
-
-  private SwitchAuthenticationMethod() {
-    this.authenticationMethod =
-      this.authenticationMethod === AuthenticationMethods.Password
-        ? AuthenticationMethods.Pincode
-        : AuthenticationMethods.Password;
-
-    if (!this.authentciationSelectorElement || !this.passwordField) {
-      return;
-    }
-
-    let displayText;
-    let placeholder;
-
-    if (this.authenticationMethod === AuthenticationMethods.Password) {
-      displayText = "Sigin with pincode";
-      placeholder = "password";
-    } else {
-      displayText = "Signin with password";
-      placeholder = "pincode";
-    }
-
-    this.authentciationSelectorElement.innerHTML = displayText;
-    this.passwordField.placeholder = placeholder;
+    this.authenticationForm.Render(parentElement);
   }
 
   private async HideUsernameIfOneUser() {
     const onlyOneUserRegisterd =
       await this._authorization.CheckForsingleUserAccount();
 
-    if (!onlyOneUserRegisterd) return;
-    if (!this.usernameField) return;
+    if (!onlyOneUserRegisterd) {
+      return;
+    }
 
-    AddOrRemoveClass(
-      [this.usernameField],
-      ["username-field-hidden"],
-      ClassOperation.ADD
-    );
-
-    const user = onlyOneUserRegisterd as UserClass;
-
-    this.usernametextField!.innerHTML = user.username;
-    return;
+    this.authenticationForm.UserKnown(onlyOneUserRegisterd.username);
   }
 
   public RemoveAuthorization(): void {
@@ -174,23 +61,13 @@ class AuthenticationGui implements AuthenticationGuiShape {
     );
   }
 
-  private async SigninSubmitted(event: SubmitEvent) {
-    event.preventDefault();
-
-    if (!this.usernameField || !this.passwordField) return;
-
-    const loginInformation = new singinAction({
-      username: this.usernameField.value,
-      authenticationInput: this.passwordField.value,
-      method: this.authenticationMethod,
-    });
-
+  private async SigninSubmitted(signinAction: SigninActionShape) {
     const userAuthenticated = await this._authorization.ValidateLogin(
-      loginInformation
+      signinAction
     );
 
     if (!userAuthenticated) {
-      this.authenticationStateMessage!.style.visibility = "visible";
+      this.authenticationForm.AuthenticationError();
     }
 
     if (userAuthenticated) {

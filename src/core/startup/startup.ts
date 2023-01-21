@@ -49,7 +49,7 @@ class Startup implements StartupMethodShape {
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
 
-    if (!this._authenticationProvider.UserLoggedIn()) {
+    if (!this._authenticationProvider.CheckAuthenticationState()) {
       this._authenticationGuiProvider.Authenticate();
 
       document

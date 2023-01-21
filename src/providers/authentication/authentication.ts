@@ -16,7 +16,7 @@ class Authentication implements AuthenticationMethodShape {
     this._memory = memory;
   }
 
-  public UserLoggedIn(): boolean {
+  public CheckAuthenticationState(): boolean {
     const authenticatedUser =
       this._memory.loadFromMemory<User>("authenticatedUser");
 
@@ -25,7 +25,7 @@ class Authentication implements AuthenticationMethodShape {
     return false;
   }
 
-  public async CheckForsingleUserAccount(): Promise<boolean | User> {
+  public async CheckForsingleUserAccount(): Promise<false | User> {
     this.userAccounts = await GetAllUsers();
 
     const moreThenOneUser = this.userAccounts.length > 1;
