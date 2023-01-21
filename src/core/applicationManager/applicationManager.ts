@@ -102,6 +102,8 @@ class ApplicationManager
   public async RefreshDesktopApps() {
     const cacheFiles =
       this._cache.loadFromMemory<Array<Directory>>("desktopFiles");
+
+    if (!cacheFiles) throw new Error();
     const allFiles = await ShowFilesInDir(this.desktopPath);
 
     const newFiles = allFiles.filter(
