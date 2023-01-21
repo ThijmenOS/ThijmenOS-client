@@ -10,7 +10,6 @@ import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
 class Authentication implements AuthenticationMethodShape {
   private readonly _memory: MemoryMethodShape;
 
-  private userAuthenticated: boolean | User = false;
   private userAccounts: Array<User> = new Array<User>();
 
   constructor(@inject(types.Cache) memory: MemoryMethodShape) {
@@ -37,15 +36,7 @@ class Authentication implements AuthenticationMethodShape {
     return this.userAccounts[0];
   }
 
-  private ValidateInputField(fieldValue: string): boolean {
-    if (typeof fieldValue !== "string") return false;
-    if (!fieldValue) return false;
-    if (!fieldValue.length) return false;
-
-    return true;
-  }
-
-  private LookupUser(username: string): boolean | User {
+  public LookupUser(username: string): boolean | User {
     if (!username) return false;
 
     const user = this.userAccounts.find(
@@ -78,8 +69,7 @@ class Authentication implements AuthenticationMethodShape {
     return this.ValidateCredentials(new UserClass(user as User), singinAction);
   }
 
-  private UserValidated(user: User) {
-    this.userAuthenticated = user;
+  public UserValidated(user: User) {
     const userAuthenticated = new CustomEvent("authenticated", {
       bubbles: true,
       cancelable: true,
@@ -94,7 +84,7 @@ class Authentication implements AuthenticationMethodShape {
     this._memory.saveToMemory<User>("authenticatedUser", user, true);
   }
 
-  private ValidateCredentials(
+  public ValidateCredentials(
     user: UserClass,
     singinAction: SigninActionShape
   ): boolean {

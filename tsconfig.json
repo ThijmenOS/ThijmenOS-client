@@ -27,11 +27,6 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": [
-    "src/**/*.ts",
-    "tests/**/*.ts",
-    "src/providers/gui/jsx/index.js",
-    "src/providers/gui/jsx/index.js"
-  ],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "*.json"],
   "exclude": ["node_modules"]
 }
