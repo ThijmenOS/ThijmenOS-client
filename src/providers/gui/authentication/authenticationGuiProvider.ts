@@ -3,7 +3,7 @@ import AuthorizationMethodShape from "@providers/authentication/authenticationMe
 import {
   AuthenticationMethods,
   singinAction,
-  User,
+  UserClass,
 } from "@providers/authentication/user";
 import { ClassOperation } from "@thijmen-os/common";
 import {
@@ -20,6 +20,7 @@ import ErrorManager from "@thijmen-os/errormanager";
 @injectable()
 class AuthenticationGui implements AuthenticationGuiShape {
   private readonly _authorization: AuthorizationMethodShape;
+
   private authorizationFormContainerElement?: HTMLDivElement;
   private authorizationFormElement?: HTMLFormElement;
   private usernameField?: HTMLInputElement;
@@ -138,9 +139,9 @@ class AuthenticationGui implements AuthenticationGuiShape {
     this.passwordField.placeholder = placeholder;
   }
 
-  private HideUsernameIfOneUser() {
+  private async HideUsernameIfOneUser() {
     const onlyOneUserRegisterd =
-      this._authorization.CheckForsingleUserAccount();
+      await this._authorization.CheckForsingleUserAccount();
 
     if (!onlyOneUserRegisterd) return;
     if (!this.usernameField) return;
@@ -151,13 +152,29 @@ class AuthenticationGui implements AuthenticationGuiShape {
       ClassOperation.ADD
     );
 
-    const user = onlyOneUserRegisterd as User;
+    const user = onlyOneUserRegisterd as UserClass;
 
     this.usernametextField!.innerHTML = user.username;
     return;
   }
 
-  private SigninSubmitted(event: SubmitEvent) {
+  public RemoveAuthorization(): void {
+    const loginWrapperElement = document.getElementById(
+      "thijmen-os-login-page"
+    );
+
+    AddOrRemoveClass(
+      [loginWrapperElement!],
+      ["user-authenticated"],
+      ClassOperation.ADD
+    );
+
+    loginWrapperElement!.addEventListener("animationend", () =>
+      loginWrapperElement?.remove()
+    );
+  }
+
+  private async SigninSubmitted(event: SubmitEvent) {
     event.preventDefault();
 
     if (!this.usernameField || !this.passwordField) return;
@@ -168,27 +185,16 @@ class AuthenticationGui implements AuthenticationGuiShape {
       method: this.authenticationMethod,
     });
 
-    const userAuthenticated =
-      this._authorization.ValidateLogin(loginInformation);
+    const userAuthenticated = await this._authorization.ValidateLogin(
+      loginInformation
+    );
 
     if (!userAuthenticated) {
       this.authenticationStateMessage!.style.visibility = "visible";
     }
 
     if (userAuthenticated) {
-      const loginWrapperElement = document.getElementById(
-        "thijmen-os-login-page"
-      );
-
-      AddOrRemoveClass(
-        [loginWrapperElement!],
-        ["user-authenticated"],
-        ClassOperation.ADD
-      );
-
-      loginWrapperElement!.addEventListener("animationend", () =>
-        loginWrapperElement?.remove()
-      );
+      this.RemoveAuthorization();
     }
   }
 }

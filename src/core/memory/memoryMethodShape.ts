@@ -4,5 +4,5 @@ export default interface MemoryMethodShape {
     object: T,
     localStorage?: boolean
   ): void;
-  loadFromMemory<T>(key: string): T;
+  loadFromMemory<T>(key: string): T | undefined;
 }

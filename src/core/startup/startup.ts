@@ -23,7 +23,6 @@ import ApplicationManager from "@core/applicationManager/applicationManagerMetho
 import Settings from "@core/settings/settingsMethodShape";
 import StartupMethodShape from "./startupMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
-import { User } from "@providers/authentication/user";
 
 @injectable()
 class Startup implements StartupMethodShape {
@@ -50,11 +49,16 @@ class Startup implements StartupMethodShape {
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
 
-    this._authenticationGuiProvider.Authenticate();
+    if (!this._authenticationProvider.UserLoggedIn()) {
+      this._authenticationGuiProvider.Authenticate();
 
-    document
-      .querySelector("#thijmen-os-login-page")!
-      .addEventListener("authenticated", () => this.userAuthenticated());
+      document
+        .querySelector("#thijmen-os-login-page")!
+        .addEventListener("authenticated", () => this.userAuthenticated());
+    } else {
+      this._authenticationGuiProvider.RemoveAuthorization();
+      this.userAuthenticated();
+    }
 
     UpdateTime();
 

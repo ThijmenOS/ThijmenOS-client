@@ -1,23 +1,34 @@
-import { injectable } from "inversify";
-import { userInfo } from "os";
+import MemoryMethodShape from "@core/memory/memoryMethodShape";
+import types from "@ostypes/types";
+import { GetAllUsers } from "@providers/filesystemEndpoints/authentication";
+import { User } from "@thijmen-os/common";
+import { inject, injectable } from "inversify";
 import AuthenticationMethodShape from "./authenticationMethodShape";
-import { AuthenticationMethods, SigninActionShape, User } from "./user";
+import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
+  private readonly _memory: MemoryMethodShape;
+
   private userAuthenticated: boolean | User = false;
+  private userAccounts: Array<User> = new Array<User>();
 
-  private userAccounts: Array<User> = [
-    new User({
-      userId: "1",
-      username: "testUser",
-      email: "test@thijmenbrand.nl",
-      password: "Welkom01",
-      pincode: "12345",
-    }),
-  ];
+  constructor(@inject(types.Cache) memory: MemoryMethodShape) {
+    this._memory = memory;
+  }
 
-  public CheckForsingleUserAccount(): boolean | User {
+  public UserLoggedIn(): boolean {
+    const authenticatedUser =
+      this._memory.loadFromMemory<User>("authenticatedUser");
+
+    if (authenticatedUser) return true;
+
+    return false;
+  }
+
+  public async CheckForsingleUserAccount(): Promise<boolean | User> {
+    this.userAccounts = await GetAllUsers();
+
     const moreThenOneUser = this.userAccounts.length > 1;
     if (moreThenOneUser) {
       return false;
@@ -37,51 +48,73 @@ class Authentication implements AuthenticationMethodShape {
   private LookupUser(username: string): boolean | User {
     if (!username) return false;
 
-    const user = this.userAccounts.find((user) => user.username === username);
+    const user = this.userAccounts.find(
+      (user) =>
+        user.username.toLocaleLowerCase() === username.toLocaleLowerCase()
+    );
 
     if (!user) return false;
     return user;
   }
 
-  public ValidateLogin(singinAction: SigninActionShape): boolean {
+  public async ValidateLogin(
+    singinAction: SigninActionShape
+  ): Promise<boolean> {
     if (singinAction.username) {
       const user = this.LookupUser(singinAction.username);
 
       if (!user) return false;
 
-      return this.ValidateCredentials(user as User, singinAction);
+      return this.ValidateCredentials(
+        new UserClass(user as User),
+        singinAction
+      );
     }
 
-    const user = this.CheckForsingleUserAccount();
+    const user = await this.CheckForsingleUserAccount();
 
     if (!user) throw new Error();
 
-    const userValidated = this.ValidateCredentials(user as User, singinAction);
+    return this.ValidateCredentials(new UserClass(user as User), singinAction);
+  }
 
-    if (userValidated) {
-      this.userAuthenticated = user;
-      const userAuthenticated = new CustomEvent("authenticated", {
-        bubbles: true,
-        cancelable: true,
-        composed: false,
-        detail: user,
-      });
-      document
-        .querySelector("#thijmen-os-login-page")
-        ?.dispatchEvent(userAuthenticated);
-    }
+  private UserValidated(user: User) {
+    this.userAuthenticated = user;
+    const userAuthenticated = new CustomEvent("authenticated", {
+      bubbles: true,
+      cancelable: true,
+      composed: false,
+      detail: user,
+    });
 
-    return userValidated;
+    document
+      .querySelector("#thijmen-os-login-page")
+      ?.dispatchEvent(userAuthenticated);
+
+    this._memory.saveToMemory<User>("authenticatedUser", user, true);
   }
 
   private ValidateCredentials(
-    user: User,
+    user: UserClass,
     singinAction: SigninActionShape
   ): boolean {
-    if (singinAction.method === AuthenticationMethods.Password)
-      return user.ValidatePassword(singinAction.authenticationInput);
+    let userAuthenticated = false;
 
-    return user.ValidatePincode(singinAction.authenticationInput);
+    if (singinAction.method === AuthenticationMethods.Password) {
+      userAuthenticated = user.ValidatePassword(
+        singinAction.authenticationInput
+      );
+    } else {
+      userAuthenticated = user.ValidatePincode(
+        singinAction.authenticationInput
+      );
+    }
+
+    if (userAuthenticated) {
+      this.UserValidated(user);
+    }
+
+    return userAuthenticated;
   }
 }
 

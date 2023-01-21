@@ -1,8 +1,10 @@
-import { SigninActionShape, User } from "./user";
+import { User } from "@thijmen-os/common";
+import { SigninActionShape } from "./user";
 
 interface AuthenticationMethodShape {
-  CheckForsingleUserAccount(): boolean | User;
-  ValidateLogin(singinAction: SigninActionShape): boolean;
+  UserLoggedIn(): boolean;
+  CheckForsingleUserAccount(): Promise<boolean | User>;
+  ValidateLogin(singinAction: SigninActionShape): Promise<boolean>;
 }
 
 export default AuthenticationMethodShape;

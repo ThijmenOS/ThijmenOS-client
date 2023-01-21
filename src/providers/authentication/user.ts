@@ -1,5 +1,4 @@
 import { UserMethodShape } from "./userMethodShape";
-import {} from "crypto";
 
 export enum AuthenticationMethods {
   Password,
@@ -32,7 +31,7 @@ export interface UserShape {
   pincode?: string;
 }
 
-export class User implements UserShape, UserMethodShape {
+export class UserClass implements UserShape, UserMethodShape {
   userId: string;
   username: string;
   email: string;
