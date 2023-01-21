@@ -1,3 +1,3 @@
 interface AuthenticationGuiShape {
-  InitialiseHtml(): void;
+  Authenticate(): void;
 }

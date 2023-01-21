@@ -21,8 +21,8 @@ import CreateWindow from "@core/applicationWindow/createApplicationWindow";
 import IWindow from "@core/applicationWindow/interfaces/applicationWindowMethodShape";
 import ICreateWindow from "@core/applicationWindow/interfaces/createApplicationWindowMethodShape";
 import Mediator from "@core/kernel/commands/Mediator";
-import AuthorizationMethodShape from "@providers/authorization/authorizationMethodShape";
-import Authorization from "@providers/authorization/authorization";
+import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
+import Authentication from "@providers/authentication/authentication";
 import AuthenticationGui from "@providers/gui/authentication/authenticationGuiProvider";
 import AuthenticationMethodShapeGui from "@providers/gui/authentication/authenticationGuiProvider";
 
@@ -41,11 +41,11 @@ javascriptOs.bind<IWindow>(types.window).to(Window);
 javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<Mediator>(types.Mediator).to(Mediator);
 javascriptOs
-  .bind<AuthorizationMethodShape>(types.Authorization)
-  .to(Authorization)
+  .bind<AuthenticationMethodShape>(types.Authentication)
+  .to(Authentication)
   .inSingletonScope();
 javascriptOs
-  .bind<AuthenticationMethodShapeGui>(types.AuthorizationGui)
+  .bind<AuthenticationMethodShapeGui>(types.AuthenticationGui)
   .to(AuthenticationGui);
 
 export default javascriptOs;
