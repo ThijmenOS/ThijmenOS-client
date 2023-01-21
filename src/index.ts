@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 //TODO: create NPX tool to start developing an thijmen-os application - it creates config file and index files.
 
 import "reflect-metadata";

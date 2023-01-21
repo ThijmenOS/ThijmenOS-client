@@ -1,24 +1,18 @@
-import type { Config } from "@jest/types";
+import { pathsToModuleNameMapper } from "ts-jest";
+import type { JestConfigWithTsJest } from "ts-jest";
+import { compilerOptions } from "./tsconfig.json";
 
-const config: Config.InitialOptions = {
+const config: JestConfigWithTsJest = {
   rootDir: "./",
   preset: "ts-jest",
   resetMocks: true,
-  moduleNameMapper: {
-    "^@ostypes/(.*)$": "<rootDir>/src/types/$1",
-    "^@drivers/(.*)$": "<rootDir>/src/drivers/$1",
-    "^@core/(.*)$": "<rootDir>/src/core/$1",
-    "^@utils/(.*)$": "<rootDir>/src/utils/$1",
-    "^@icon/(.*)$": "<rootDir>/src/fileIcon/$1",
-    "^@window/(.*)$": "<rootDir>/src/window/$1",
-    "^@static/(.*)$": "<rootDir>/src/static/$1",
-    "^@config/(.*)$": "<rootDir>/src/config/$1",
-    "^@common/(.*)$": "<rootDir>/../@thijmen-os/common/types/$1",
-  },
+  modulePaths: [compilerOptions.baseUrl],
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
   verbose: true,
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
+  testEnvironment: "jsdom",
 };
 
 export default config;

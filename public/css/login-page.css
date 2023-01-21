@@ -1,0 +1,97 @@
+.thijmen-os-login-page {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: 100;
+  background-image: url("http://localhost:8080/static/C/Images/wallpapers/mountain.jpg");
+  background-size: cover;
+  background-color: aliceblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username-field-hidden {
+  display: none;
+}
+
+.user-authenticated {
+  animation: authenticated 0.3s ease-in-out 0s 1 normal forwards;
+}
+
+@keyframes authenticated {
+  to {
+    opacity: 0;
+    display: none;
+  }
+}
+
+.authorization-form-container {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(204, 235, 255);
+  opacity: 0.95;
+  padding: 2.5em;
+  border-radius: 15px;
+  border: 0.5px solid rgb(193, 230, 255);
+  width: 25%;
+}
+
+.authorization-form-container .profile-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1em 0em;
+}
+
+.authorization-form-container .profile-image p {
+  display: inline-block;
+  width: fit-content;
+}
+
+.authorization-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorization-form input {
+  margin: 1em 0em;
+  padding: 0.5em;
+  border: none;
+  border-radius: 10px;
+  padding: 1em;
+}
+
+.authorization-form input[type="submit"] {
+  background-color: rgb(31, 132, 255);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.authorization-form input[type="submit"]:hover {
+  background-color: rgb(9, 120, 255);
+}
+
+.user-profile-picture {
+  height: 5em;
+  width: 5em;
+}
+
+.authentication-method-selector {
+  font-size: 0.7em;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 0;
+}
+
+.authorization-form-username {
+  margin-bottom: 0;
+}
+
+.authorization-failed {
+  margin-top: 0;
+  font-size: 0.7em;
+  color: red;
+  visibility: hidden;
+}
