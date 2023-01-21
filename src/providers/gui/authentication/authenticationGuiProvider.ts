@@ -26,6 +26,7 @@ class AuthenticationGui implements AuthenticationGuiShape {
   private passwordField?: HTMLInputElement;
   private usernametextField?: HTMLParagraphElement;
   private authentciationSelectorElement?: HTMLParagraphElement;
+  private authenticationStateMessage?: HTMLParagraphElement;
 
   private authenticationMethod: AuthenticationMethods =
     AuthenticationMethods.Password;
@@ -75,6 +76,11 @@ class AuthenticationGui implements AuthenticationGuiShape {
         this.authorizationFormElement,
         "authentication-method-selector"
       );
+
+    this.authenticationStateMessage = GetElementByClass<HTMLParagraphElement>(
+      this.authorizationFormContainerElement,
+      "authorization-failed"
+    );
   }
 
   private AddElementToDom() {
@@ -164,6 +170,10 @@ class AuthenticationGui implements AuthenticationGuiShape {
 
     const userAuthenticated =
       this._authorization.ValidateLogin(loginInformation);
+
+    if (!userAuthenticated) {
+      this.authenticationStateMessage!.style.visibility = "visible";
+    }
 
     if (userAuthenticated) {
       const loginWrapperElement = document.getElementById(

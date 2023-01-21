@@ -84,3 +84,14 @@
   text-align: center;
   margin-top: 0;
 }
+
+.authorization-form-username {
+  margin-bottom: 0;
+}
+
+.authorization-failed {
+  margin-top: 0;
+  font-size: 0.7em;
+  color: red;
+  visibility: hidden;
+}

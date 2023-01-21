@@ -6,6 +6,7 @@ const template = `
         src="http://localhost:8080/static/C/OperatingSystem/Icons/default_profile_picture.svg"
       />
       <p class="authorization-form-username"></p>
+      <p class="authorization-failed">Incorrect credentials</p>
     </div>
     <form id="authorization-form" class="authorization-form">
       <input
