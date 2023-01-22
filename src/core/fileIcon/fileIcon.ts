@@ -71,10 +71,11 @@ class FileIcon implements IFileIcon {
       return null;
     }
 
-    const fileExtension = fileName.split(".").at(-1) as MimeTypes;
+    const fileArray = fileName.split(".");
+    let fileExtension = fileArray.at(-1) as MimeTypes;
 
-    if (!fileExtension) {
-      return null;
+    if (fileArray.length === 1) {
+      fileExtension = MimeTypes.dir;
     }
 
     if (fileExtension === MimeTypes.thijm) {

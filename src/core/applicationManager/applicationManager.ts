@@ -125,11 +125,11 @@ class ApplicationManager
       return;
     }
 
-    new SelectApplication(resultTitles, (selectedApp: string) => {
+    new SelectApplication(resultTitles, async (selectedApp: string) => {
       const app = installedAppsWithDesiredMimetype.find(
         (app) => app.name === selectedApp
       )!;
-      const openedApp = this.OpenExecutable(app);
+      const openedApp = await this.OpenExecutable(app, false);
       this.SendDataToApp<string>(
         openedApp.windowOptions.windowIdentifier,
         file.filePath,
@@ -139,7 +139,7 @@ class ApplicationManager
     });
   }
 
-  public OpenFile(file: OpenFileType): boolean {
+  public async OpenFile(file: OpenFileType): Promise<boolean> {
     const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 
     if (!DefaultAppToOpen) {
@@ -147,7 +147,7 @@ class ApplicationManager
       return false;
     }
 
-    const application = this.OpenExecutable(DefaultAppToOpen);
+    const application = await this.OpenExecutable(DefaultAppToOpen, false);
 
     this.SendDataToApp(
       application.windowOptions.windowIdentifier,
@@ -159,7 +159,10 @@ class ApplicationManager
     return true;
   }
 
-  public OpenExecutable(iconMetadata: ApplicationMetaData): ApplicationWindow {
+  public async OpenExecutable(
+    iconMetadata: ApplicationMetaData,
+    sendEvent = true
+  ): Promise<ApplicationWindow> {
     const targetedApplication = this._settings.settings.apps.installedApps.find(
       (x) => x.exeLocation === iconMetadata.exeLocation
     );
@@ -168,7 +171,8 @@ class ApplicationManager
       ErrorManager.applicationNotFoundError();
       throw new Error();
     }
-    const applicationWindow = this._window.Application(iconMetadata);
+
+    const applicationWindow = await this._window.Application(iconMetadata);
 
     const applicationInstance = this.getApplicationFromOpenApps(
       targetedApplication.applicationIdentifier
@@ -183,6 +187,15 @@ class ApplicationManager
           applicationId: targetedApplication.applicationIdentifier,
           applicationWindows: [applicationWindow],
         })
+      );
+    }
+
+    if (sendEvent) {
+      this.SendDataToApp<null>(
+        applicationWindow.windowOptions.windowIdentifier,
+        null,
+        "system",
+        EventName.StartedApplication
       );
     }
 

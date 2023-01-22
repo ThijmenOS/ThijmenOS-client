@@ -15,38 +15,34 @@ import ApplicationWindow from "./applicationWindow";
 import { windowOptions } from "./defaults";
 import { injectable } from "inversify";
 import GenerateUUID from "@utils/generateUUID";
+import ErrorManager from "@thijmen-os/errormanager";
 
 @injectable()
 class CreateWindow implements CreateApplicationWindowMethodShape {
-  private windowContent = "";
-  private windowFileLocation = "";
-  private windowTitle = "";
-  private windowIconLocation?: string;
-  private windowId?: string;
+  public Application(fileIcon: ApplicationMetaData): ApplicationWindow {
+    const windowId = GenerateUUID();
 
-  public Application(fileIcon: ApplicationMetaData) {
-    this.windowFileLocation = fileIcon.exeLocation;
-    this.windowTitle = fileIcon.name;
-    this.windowIconLocation = fileIcon.iconLocation;
-
-    this.windowId = GenerateUUID();
-
-    this.windowContent = `<iframe id='${this.windowId}' name='${this.windowId}' class='app-iframe' style="height: ${windowOptions.windowHeight}px; width: ${windowOptions.windowWidth}px;" src='${host}/static/${this.windowFileLocation}'></iframe>`;
-
-    return this.InitWindow();
-  }
-
-  private InitWindow(): ApplicationWindow {
     const window = new ApplicationWindow({
-      windowTitle: this.windowTitle,
-      iconLocation: this.windowIconLocation,
+      windowTitle: fileIcon.name,
+      iconLocation: fileIcon.iconLocation,
       windowHeight: windowOptions.windowHeight,
       windowWidth: windowOptions.windowWidth,
       windowType: windowOptions.windowType,
-      windowIdentifier: this.windowId!,
+      windowIdentifier: windowId,
     });
+
+    fetch(`${host}/static/${fileIcon.exeLocation}`).then((result) => {
+      if (!result.ok) {
+        window.Destroy();
+        ErrorManager.applicationNotFoundError();
+        throw new Error();
+      }
+    });
+
+    const applicationContent = `<iframe id='${windowId}' name='${windowId}' class='app-iframe' style="height: ${windowOptions.windowHeight}px; width: ${windowOptions.windowWidth}px;" src='${host}/static/${fileIcon.exeLocation}'></iframe>`;
+
     window.InitTemplate();
-    window.Render(this.windowContent);
+    window.Render(applicationContent);
     window.InitBehaviour();
 
     return window;

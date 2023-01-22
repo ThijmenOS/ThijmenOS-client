@@ -6,6 +6,7 @@ export enum EventName {
   TestCommand = "testCommand",
   SelfInvoked = "selfInvoked",
   OpenFile = "openFile",
+  StartedApplication = "startedApplication",
   DirectoryCreated = "directoryCreated",
   Error = "error",
 

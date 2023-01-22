@@ -1,5 +1,6 @@
 const fileIcons: { [key: string]: string } = {
   default: "default_file",
+  dir: "dir",
   accdb: "access",
   ai: "ai",
   asp: "asp",
