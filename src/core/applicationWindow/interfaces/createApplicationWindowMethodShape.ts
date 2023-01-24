@@ -1,6 +1,6 @@
 import { ApplicationMetaData } from "@thijmen-os/common";
-import Window from "../applicationWindow";
+import ApplicationWindow from "../applicationWindow";
 
 export default interface createApplicationWindowMethodShape {
-  Application(fileIcon: any | ApplicationMetaData): Window;
+  Application(fileIcon: any | ApplicationMetaData): ApplicationWindow;
 }

@@ -8,8 +8,8 @@ interface ApplicationManager {
   FindCorrespondingAppWithWindowHash(target: string): string;
   RefreshDesktopApps(): Promise<void>;
   OpenFileWithApplication(props: OpenFileType): void;
-  OpenExecutable(applicationDetails: IconMetadata): ApplicationWindow;
-  OpenFile(file: OpenFileType): boolean;
+  OpenExecutable(applicationDetails: IconMetadata): Promise<ApplicationWindow>;
+  OpenFile(file: OpenFileType): Promise<boolean>;
   CheckIfAppIsOpen(appName: string): boolean;
   CloseExecutable(targetWindow: string): void;
   SendDataToApp<T>(

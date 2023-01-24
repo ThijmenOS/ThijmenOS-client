@@ -14,8 +14,10 @@ class OpenFileCommand implements ICommand {
     this.props = props;
   }
 
-  Handle(): CommandReturn<boolean> {
-    const openedApplication = this._applicationManager.OpenFile(this.props);
+  async Handle(): Promise<CommandReturn<boolean>> {
+    const openedApplication = await this._applicationManager.OpenFile(
+      this.props
+    );
 
     return new CommandReturn<boolean>(
       openedApplication,
