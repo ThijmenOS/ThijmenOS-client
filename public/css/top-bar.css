@@ -25,15 +25,15 @@
   height: 100%;
 }
 
-.left-side *:not(#dynamic-props) {
-  margin-left: 1em;
-}
-
 .left-side *:not(.logo) {
   margin: 0;
   color: white;
   font-weight: 500;
   cursor: pointer;
+}
+
+.left-side *:not(#dynamic-props) {
+  margin-left: 1em;
 }
 
 #dynamic-props *:hover {

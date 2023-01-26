@@ -23,6 +23,7 @@ import ApplicationManager from "@core/applicationManager/applicationManagerMetho
 import Settings from "@core/settings/settingsMethodShape";
 import StartupMethodShape from "./startupMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
+import DesktopMethods from "@providers/desktop/desktopMethods";
 
 @injectable()
 class Startup implements StartupMethodShape {
@@ -31,25 +32,31 @@ class Startup implements StartupMethodShape {
   private readonly _settings: Settings;
   private readonly _authenticationGuiProvider: AuthenticationGuiShape;
   private readonly _authenticationProvider: AuthenticationMethodShape;
+  private readonly _desktop: DesktopMethods;
 
   constructor(
     @inject(types.Kernel) kernel: Kernel,
     @inject(types.AppManager) appManager: ApplicationManager,
     @inject(types.Settings) settings: Settings,
     @inject(types.AuthenticationGui) authenticationGui: AuthenticationGuiShape,
-    @inject(types.Authentication) authentication: AuthenticationMethodShape
+    @inject(types.Authentication) authentication: AuthenticationMethodShape,
+    @inject(types.Desktop) desktop: DesktopMethods
   ) {
     this._kernel = kernel;
     this._appManager = appManager;
     this._settings = settings;
     this._authenticationGuiProvider = authenticationGui;
     this._authenticationProvider = authentication;
+    this._desktop = desktop;
   }
 
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
 
-    if (!this._authenticationProvider.CheckAuthenticationState()) {
+    const userAuthenticated =
+      this._authenticationProvider.CheckAuthenticationState();
+
+    if (!userAuthenticated) {
       this._authenticationGuiProvider.Authenticate();
 
       document
@@ -78,7 +85,7 @@ class Startup implements StartupMethodShape {
     await this._settings.Background().Get();
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
-    this._appManager.ShowFilesOnDesktop();
+    this._desktop.LoadDesktop();
   }
 }
 
