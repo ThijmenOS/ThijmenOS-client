@@ -1,31 +1,29 @@
 .gg-options {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    transform: scale(var(--ggs,1));
-    width: 10px;
-    height: 1px;
-    color: white;
-    box-shadow:
-        -3px 4px 0 0,
-        3px -4px 0 0
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transform: scale(var(--ggs, 1));
+  width: 10px;
+  height: 1px;
+  color: white;
+  box-shadow: -3px 4px 0 0, 3px -4px 0 0;
 }
 .gg-options::after,
 .gg-options::before {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border: 1px solid;
-    border-radius: 100%
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid;
+  border-radius: 100%;
 }
 .gg-options::before {
-    top: -7px;
-    left: -4px
+  top: -7px;
+  left: -4px;
 }
 .gg-options::after {
-    bottom: -7px;
-    right: -4px
+  bottom: -7px;
+  right: -4px;
 }

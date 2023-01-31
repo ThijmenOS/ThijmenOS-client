@@ -1,13 +1,13 @@
 import { Mkdir, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import IAppManager from "@core/applicationManager/applicationManagerMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
+import DesktopMethods from "@providers/desktop/desktopMethods";
 
 class TouchCommand implements ICommand {
-  private appManager: IAppManager = javascriptOs.get<IAppManager>(
-    types.AppManager
+  private _desktop: DesktopMethods = javascriptOs.get<DesktopMethods>(
+    types.Desktop
   );
 
   private props: Mkdir;
@@ -20,7 +20,7 @@ class TouchCommand implements ICommand {
   public async Handle(): Promise<void> {
     await CreateFile(this.props);
 
-    this.appManager.RefreshDesktopApps();
+    this._desktop.RefreshDesktop();
   }
 }
 

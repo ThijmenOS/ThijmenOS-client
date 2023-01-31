@@ -14,6 +14,7 @@ const types = {
   Mediator: Symbol.for("Mediator"),
   Authentication: Symbol.for("Authentication"),
   AuthenticationGui: Symbol.for("AuthenticationGui"),
+  Desktop: Symbol.for("Desktop"),
 };
 
 export default types;

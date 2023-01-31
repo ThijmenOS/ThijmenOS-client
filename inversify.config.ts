@@ -25,6 +25,8 @@ import AuthenticationMethodShape from "@providers/authentication/authenticationM
 import Authentication from "@providers/authentication/authentication";
 import AuthenticationGui from "@providers/gui/authentication/authenticationGuiProvider";
 import AuthenticationMethodShapeGui from "@providers/gui/authentication/authenticationGuiProvider";
+import DesktopMethods from "@providers/desktop/desktopMethods";
+import Desktop from "@providers/desktop/desktop";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
@@ -47,5 +49,6 @@ javascriptOs
 javascriptOs
   .bind<AuthenticationMethodShapeGui>(types.AuthenticationGui)
   .to(AuthenticationGui);
+javascriptOs.bind<DesktopMethods>(types.Desktop).to(Desktop);
 
 export default javascriptOs;

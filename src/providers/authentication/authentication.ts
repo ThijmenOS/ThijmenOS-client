@@ -16,11 +16,11 @@ class Authentication implements AuthenticationMethodShape {
     this._memory = memory;
   }
 
-  public CheckAuthenticationState(): boolean {
+  public CheckAuthenticationState(): false | User {
     const authenticatedUser =
       this._memory.loadFromMemory<User>("authenticatedUser");
 
-    if (authenticatedUser) return true;
+    if (authenticatedUser) return authenticatedUser;
 
     return false;
   }

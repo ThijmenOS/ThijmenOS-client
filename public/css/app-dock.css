@@ -65,6 +65,7 @@
   display: none;
   z-index: 200;
 }
+
 .all-apps-container.all-apps-visible {
   display: block;
 }
@@ -82,15 +83,18 @@
 .app.app-in-all-apps {
   margin: 1pc;
 }
+
 .app-name-combination p {
   display: inline-block;
 }
+
 .app-name-combination {
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
 }
+
 .app-name-combination:hover {
   background-color: rgba(190, 190, 190, 0.95);
 }
