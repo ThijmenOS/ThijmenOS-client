@@ -1,6 +1,5 @@
 import { Mkdir, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import IAppManager from "@core/applicationManager/applicationManagerMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
