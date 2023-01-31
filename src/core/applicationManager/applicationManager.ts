@@ -65,6 +65,8 @@ class ApplicationManager implements ApplicationManagerMethodShape {
       file.mimeType
     );
 
+    console.log(file);
+
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.name);
 
     if (!resultTitles.length) {
