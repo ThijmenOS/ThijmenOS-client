@@ -24,7 +24,13 @@ class TouchCommand extends CommandAccessValidation implements ICommand {
     const validated = this.validateAccess(this.props.directoryPath, Access.w);
     if (!validated) return;
 
-    await CreateFile(this.props);
+    const userId = this.loadUserData().userId;
+
+    await CreateFile({
+      props: this.props,
+      userId: userId,
+      access: this.tempDefaultAccess,
+    });
 
     this._desktop.RefreshDesktop();
   }

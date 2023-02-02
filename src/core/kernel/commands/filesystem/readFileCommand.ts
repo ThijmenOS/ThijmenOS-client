@@ -16,7 +16,7 @@ class ReadFileCommand extends CommandAccessValidation implements ICommand {
   }
 
   public async Handle(): Promise<CommandReturn<string>> {
-    const validated = this.validateAccess(this.props, Access.w);
+    const validated = this.validateAccess(this.props, Access.r);
     if (!validated) return new CommandReturn("", EventName.NoAccess);
 
     const result: string = await OpenFile(this.props);

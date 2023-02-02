@@ -18,7 +18,13 @@ class mkdirCommand extends CommandAccessValidation implements ICommand {
     const validated = this.validateAccess(this.props.directoryPath, Access.w);
     if (!validated) return;
 
-    MakeDirectory(this.props);
+    const userId = this.loadUserData().userId;
+
+    MakeDirectory({
+      props: this.props,
+      userId: userId,
+      access: this.tempDefaultAccess,
+    });
   }
 }
 
