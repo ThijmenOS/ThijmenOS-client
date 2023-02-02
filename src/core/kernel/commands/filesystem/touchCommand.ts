@@ -1,11 +1,12 @@
-import { Mkdir, Permissions } from "@thijmen-os/common";
+import { Access, Mkdir, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
 import DesktopMethods from "@providers/desktop/desktopMethods";
+import CommandAccessValidation from "@core/kernel/accessValidation";
 
-class TouchCommand implements ICommand {
+class TouchCommand extends CommandAccessValidation implements ICommand {
   private _desktop: DesktopMethods = javascriptOs.get<DesktopMethods>(
     types.Desktop
   );
@@ -15,9 +16,14 @@ class TouchCommand implements ICommand {
   readonly requiredPermission = Permissions.fileSystem;
 
   constructor(props: Mkdir) {
+    super();
+
     this.props = props;
   }
   public async Handle(): Promise<void> {
+    const validated = this.validateAccess(this.props.directoryPath, Access.w);
+    if (!validated) return;
+
     await CreateFile(this.props);
 
     this._desktop.RefreshDesktop();

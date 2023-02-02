@@ -24,6 +24,7 @@ import Settings from "@core/settings/settingsMethodShape";
 import StartupMethodShape from "./startupMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import DesktopMethods from "@providers/desktop/desktopMethods";
+import { readAccessFile } from "@providers/filesystemEndpoints/root";
 
 @injectable()
 class Startup implements StartupMethodShape {
@@ -52,6 +53,7 @@ class Startup implements StartupMethodShape {
 
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
+    this._kernel.loadKernel();
 
     const userAuthenticated =
       this._authenticationProvider.CheckAuthenticationState();

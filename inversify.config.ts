@@ -27,6 +27,8 @@ import AuthenticationGui from "@providers/gui/authentication/authenticationGuiPr
 import AuthenticationMethodShapeGui from "@providers/gui/authentication/authenticationGuiProvider";
 import DesktopMethods from "@providers/desktop/desktopMethods";
 import Desktop from "@providers/desktop/desktop";
+import AccessValidationMethods from "@core/kernel/accessValidationMethods";
+import CommandAccessValidation from "@core/kernel/accessValidation";
 
 const javascriptOs = new Container();
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
@@ -38,7 +40,7 @@ javascriptOs
 javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
 javascriptOs.bind<ISettings>(types.Settings).to(Settings).inSingletonScope();
 javascriptOs.bind<IBackgroundOptions>(BackgroundOptions).toSelf();
-javascriptOs.bind<ICache>(types.Cache).to(Cache);
+javascriptOs.bind<ICache>(types.Cache).to(Cache).inSingletonScope();
 javascriptOs.bind<IWindow>(types.window).to(Window);
 javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<Mediator>(types.Mediator).to(Mediator);
@@ -50,5 +52,9 @@ javascriptOs
   .bind<AuthenticationMethodShapeGui>(types.AuthenticationGui)
   .to(AuthenticationGui);
 javascriptOs.bind<DesktopMethods>(types.Desktop).to(Desktop);
+javascriptOs
+  .bind<AccessValidationMethods>(types.CommandAccessValidation)
+  .to(CommandAccessValidation)
+  .inSingletonScope();
 
 export default javascriptOs;

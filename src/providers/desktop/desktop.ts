@@ -66,7 +66,7 @@ class Desktop implements DesktopMethods {
 
   private ConstructDesktopPath = (user: User) =>
     //TODO: Get this form env variables
-    `C/Users/OS-${user.userId}~${user.username}/Desktop`;
+    `C/Users/${user.username}/Desktop`;
 }
 
 export default Desktop;
