@@ -9,6 +9,7 @@ export enum EventName {
   StartedApplication = "startedApplication",
   DirectoryCreated = "directoryCreated",
   Error = "error",
+  NoAccess = "No access",
 
   PermissionGranted = "permissionGranted",
   PermissionNotGranted = "permissionNotGranted",

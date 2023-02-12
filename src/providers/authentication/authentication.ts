@@ -1,4 +1,5 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
+import { userKey } from "@ostypes/memoryKeys";
 import types from "@ostypes/types";
 import { GetAllUsers } from "@providers/filesystemEndpoints/authentication";
 import { User } from "@thijmen-os/common";
@@ -17,8 +18,7 @@ class Authentication implements AuthenticationMethodShape {
   }
 
   public CheckAuthenticationState(): false | User {
-    const authenticatedUser =
-      this._memory.loadFromMemory<User>("authenticatedUser");
+    const authenticatedUser = this._memory.loadFromMemory<User>(userKey);
 
     if (authenticatedUser) return authenticatedUser;
 
@@ -81,7 +81,7 @@ class Authentication implements AuthenticationMethodShape {
       .querySelector("#thijmen-os-login-page")
       ?.dispatchEvent(userAuthenticated);
 
-    this._memory.saveToMemory<User>("authenticatedUser", user, true);
+    this._memory.saveToMemory<User>(userKey, user, true);
   }
 
   public ValidateCredentials(

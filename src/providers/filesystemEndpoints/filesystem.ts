@@ -1,5 +1,5 @@
 import api from "./api";
-import { Mkdir, Directory, Path } from "@thijmen-os/common";
+import { Mkdir, Directory, Path, AccessMap } from "@thijmen-os/common";
 
 export async function ShowFilesInDir(path = ""): Promise<Array<Directory>> {
   const { data } = await api.get(`/filesystem/showUserFiles?dir=${path}`);
@@ -16,12 +16,20 @@ export async function ChangeDirectory(path: Path): Promise<string> {
   return data;
 }
 
-export async function MakeDirectory(props: Mkdir): Promise<string> {
+export async function MakeDirectory(props: {
+  props: Mkdir;
+  userId: string;
+  access: AccessMap;
+}): Promise<string> {
   const { data } = await api.post("/filesystem/makeDirectory", props);
   return data;
 }
 
-export async function CreateFile(props: Mkdir): Promise<string> {
+export async function CreateFile(props: {
+  props: Mkdir;
+  userId: string;
+  access: AccessMap;
+}): Promise<string> {
   const { data } = await api.post("/filesystem/makeFile", props);
   return data;
 }

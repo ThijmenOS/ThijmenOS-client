@@ -39,31 +39,31 @@ import ApplicationManager from "@core/applicationManager/applicationManagerMetho
 import AskPermissionCommand from "./commands/settings/askPermissionCommand";
 import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
 import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
+import AccessValidationMethods from "./accessValidationMethods";
 
 @injectable()
 class Kernel implements KernelMethodShape {
   private readonly _applicationManager: ApplicationManager;
   private readonly _mediator: Mediator;
+  private readonly _commandAccessValidator: AccessValidationMethods;
   private origin = "";
 
   constructor(
     @inject(types.AppManager) applicationManager: ApplicationManager,
-    @inject(types.Mediator) mediator: Mediator
+    @inject(types.Mediator) mediator: Mediator,
+    @inject(types.CommandAccessValidation)
+    accessValidator: AccessValidationMethods
   ) {
     this._applicationManager = applicationManager;
     this._mediator = mediator;
+    this._commandAccessValidator = accessValidator;
+  }
+
+  public loadKernel(): void {
+    this._commandAccessValidator.loadAccessFile();
   }
 
   private kernelMethods: KernelMethods = {
-    // kernelMethodNotFound: () =>
-    //   this._core.appManager.SendDataToApp<Error>(
-    //     this.origin,
-    //     //TODO: For development throw. But at the end, notify the application and log the incident
-    //     new Error("The requested kernel method does not exist"),
-    //     system,
-    //     EventName.Error
-    //   ),
-
     filesInDir: ShowFilesInDirCommand,
 
     readFile: ReadFileCommand,

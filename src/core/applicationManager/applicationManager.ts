@@ -91,6 +91,8 @@ class ApplicationManager implements ApplicationManagerMethodShape {
   public async OpenFile(file: OpenFileType): Promise<boolean> {
     const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 
+    console.log(file);
+
     if (!DefaultAppToOpen) {
       this.OpenFileWithApplication(file);
       return false;

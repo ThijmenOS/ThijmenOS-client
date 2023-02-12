@@ -52,6 +52,7 @@ class Startup implements StartupMethodShape {
 
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
+    this._kernel.loadKernel();
 
     const userAuthenticated =
       this._authenticationProvider.CheckAuthenticationState();
