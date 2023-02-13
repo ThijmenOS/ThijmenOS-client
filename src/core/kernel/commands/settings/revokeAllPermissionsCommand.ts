@@ -4,6 +4,7 @@ import { EventName } from "@ostypes/AppManagerTypes";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 
+//TODO: Implement root. this method can only be access by root actors
 class RevokeAllPermissionCommand implements ICommand {
   private readonly _settings = javascriptOs.get<Settings>(types.Settings);
 

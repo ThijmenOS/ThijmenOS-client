@@ -34,7 +34,7 @@ export async function CreateFile(props: {
   return data;
 }
 
-export async function RemoveDirectory(props: Path): Promise<string> {
+export async function RemoveDirectory(props: Path): Promise<boolean> {
   const { data } = await api.post("/filesystem/removeDirectory", {
     Path: props,
   });
