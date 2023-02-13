@@ -51,7 +51,7 @@ class CommandAccessValidation implements AccessValidationMethods {
 
   protected loadUserData(): User {
     const user = this._memory.loadFromMemory<User>(userKey);
-    //TODO: If there is no user signed in. handle this error properly
+    //TODO: Throw kernel panic
     if (!user) {
       throw new Error();
     }

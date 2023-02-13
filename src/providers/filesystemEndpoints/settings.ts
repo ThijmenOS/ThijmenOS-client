@@ -17,29 +17,23 @@ export async function FetchSettings(): Promise<OSSettings> {
   return data;
 }
 
-export async function ChangeBackground(props: string): Promise<string> {
-  const { data } = await api.post("/settings/setBackground", {
-    Path: props,
-  });
-  return data;
-}
-
-export async function GetBackground(): Promise<string> {
-  const { data } = await api.get("/settings/getBackground");
-  return data;
-}
-
-export async function GrantApplicationPermission(props: PermissionRequestDto) {
+export async function GrantApplicationPermission(
+  props: PermissionRequestDto
+): Promise<boolean> {
   const { data } = await api.post("/settings/grantPermission", props);
   return data;
 }
 
-export async function RevokeApplicationPermission(props: PermissionRequestDto) {
+export async function RevokeApplicationPermission(
+  props: PermissionRequestDto
+): Promise<boolean> {
   const { data } = await api.delete("/settings/grantPermission", props);
   return data;
 }
 
-export async function RevokeAllApplicationPermissions(applicationId: string) {
+export async function RevokeAllApplicationPermissions(
+  applicationId: string
+): Promise<boolean> {
   const { data } = await api.delete("/settings/allPermissions", {
     applicationId: applicationId,
   });

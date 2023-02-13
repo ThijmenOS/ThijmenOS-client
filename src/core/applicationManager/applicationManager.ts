@@ -2,8 +2,6 @@
 import { inject, injectable } from "inversify";
 import types from "@ostypes/types";
 
-//Classes
-
 //DI interfaces
 import ApplicationManagerMethodShape from "./applicationManagerMethodShape";
 import { WaitForElm } from "@thijmen-os/graphics";
@@ -43,7 +41,8 @@ class ApplicationManager implements ApplicationManagerMethodShape {
   }
 
   public async FetchInstalledApps(): Promise<void> {
-    this.installedApps = this._settings.settings.apps.installedApps;
+    this.installedApps =
+      this._settings.settings.applications.installedApplications;
   }
 
   public FindCorrespondingAppWithWindowHash(target: string): string {
@@ -64,8 +63,6 @@ class ApplicationManager implements ApplicationManagerMethodShape {
     const installedAppsWithDesiredMimetype = this.FindInstalledAppsWithMimetype(
       file.mimeType
     );
-
-    console.log(file);
 
     const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.name);
 
@@ -91,8 +88,6 @@ class ApplicationManager implements ApplicationManagerMethodShape {
   public async OpenFile(file: OpenFileType): Promise<boolean> {
     const DefaultAppToOpen = this._settings.DefaultApplication(file.mimeType);
 
-    console.log(file);
-
     if (!DefaultAppToOpen) {
       this.OpenFileWithApplication(file);
       return false;
@@ -114,9 +109,10 @@ class ApplicationManager implements ApplicationManagerMethodShape {
     iconMetadata: ApplicationMetaData,
     sendEvent = true
   ): Promise<ApplicationWindow> {
-    const targetedApplication = this._settings.settings.apps.installedApps.find(
-      (x) => x.exeLocation === iconMetadata.exeLocation
-    );
+    const targetedApplication =
+      this._settings.settings.applications.installedApplications.find(
+        (x) => x.exeLocation === iconMetadata.exeLocation
+      );
 
     if (!targetedApplication) {
       ErrorManager.applicationNotFoundError();

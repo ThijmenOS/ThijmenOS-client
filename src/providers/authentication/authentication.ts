@@ -77,11 +77,11 @@ class Authentication implements AuthenticationMethodShape {
       detail: user,
     });
 
+    this._memory.saveToMemory<User>(userKey, user, true);
+
     document
       .querySelector("#thijmen-os-login-page")
       ?.dispatchEvent(userAuthenticated);
-
-    this._memory.saveToMemory<User>(userKey, user, true);
   }
 
   public ValidateCredentials(

@@ -18,6 +18,14 @@ describe("authentication", () => {
     password: "Welkom01",
     pincode: "12345",
     email: "testUser@thijmenbrand.nl",
+    preferences: {
+      background: "",
+      colors: "",
+      fonts: "",
+      lockscreen: "",
+      startMenu: "",
+      themes: "",
+    },
   });
 
   beforeEach(() => {

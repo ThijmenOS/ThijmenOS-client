@@ -14,13 +14,16 @@ class RevokeAllPermissionCommand implements ICommand {
   }
 
   public async Handle(): Promise<CommandReturn<boolean>> {
-    const application = this._settings.settings.apps.installedApps.find(
-      (app) => app.applicationIdentifier === this.applicationId.toString()
-    );
+    const application =
+      this._settings.settings.applications.installedApplications.find(
+        (app) => app.applicationIdentifier === this.applicationId.toString()
+      );
 
     if (!application) return new CommandReturn(false, EventName.Error);
 
-    await this._settings.RevokeAllApplicationPermissions(this.applicationId);
+    await this._settings.ApplicationSettings.RevokeAllApplicationPermissions(
+      this.applicationId
+    );
     await this._settings.RefreshSettings();
     return new CommandReturn<boolean>(true, EventName.PermissionRevoked);
   }

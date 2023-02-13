@@ -2,11 +2,12 @@ import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
-import { Directory, User } from "@thijmen-os/common";
+import { Directory, host, User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import DesktopMethods from "./desktopMethods";
 import IFileIcon from "@core/fileIcon/fileIconMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
+import { imagetypes } from "@ostypes/imageTypes";
 
 @injectable()
 class Desktop implements DesktopMethods {
@@ -23,7 +24,8 @@ class Desktop implements DesktopMethods {
 
   public async LoadDesktop(): Promise<void> {
     const signedInUser = this._authentication.CheckAuthenticationState();
-    //TODO: Implement propper error
+    //This error should never happen. Therefore implement kernel panic where os is rebooted;
+    //TODO: Throw kernel panic
     if (!signedInUser) throw new Error();
 
     const desktopFiles = await ShowFilesInDir(
@@ -42,7 +44,8 @@ class Desktop implements DesktopMethods {
     if (!cacheFiles) throw new Error();
     const loggedInUser = this._authentication.CheckAuthenticationState();
 
-    //TODO: Implement propper error
+    //This error should never happen. Therefore implement kernel panic where os is rebooted;
+    //TODO: Throw kernel panic
     if (!loggedInUser) throw new Error();
 
     const allFiles = await ShowFilesInDir(
@@ -54,6 +57,18 @@ class Desktop implements DesktopMethods {
     );
 
     this.RenderIcon(newFiles);
+  }
+
+  public SetBackground(path: string): void {
+    if (!path) throw new Error();
+
+    const fileExtension = path.split(".").at(-1);
+    if (!fileExtension || !imagetypes.includes(fileExtension)) {
+      throw new Error();
+    }
+
+    const backgroundElement = document.querySelector("body")!;
+    backgroundElement.style.backgroundImage = `url("${host}/static/${path}")`;
   }
 
   private RenderIcon(content: Array<Directory>) {

@@ -15,9 +15,11 @@ class RevokePermissionCommand implements ICommand {
   }
 
   public async Handle(): Promise<CommandReturn<boolean>> {
-    const application = this._settings.settings.apps.installedApps.find(
-      (app) => app.applicationIdentifier === this.props.applicationId.toString()
-    );
+    const application =
+      this._settings.settings.applications.installedApplications.find(
+        (app) =>
+          app.applicationIdentifier === this.props.applicationId.toString()
+      );
 
     if (!application) return new CommandReturn(false, EventName.Error);
 
@@ -28,7 +30,9 @@ class RevokePermissionCommand implements ICommand {
     if (!hasPermission)
       return new CommandReturn(true, EventName.PermissionRevoked);
 
-    await this._settings.RevokeApplicationPermission(this.props);
+    await this._settings.ApplicationSettings.RevokeApplicationPermission(
+      this.props
+    );
     await this._settings.RefreshSettings();
     return new CommandReturn<boolean>(true, EventName.PermissionRevoked);
   }
