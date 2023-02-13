@@ -24,7 +24,8 @@ class Desktop implements DesktopMethods {
 
   public async LoadDesktop(): Promise<void> {
     const signedInUser = this._authentication.CheckAuthenticationState();
-    //TODO: Implement propper error
+    //This error should never happen. Therefore implement kernel panic where os is rebooted;
+    //TODO: Throw kernel panic
     if (!signedInUser) throw new Error();
 
     const desktopFiles = await ShowFilesInDir(
@@ -43,7 +44,8 @@ class Desktop implements DesktopMethods {
     if (!cacheFiles) throw new Error();
     const loggedInUser = this._authentication.CheckAuthenticationState();
 
-    //TODO: Implement propper error
+    //This error should never happen. Therefore implement kernel panic where os is rebooted;
+    //TODO: Throw kernel panic
     if (!loggedInUser) throw new Error();
 
     const allFiles = await ShowFilesInDir(

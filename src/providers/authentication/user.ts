@@ -81,6 +81,7 @@ export class UserClass implements User, UserMethodShape {
 
   ChangeBackground(backgroundPath: string): boolean {
     if (!backgroundPath) return false;
+
     const fileExt = backgroundPath.split(".").at(-1);
     if (!fileExt || imagetypes.includes(fileExt)) {
       return false;

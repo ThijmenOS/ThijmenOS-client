@@ -98,7 +98,6 @@ class Kernel implements KernelMethodShape {
     };
   }
 
-  //TODO: better way enforce rules
   private async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
       const applicationId =
