@@ -1,7 +1,8 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
-import { ICommand } from "@ostypes/CommandTypes";
+import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
 import CommandAccessValidation from "@core/kernel/accessValidation";
+import { EventName } from "@ostypes/AppManagerTypes";
 
 class rmdirCommand extends CommandAccessValidation implements ICommand {
   private props: Path;
@@ -14,11 +15,17 @@ class rmdirCommand extends CommandAccessValidation implements ICommand {
     this.props = props;
   }
 
-  public Handle(): void {
+  public async Handle(): Promise<CommandReturn<boolean | null>> {
     const validated = this.validateAccess(this.props, Access.w);
-    if (!validated) return;
+    if (!validated) return new CommandReturn<null>(null, EventName.NoAccess);
 
-    RemoveDirectory(this.props);
+    const result = await RemoveDirectory(this.props);
+
+    const eventName = result
+      ? EventName.DirectoryRemoved
+      : EventName.DirectoryDoesNotExist;
+
+    return new CommandReturn<boolean>(result, eventName);
   }
 }
 

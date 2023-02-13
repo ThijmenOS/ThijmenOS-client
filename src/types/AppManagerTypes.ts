@@ -5,9 +5,14 @@ export type Event<T> = { eventName: string; eventSender: string; eventData: T };
 export enum EventName {
   TestCommand = "testCommand",
   SelfInvoked = "selfInvoked",
+
   OpenFile = "openFile",
   StartedApplication = "startedApplication",
+
   DirectoryCreated = "directoryCreated",
+  DirectoryRemoved = "directoryRemoved",
+  DirectoryDoesNotExist = "DirectoryDoesNotExist",
+
   Error = "error",
   NoAccess = "No access",
 
