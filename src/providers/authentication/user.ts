@@ -1,4 +1,6 @@
 import { UserMethodShape } from "./userMethodShape";
+import { User } from "@thijmen-os/common";
+import { imagetypes } from "@ostypes/imageTypes";
 
 export enum AuthenticationMethods {
   Password,
@@ -23,27 +25,28 @@ export class singinAction implements SigninActionShape {
   }
 }
 
-export interface UserShape {
+export class UserClass implements User, UserMethodShape {
   userId: string;
   username: string;
   email: string;
   password: string;
   pincode?: string;
-}
+  preferences: {
+    background: string;
+    colors: any;
+    themes: any;
+    lockscreen: any;
+    startMenu: any;
+    fonts: any;
+  };
 
-export class UserClass implements UserShape, UserMethodShape {
-  userId: string;
-  username: string;
-  email: string;
-  password: string;
-  pincode?: string;
-
-  constructor(props: UserShape) {
+  constructor(props: User) {
     this.userId = props.userId;
     this.username = props.username;
     this.email = props.email;
     this.password = props.password;
     this.pincode = props.pincode;
+    this.preferences = props.preferences;
   }
 
   ChangeUserName(newUsername: string): boolean | string {
@@ -74,5 +77,20 @@ export class UserClass implements UserShape, UserMethodShape {
     if (inputPincode !== this.pincode) return false;
 
     return true;
+  }
+
+  ChangeBackground(backgroundPath: string): boolean {
+    if (!backgroundPath) return false;
+    const fileExt = backgroundPath.split(".").at(-1);
+    if (!fileExt || imagetypes.includes(fileExt)) {
+      return false;
+    }
+
+    this.preferences.background = backgroundPath;
+    return true;
+  }
+
+  GetBackground(): string {
+    return this.preferences.background;
   }
 }

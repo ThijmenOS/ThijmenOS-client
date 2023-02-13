@@ -35,9 +35,10 @@ class Mediator {
     permissionToValidate: Permissions,
     applicationId: string
   ): Promise<boolean> {
-    const targetApplication = this._settings.settings.apps.installedApps.find(
-      (app) => app.applicationIdentifier === applicationId
-    );
+    const targetApplication =
+      this._settings.settings.applications.installedApplications.find(
+        (app) => app.applicationIdentifier === applicationId
+      );
 
     if (!targetApplication) return false;
 

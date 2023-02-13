@@ -9,6 +9,7 @@ const types = {
   Prompt: Symbol.for("Prompt"),
   ErrorPrompt: Symbol.for("ErrorPrompt"),
   Settings: Symbol.for("Settings"),
+  ApplicationSettings: Symbol.for("ApplicationSettings"),
   ErrorManager: Symbol.for("ErrorManager"),
   Cache: Symbol.for("Cache"),
   Mediator: Symbol.for("Mediator"),

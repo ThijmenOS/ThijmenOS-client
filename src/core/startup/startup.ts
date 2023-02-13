@@ -1,14 +1,3 @@
-/* <Class Documentation>
-
-  <Class Description>
-    The startup class calls every method that is needed to startup the operating system. So it starts listening for app requests, it finds all the desktop apps and more
-
-  <Method Description>
-    InitialiseOperatingSystem(): Calls all the methods to start the operating system
-    ShowFilesOnDesktop(): Fetches all the files on the desktop directory
-
-*/
-
 //DI
 import "reflect-metadata";
 import { injectable, inject } from "inversify";
@@ -24,6 +13,7 @@ import Settings from "@core/settings/settingsMethodShape";
 import StartupMethodShape from "./startupMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import DesktopMethods from "@providers/desktop/desktopMethods";
+import { User } from "@thijmen-os/common";
 
 @injectable()
 class Startup implements StartupMethodShape {
@@ -60,12 +50,15 @@ class Startup implements StartupMethodShape {
     if (!userAuthenticated) {
       this._authenticationGuiProvider.Authenticate();
 
-      document
-        .querySelector("#thijmen-os-login-page")!
-        .addEventListener("authenticated", () => this.userAuthenticated());
+      const loginPage = document.querySelector("#thijmen-os-login-page")!;
+
+      loginPage.addEventListener("authenticated", (event: Event) => {
+        const { detail } = event as CustomEvent<User>;
+        this.userAuthenticated(detail);
+      });
     } else {
       this._authenticationGuiProvider.RemoveAuthorization();
-      this.userAuthenticated();
+      this.userAuthenticated(userAuthenticated);
     }
 
     UpdateTime();
@@ -82,8 +75,8 @@ class Startup implements StartupMethodShape {
     }, 1000);
   }
 
-  private async userAuthenticated() {
-    await this._settings.Background().Get();
+  private async userAuthenticated(authenticatedUser: User) {
+    this._desktop.SetBackground(authenticatedUser.preferences.background);
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
     this._desktop.LoadDesktop();

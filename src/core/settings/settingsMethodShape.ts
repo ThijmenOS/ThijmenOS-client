@@ -1,10 +1,9 @@
-import { ApplicationMetaData, OSSettings } from "@thijmen-os/common";
-import BackgroundSettingsMethodShape from "./individualSettings/backgroundSettingsMethodShape";
+import { ApplicationMetaData } from "@thijmen-os/common";
+import BaseSettingsMethods from "./baseSettingsMethods";
+import ApplicationSettings from "./individualSettings/applicationSettings";
 
-export default interface Settings {
-  get settings(): OSSettings;
-  Initialise(): Promise<void>;
+export default interface Settings extends BaseSettingsMethods {
   RefreshSettings(): Promise<void>;
   DefaultApplication(mimeType: string): ApplicationMetaData | undefined;
-  Background(): BackgroundSettingsMethodShape;
+  get ApplicationSettings(): ApplicationSettings;
 }

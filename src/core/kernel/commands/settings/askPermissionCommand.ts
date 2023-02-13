@@ -16,9 +16,10 @@ class AskPermissionCommand implements ICommand {
   }
 
   public async Handle(applicationId: string): Promise<CommandReturn<boolean>> {
-    const application = this._settings.settings.apps.installedApps.find(
-      (app) => app.applicationIdentifier === applicationId.toString()
-    );
+    const application =
+      this._settings.settings.applications.installedApplications.find(
+        (app) => app.applicationIdentifier === applicationId.toString()
+      );
 
     if (!application) return new CommandReturn(false, EventName.Error);
 
@@ -45,7 +46,7 @@ class AskPermissionCommand implements ICommand {
       return new CommandReturn<boolean>(false, EventName.PermissionNotGranted);
     }
 
-    await this._settings.GrantPermissionsToApplication({
+    await this._settings.ApplicationSettings.GrantPermissionsToApplication({
       applicationId: applicationId,
       permission: this.requestedPermission,
     });

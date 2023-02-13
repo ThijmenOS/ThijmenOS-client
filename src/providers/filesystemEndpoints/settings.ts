@@ -17,18 +17,6 @@ export async function FetchSettings(): Promise<OSSettings> {
   return data;
 }
 
-export async function ChangeBackground(props: string): Promise<string> {
-  const { data } = await api.post("/settings/setBackground", {
-    Path: props,
-  });
-  return data;
-}
-
-export async function GetBackground(): Promise<string> {
-  const { data } = await api.get("/settings/getBackground");
-  return data;
-}
-
 export async function GrantApplicationPermission(props: PermissionRequestDto) {
   const { data } = await api.post("/settings/grantPermission", props);
   return data;

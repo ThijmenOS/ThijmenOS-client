@@ -31,7 +31,6 @@ import ReadFileCommand from "./commands/filesystem/readFileCommand";
 import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
 import CloseSelfCommand from "./commands/application/closeSelfCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
-import ChangeBackgroundCommand from "./commands/settings/changeBackgroundCommand";
 import { system } from "@ostypes/AppManagerTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
@@ -81,7 +80,6 @@ class Kernel implements KernelMethodShape {
     openFile: OpenFileCommand,
 
     //Settings
-    changeBackground: ChangeBackgroundCommand,
     askPermission: AskPermissionCommand,
     revokeAllPermissions: RevokeAllPermissionCommand,
     revokePermission: RevokePermissionCommand,

@@ -2,11 +2,12 @@ import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
-import { Directory, User } from "@thijmen-os/common";
+import { Directory, host, User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import DesktopMethods from "./desktopMethods";
 import IFileIcon from "@core/fileIcon/fileIconMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
+import { imagetypes } from "@ostypes/imageTypes";
 
 @injectable()
 class Desktop implements DesktopMethods {
@@ -54,6 +55,18 @@ class Desktop implements DesktopMethods {
     );
 
     this.RenderIcon(newFiles);
+  }
+
+  public SetBackground(path: string): void {
+    if (!path) throw new Error();
+
+    const fileExtension = path.split(".").at(-1);
+    if (!fileExtension || !imagetypes.includes(fileExtension)) {
+      throw new Error();
+    }
+
+    const backgroundElement = document.querySelector("body")!;
+    backgroundElement.style.backgroundImage = `url("${host}/static/${path}")`;
   }
 
   private RenderIcon(content: Array<Directory>) {

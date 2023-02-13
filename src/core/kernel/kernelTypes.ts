@@ -21,7 +21,6 @@ export enum ValidMethods {
   openFile = "openFile",
 
   //Settings
-  changeBackground = "changeBackground",
   askPermission = "askPermission",
   revokePermission = "revokePermission",
   revokeAllPermissions = "revokeAllPermissions",
