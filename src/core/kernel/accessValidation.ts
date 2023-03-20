@@ -32,6 +32,9 @@ class CommandAccessValidation implements AccessValidationMethods {
     const accessData = this.loadAccessData();
     if (!accessData) return false;
 
+    console.log(user);
+    console.log(accessData);
+
     const targetObject = Object.keys(accessData).find((x) =>
       object.includes(x)
     );

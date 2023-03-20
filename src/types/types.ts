@@ -1,6 +1,7 @@
 const types = {
   Startup: Symbol.for("Startup"),
   AppManager: Symbol.for("AppManager"),
+  Processes: Symbol.for("Processes"),
   FileIcon: Symbol.for("FileIcon"),
   Kernel: Symbol.for("Kernel"),
   window: Symbol.for("window"),

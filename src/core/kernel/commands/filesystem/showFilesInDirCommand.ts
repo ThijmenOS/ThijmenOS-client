@@ -1,6 +1,6 @@
 import { Access, Directory, Path, Permissions } from "@thijmen-os/common";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import { EventName } from "@ostypes/AppManagerTypes";
+import { EventName } from "@ostypes/ProcessTypes";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import CommandAccessValidation from "@core/kernel/accessValidation";
 

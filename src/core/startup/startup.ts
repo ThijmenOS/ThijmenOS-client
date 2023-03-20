@@ -6,14 +6,13 @@ import types from "@ostypes/types";
 //Interfaces
 import UpdateTime from "@utils/updateTime";
 import Kernel from "@core/kernel/kernelMethodShape";
-import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
+import ApplicationManager from "@core/ApplicationManager/ApplicationManagerMethods";
 
 //Types
 import Settings from "@core/settings/settingsMethodShape";
 import StartupMethodShape from "./startupMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import DesktopMethods from "@providers/desktop/desktopMethods";
-import { User } from "@thijmen-os/common";
 
 @injectable()
 class Startup implements StartupMethodShape {
@@ -52,13 +51,12 @@ class Startup implements StartupMethodShape {
 
       const loginPage = document.querySelector("#thijmen-os-login-page")!;
 
-      loginPage.addEventListener("authenticated", (event: Event) => {
-        const { detail } = event as CustomEvent<User>;
-        this.userAuthenticated(detail);
+      loginPage.addEventListener("authenticated", () => {
+        this.userAuthenticated();
       });
     } else {
       this._authenticationGuiProvider.RemoveAuthorization();
-      this.userAuthenticated(userAuthenticated);
+      this.userAuthenticated();
     }
 
     UpdateTime();
@@ -75,8 +73,7 @@ class Startup implements StartupMethodShape {
     }, 1000);
   }
 
-  private async userAuthenticated(authenticatedUser: User) {
-    this._desktop.SetBackground(authenticatedUser.preferences.background);
+  private async userAuthenticated() {
     this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
     this._desktop.LoadDesktop();

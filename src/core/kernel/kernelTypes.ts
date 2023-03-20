@@ -1,4 +1,3 @@
-import { MimeTypes } from "@thijmen-os/common";
 import { Class, ICommand } from "../../types/CommandTypes";
 
 export type JsOsCommunicationMessage = {
@@ -17,7 +16,6 @@ export enum ValidMethods {
   touch = "touch",
 
   //Window operations
-  closeSelf = "closeSelf",
   openFile = "openFile",
 
   //Settings
@@ -27,5 +25,3 @@ export enum ValidMethods {
 }
 
 export type KernelMethods = { [key in ValidMethods]: Class<ICommand> };
-
-export type OpenFileType = { mimeType: MimeTypes; filePath: string };

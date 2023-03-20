@@ -29,31 +29,31 @@ import mkdirCommand from "./commands/filesystem/mkdirCommand";
 import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
 import ReadFileCommand from "./commands/filesystem/readFileCommand";
 import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
-import CloseSelfCommand from "./commands/application/closeSelfCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
-import { system } from "@ostypes/AppManagerTypes";
+import { system } from "@ostypes/ProcessTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
-import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 import AskPermissionCommand from "./commands/settings/askPermissionCommand";
 import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
 import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 import AccessValidationMethods from "./accessValidationMethods";
+import Processes from "@core/processManager/interfaces/processesShape";
+import Communication from "./commands/application/communication";
 
 @injectable()
 class Kernel implements KernelMethodShape {
-  private readonly _applicationManager: ApplicationManager;
+  private readonly _processManager: Processes;
   private readonly _mediator: Mediator;
   private readonly _commandAccessValidator: AccessValidationMethods;
   private origin = "";
 
   constructor(
-    @inject(types.AppManager) applicationManager: ApplicationManager,
+    @inject(types.Processes) processes: Processes,
     @inject(types.Mediator) mediator: Mediator,
     @inject(types.CommandAccessValidation)
     accessValidator: AccessValidationMethods
   ) {
-    this._applicationManager = applicationManager;
+    this._processManager = processes;
     this._mediator = mediator;
     this._commandAccessValidator = accessValidator;
   }
@@ -76,7 +76,6 @@ class Kernel implements KernelMethodShape {
     touch: TouchCommand,
 
     //Window operations
-    closeSelf: CloseSelfCommand,
     openFile: OpenFileCommand,
 
     //Settings
@@ -89,9 +88,6 @@ class Kernel implements KernelMethodShape {
     window.onmessage = (event: MessageEvent) => {
       const messageData: JsOsCommunicationMessage = event.data;
 
-      if (!this._applicationManager.CheckIfAppIsOpen(messageData.origin))
-        throw new Error("Sender app is not known!");
-
       this.origin = messageData.origin;
 
       this.ProcessMethod(messageData);
@@ -100,25 +96,22 @@ class Kernel implements KernelMethodShape {
 
   private async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
-      const applicationId =
-        this._applicationManager.FindCorrespondingAppWithWindowHash(
-          props.origin
-        );
+      const application = this._processManager.FindProcess(props.origin);
+      if (!application) throw new Error("AA");
 
       const command = this.kernelMethods[props.method as ValidMethods];
 
       const result = await this._mediator.send(
         new command(props.params),
-        applicationId
+        application.applicationIdentifier
       );
 
       if (result instanceof CommandReturn) {
-        this._applicationManager.SendDataToApp(
-          this.origin,
-          result.data,
-          system,
-          result.event
-        );
+        new Communication({
+          data: result.data,
+          eventName: result.event,
+          processIdentifier: system,
+        }).Handle();
       }
     } catch (error) {
       console.log(error);

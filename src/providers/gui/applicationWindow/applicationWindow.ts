@@ -1,32 +1,8 @@
-/* <Class Documentation>
-
-  <Class Description>
-    The window class manages everything that has to do with an application window
-
-  <Method Descriptions>
-    Destroy(): Destroys the window and removes it from the DOM
-    Freese(): Makes the window unresponsible for everything
-      |_ This method is used when this window is involved by a prompt or an error for example
-    UnFreese(): Makes the window responsive again
-    Onclick() - DblClick() - mouseDown(): These are behaviour methods. These methods are called when one of these actions occur. These methods then call their responsible handler
-    RegisterEventListeners(): Registers the above actions as event listener
-    RemoveEventListener(): Removes the event listeneners.
-     |_ This method is used by the Freese() method to make the window unresponsive
-     NewWindow(): sets the window settings on this class. It is used as an entry for other classes to make a new window
-     InitTemplate(): This method initialises the DOM elements to prepare it for the DOM
-     InitBehaviour(): This method class the other nessecery methods to add behaviour and responsiveness to the window
-     InitMovement(): Initialises the movement of the window
-     UpdateStyle(): Updates the classes necesery for displaying the window
-     UpdateUI(): Updates the UI elements for displaying the window
-     Render(): Renders the finished class to the DOM
-
-*/
-
 //DI
 
 //Interfaces
 import ApplicationWindowMethodShape from "./interfaces/applicationWindowMethodShape";
-import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
+import ApplicationManager from "@core/ApplicationManager/ApplicationManagerMethods";
 
 //Types
 import { window, windowDataActions, windowSelectors } from "./defaults";
@@ -61,8 +37,9 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
   public windowOptions!: WindowOptions;
 
   constructor(windowOptions: WindowOptions) {
-    windowCount++;
     this.windowOptions = windowOptions;
+
+    windowCount++;
   }
 
   private onclick = (ev: Event) => this.Click(ev);

@@ -28,6 +28,8 @@ class Desktop implements DesktopMethods {
     //TODO: Throw kernel panic
     if (!signedInUser) throw new Error();
 
+    this.SetBackground(signedInUser.preferences.background);
+
     const desktopFiles = await ShowFilesInDir(
       this.ConstructDesktopPath(signedInUser)
     );

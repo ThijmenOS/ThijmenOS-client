@@ -1,26 +1,10 @@
-/* <Class Documentation>
-
-  <Class Description>
-    The file icon holds does two main things. It knows how to display itself on the screen and in knows information about the file in order to excecute it.
-
-  <Method Descriptions>
-    ConstructFileIcon(): This method is the entry point to start the processes that are involved with the file icon.
-    GetFileConfigurations(): If the file is an executable or a short to an executable, this method gathers information about where the executable actually is and what icon to display with it. If it is not an executable but an file, it gathes information about which default app to open this file with and which icon to show
-    InitIcon(): This method does the nesecery dom things for the file icon to render and give behaviour
-    InitBehaviour(): This method initialises for example movement of the icon or what happens when you click the icon.
-    Render(): This method renders the icon to the actual DOM so it is visible on the desktop
-    OpenFile(): Opens the file or executable
-    Destroy(): Removes the file icon from the DOM
-
-*/
-
 //DI
 import types from "@ostypes/types";
 import { inject, injectable } from "inversify";
 
 //Interfaces
 import IFileIcon from "./fileIconMethodShape";
-import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
+import ProcessManager from "@core/ApplicationManager/ApplicationManagerMethods";
 
 //Types
 import fileIcons from "./mimetypeFIleNameMap";
@@ -39,10 +23,11 @@ import {
 import ErrorManager from "@thijmen-os/errormanager";
 import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import GenerateUUID from "@utils/generateUUID";
+import StartProcess from "@core/kernel/commands/processes/startProcess";
 
 @injectable()
 class FileIcon implements IFileIcon {
-  private readonly _applicationManager: ApplicationManager;
+  private readonly _processManager: ProcessManager;
 
   private iconContainerElement!: HTMLDivElement;
   private iconImageElement!: HTMLObjectElement;
@@ -57,10 +42,8 @@ class FileIcon implements IFileIcon {
     mimeType: MimeTypes.thijm,
   };
 
-  constructor(
-    @inject(types.AppManager) applicationManager: ApplicationManager
-  ) {
-    this._applicationManager = applicationManager;
+  constructor(@inject(types.AppManager) applicationManager: ProcessManager) {
+    this._processManager = applicationManager;
   }
 
   private async GetFileConfigurations(
@@ -171,7 +154,8 @@ class FileIcon implements IFileIcon {
     if (this.iconHasError) ErrorManager.applicationNotFoundError();
 
     if (metadata.mimeType === MimeTypes.thijm) {
-      this._applicationManager.OpenExecutable(metadata);
+      new StartProcess();
+      this._processManager.OpenExecutable(metadata);
 
       return;
     }
@@ -182,7 +166,7 @@ class FileIcon implements IFileIcon {
       return;
     }
 
-    this._applicationManager.OpenFile({
+    this._processManager.OpenFile({
       filePath: metadata.exeLocation,
       mimeType: metadata.mimeType,
     });

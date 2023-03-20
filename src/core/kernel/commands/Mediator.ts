@@ -3,7 +3,7 @@
 import Settings from "@core/settings/settingsMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import { EventName } from "@ostypes/AppManagerTypes";
+import { EventName } from "@ostypes/ProcessTypes";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { Permissions } from "@thijmen-os/common";
 import { injectable } from "inversify";
