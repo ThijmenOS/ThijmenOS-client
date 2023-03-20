@@ -20,7 +20,6 @@ import TerminateProcess from "@core/kernel/commands/processes/terminateProcess";
 
 let lastWindowOnTop: ApplicationWindow;
 
-//TODO: Make executable descide and spawn window
 @injectable()
 class ApplicationWindow implements ApplicationWindowMethodShape {
   private windowHeaderElement!: HTMLDivElement;

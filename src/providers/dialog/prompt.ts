@@ -5,7 +5,7 @@ import {
   InitMovement,
 } from "@thijmen-os/graphics";
 import { promptSelectors, prompt } from "./defaults";
-import { randomUUID } from "crypto";
+import GenerateUUID from "@utils/generateUUID";
 
 class Prompt {
   protected promptElement!: HTMLElement;
@@ -14,7 +14,7 @@ class Prompt {
 
   constructor() {
     this.promptElement = CreateElementFromString(prompt);
-    this.promptIdentifier = randomUUID();
+    this.promptIdentifier = GenerateUUID();
     this.promptElement.setAttribute("data-id", this.promptIdentifier);
   }
 

@@ -18,15 +18,34 @@ class StartProcess extends Processes implements ICommand {
     this.exePath = exePath;
   }
 
-  public Handle() {
+  public async Handle() {
     //Op basis van exe pad  het process starten en runnen.
-    this.RegisterProcess(this.InitialiseProcess(this.exePath));
+    // this.RegisterProcess(this.InitialiseProcess(this.exePath));
+
+    const blob = new Blob(
+      [
+        "importScripts('" +
+          "http://localhost:8080/static/C/ProgramFiles/testProgram/test23.js" +
+          "');",
+      ],
+      { type: "application/javascript" }
+    );
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+
+    worker.postMessage("hello worker!");
+
+    worker.addEventListener(
+      "message",
+      function (e) {
+        console.log("Worker said: ", e.data);
+      },
+      false
+    );
   }
 
   private InitialiseProcess(executionLocation: string): WindowProcess {
     const applicationWindow = this._window.Application(executionLocation);
-
-    console.log(applicationWindow.windowOptions.windowIdentifier);
 
     return new WindowProcess(
       {
@@ -34,7 +53,6 @@ class StartProcess extends Processes implements ICommand {
       },
       applicationWindow
     );
-    //TODO: Application has to spawn its own window and its configurations
   }
 }
 

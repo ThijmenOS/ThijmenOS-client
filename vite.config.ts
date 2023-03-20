@@ -4,7 +4,7 @@ import nodePolyfills from "vite-plugin-node-stdlib-browser";
 import path from "path";
 
 export default defineConfig({
-  plugins: [eslintPlugin(), nodePolyfills()],
+  plugins: [eslintPlugin()],
   server: {
     cors: false,
   },

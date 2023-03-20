@@ -11,9 +11,6 @@ class Processes implements ProcessesShape {
 
   private readonly MemoryProcessesKey = "Processes";
 
-  private _runningProcesses: Array<ApplicationInstance> =
-    new Array<ApplicationInstance>();
-
   public RegisterProcess = (newProcess: ApplicationInstance) => {
     let processes = this.loadProcesses();
 
@@ -25,8 +22,6 @@ class Processes implements ProcessesShape {
       this.MemoryProcessesKey,
       processes
     );
-
-    console.log(processes);
   };
 
   public FindProcess(processIdentifier: string): GlobalProcess | null {
@@ -55,9 +50,6 @@ class Processes implements ProcessesShape {
     const targetIndex = processes.findIndex(
       (x) => x.processIdentifier === processIdentifier
     );
-
-    console.log(targetIndex);
-    console.log(processes);
 
     processes.splice(targetIndex, 1);
 

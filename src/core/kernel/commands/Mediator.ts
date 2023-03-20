@@ -13,22 +13,24 @@ class Mediator {
   private readonly _settings = javascriptOs.get<Settings>(types.Settings);
 
   public async send(command: ICommand, requestingApplicationId: string) {
-    if (command.requiredPermission === undefined) {
-      return command.Handle(requestingApplicationId);
-    }
-
-    const applicationCanExecuteCommand = await this.validatePermission(
-      command.requiredPermission,
-      requestingApplicationId
-    );
-
-    if (!applicationCanExecuteCommand)
-      return new CommandReturn<string>(
-        `No permission to execute ${command.requiredPermission}`,
-        EventName.Error
-      );
-
     return command.Handle(requestingApplicationId);
+
+    // if (command.requiredPermission === undefined) {
+    //   return command.Handle(requestingApplicationId);
+    // }
+
+    // const applicationCanExecuteCommand = await this.validatePermission(
+    //   command.requiredPermission,
+    //   requestingApplicationId
+    // );
+
+    // if (!applicationCanExecuteCommand)
+    //   return new CommandReturn<string>(
+    //     `No permission to execute ${command.requiredPermission}`,
+    //     EventName.Error
+    //   );
+
+    // return command.Handle(requestingApplicationId);
   }
 
   private async validatePermission(

@@ -45,7 +45,6 @@ class Kernel implements KernelMethodShape {
   private readonly _processManager: Processes;
   private readonly _mediator: Mediator;
   private readonly _commandAccessValidator: AccessValidationMethods;
-  private origin = "";
 
   constructor(
     @inject(types.ProcessManager) processes: Processes,
@@ -88,13 +87,12 @@ class Kernel implements KernelMethodShape {
     window.onmessage = (event: MessageEvent) => {
       const messageData: JsOsCommunicationMessage = event.data;
 
-      this.origin = messageData.origin;
-
       this.ProcessMethod(messageData);
     };
   }
 
   private async ProcessMethod(props: JsOsCommunicationMessage) {
+    console.log(props);
     try {
       const application = this._processManager.FindProcess(props.origin);
       if (!application) throw new Error("AA");
