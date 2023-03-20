@@ -1,7 +1,10 @@
 import ApplicationWindowMethodShape from "@providers/gui/applicationWindow/interfaces/applicationWindowMethodShape";
-import { ChildProcess, GlobalProcessArgs } from "../interfaces/baseProcess";
+import {
+  GlobalProcessArgs,
+  ApplicationInstance,
+} from "../interfaces/baseProcess";
 
-class WindowProcess extends ChildProcess {
+class WindowProcess extends ApplicationInstance {
   private _window: ApplicationWindowMethodShape;
 
   constructor(

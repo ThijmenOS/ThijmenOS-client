@@ -2,11 +2,11 @@
 
 //Interfaces
 import ApplicationWindowMethodShape from "./interfaces/applicationWindowMethodShape";
-import ApplicationManager from "@core/ApplicationManager/ApplicationManagerMethods";
 
 //Types
 import { window, windowDataActions, windowSelectors } from "./defaults";
-import { ClassOperation, host, WindowOptions } from "@thijmen-os/common";
+import { WindowOptions } from "./interfaces/window";
+import { ClassOperation } from "@thijmen-os/common";
 
 //Other
 import {
@@ -16,17 +16,13 @@ import {
   InitMovement,
 } from "@thijmen-os/graphics";
 import { injectable } from "inversify";
-import types from "@ostypes/types";
-import javascriptOs from "@inversify/inversify.config";
+import TerminateProcess from "@core/kernel/commands/processes/terminateProcess";
 
-let windowCount = 0;
 let lastWindowOnTop: ApplicationWindow;
 
+//TODO: Make executable descide and spawn window
 @injectable()
 class ApplicationWindow implements ApplicationWindowMethodShape {
-  private readonly _applicationManager: ApplicationManager =
-    javascriptOs.get<ApplicationManager>(types.AppManager);
-
   private windowHeaderElement!: HTMLDivElement;
   private windowContentElement!: HTMLDivElement;
   private windowFrozenElement!: HTMLDivElement;
@@ -38,8 +34,6 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
 
   constructor(windowOptions: WindowOptions) {
     this.windowOptions = windowOptions;
-
-    windowCount++;
   }
 
   private onclick = (ev: Event) => this.Click(ev);
@@ -73,9 +67,7 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       ) as windowDataActions;
 
       if (action === windowDataActions.Close)
-        this._applicationManager.CloseExecutable(
-          this.windowOptions.windowIdentifier
-        );
+        new TerminateProcess(this.windowOptions.windowIdentifier).Handle();
       if (action === windowDataActions.Maximize)
         this.MaxOrMin(ClassOperation.ADD);
       if (action === windowDataActions.Minimize)
@@ -121,21 +113,6 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.windowContainerElement!.style.width =
       this.windowOptions.windowWidth + "px";
   }
-  private UpdateUI() {
-    const staticURL = host + "/static/";
-    GetElementByClass<HTMLDivElement>(
-      this.windowContainerElement,
-      windowSelectors.windowTitle
-    ).innerHTML = this.windowOptions.windowTitle;
-    GetElementByClass<HTMLDivElement>(
-      this.windowContainerElement,
-      `${windowSelectors.windowIcon} > div`
-    ).style.backgroundImage = `url('${
-      this.windowOptions.iconLocation?.includes(staticURL)
-        ? this.windowOptions.iconLocation
-        : staticURL + this.windowOptions.iconLocation
-    }')`;
-  }
 
   public Destroy(): void {
     if (this.windowContainerElement) this.windowContainerElement.remove();
@@ -167,18 +144,12 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       "<div style='height: 100%;width:100%;background-color:rgba(142,142,142,0.2);position:absolute;'></div>"
     );
 
-    this.windowHeaderElement.setAttribute(
-      "data-id",
-      this.windowOptions.windowTitle + windowCount.toString()
-    );
-
     this.windowContainerElement.setAttribute(
       "data-id",
       this.windowOptions.windowIdentifier
     );
 
     this.UpdateStyle();
-    this.UpdateUI();
 
     return this;
   }

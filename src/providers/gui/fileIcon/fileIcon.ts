@@ -24,6 +24,7 @@ import ErrorManager from "@thijmen-os/errormanager";
 import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import GenerateUUID from "@utils/generateUUID";
 import StartProcess from "@core/kernel/commands/processes/startProcess";
+import OpenFileCommand from "@core/kernel/commands/application/openFileCommand";
 
 @injectable()
 class FileIcon implements IFileIcon {
@@ -154,8 +155,8 @@ class FileIcon implements IFileIcon {
     if (this.iconHasError) ErrorManager.applicationNotFoundError();
 
     if (metadata.mimeType === MimeTypes.thijm) {
-      new StartProcess();
-      this._processManager.OpenExecutable(metadata);
+      //Exe path mee geven op basis daar van exe laden.
+      new StartProcess(metadata.exeLocation).Handle();
 
       return;
     }
@@ -166,10 +167,10 @@ class FileIcon implements IFileIcon {
       return;
     }
 
-    this._processManager.OpenFile({
+    new OpenFileCommand({
       filePath: metadata.exeLocation,
       mimeType: metadata.mimeType,
-    });
+    }).Handle();
   }
 
   public Destory() {

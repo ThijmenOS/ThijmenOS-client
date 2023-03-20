@@ -10,7 +10,7 @@
 */
 
 import CreateApplicationWindowMethodShape from "./interfaces/createApplicationWindowMethodShape";
-import { host, ApplicationMetaData } from "@thijmen-os/common";
+import { host } from "@thijmen-os/common";
 import ApplicationWindow from "./applicationWindow";
 import { windowOptions } from "./defaults";
 import { injectable } from "inversify";
@@ -19,19 +19,17 @@ import ErrorManager from "@thijmen-os/errormanager";
 
 @injectable()
 class CreateWindow implements CreateApplicationWindowMethodShape {
-  public Application(fileIcon: ApplicationMetaData): ApplicationWindow {
+  public Application(executionLocation: string): ApplicationWindow {
     const windowId = GenerateUUID();
 
     const window = new ApplicationWindow({
-      windowTitle: fileIcon.name,
-      iconLocation: fileIcon.iconLocation,
       windowHeight: windowOptions.windowHeight,
       windowWidth: windowOptions.windowWidth,
       windowType: windowOptions.windowType,
       windowIdentifier: windowId,
     });
 
-    fetch(`${host}/static/${fileIcon.exeLocation}`).then((result) => {
+    fetch(`${host}/static/${executionLocation}`).then((result) => {
       if (!result.ok) {
         window.Destroy();
         ErrorManager.applicationNotFoundError();
@@ -39,7 +37,7 @@ class CreateWindow implements CreateApplicationWindowMethodShape {
       }
     });
 
-    const applicationContent = `<iframe id='${windowId}' name='${windowId}' class='app-iframe' style="height: ${windowOptions.windowHeight}px; width: ${windowOptions.windowWidth}px;" src='${host}/static/${fileIcon.exeLocation}'></iframe>`;
+    const applicationContent = `<iframe id='${windowId}' name='${windowId}' class='app-iframe' style="height: ${windowOptions.windowHeight}px; width: ${windowOptions.windowWidth}px;" src='${host}/static/${executionLocation}'></iframe>`;
 
     window.InitTemplate();
     window.Render(applicationContent);

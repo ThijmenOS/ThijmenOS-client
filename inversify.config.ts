@@ -14,8 +14,8 @@ import IKernel from "@core/kernel/kernelMethodShape";
 import Kernel from "@core/kernel/kernel";
 import ISettings from "@core/settings/settingsMethodShape";
 import Settings from "@core/settings/settings";
-import ICache from "@core/memory/memoryMethodShape";
-import Cache from "@core/memory/memory";
+import MemoryMethods from "@core/memory/memoryMethodShape";
+import Memory from "@core/memory/memory";
 import Window from "@providers/gui/applicationWindow/applicationWindow";
 import CreateWindow from "@providers/gui/applicationWindow/createApplicationWindow";
 import IWindow from "@providers/gui/applicationWindow/interfaces/applicationWindowMethodShape";
@@ -47,11 +47,11 @@ javascriptOs
   .to(ApplicationManager)
   .inSingletonScope();
 javascriptOs
-  .bind<ProcessesShape>(types.Processes)
+  .bind<ProcessesShape>(types.ProcessManager)
   .to(Processes)
   .inSingletonScope();
 javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
-javascriptOs.bind<ICache>(types.Cache).to(Cache).inSingletonScope();
+javascriptOs.bind<MemoryMethods>(types.Memory).to(Memory).inSingletonScope();
 javascriptOs.bind<IWindow>(types.window).to(Window);
 javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<Mediator>(types.Mediator).to(Mediator);

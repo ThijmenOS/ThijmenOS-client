@@ -32,7 +32,7 @@ class OpenFileCommand implements ICommand {
       this.OpenFileWithApplication(this.props);
     }
 
-    new StartProcess(DefaultAppToOpen!.applicationIdentifier).Handle();
+    new StartProcess(DefaultAppToOpen!.exeLocation).Handle();
     new Communication<string>({
       data: this.props.filePath,
       eventName: EventName.OpenFile,

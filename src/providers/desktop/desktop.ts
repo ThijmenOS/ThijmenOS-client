@@ -5,7 +5,7 @@ import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import { Directory, host, User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import DesktopMethods from "./desktopMethods";
-import IFileIcon from "@core/fileIcon/fileIconMethodShape";
+import IFileIcon from "@providers/gui/fileIcon/fileIconMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import { imagetypes } from "@ostypes/imageTypes";
 
@@ -15,7 +15,7 @@ class Desktop implements DesktopMethods {
   private readonly _authentication: AuthenticationMethodShape;
 
   constructor(
-    @inject(types.Cache) cache: MemoryMethodShape,
+    @inject(types.Memory) cache: MemoryMethodShape,
     @inject(types.Authentication) authentication: AuthenticationMethodShape
   ) {
     this._cache = cache;

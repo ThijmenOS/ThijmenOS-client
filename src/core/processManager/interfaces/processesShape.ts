@@ -1,19 +1,8 @@
-import { ApplicationMetaData } from "@thijmen-os/common";
-import {
-  ApplicationInstance,
-  ChildProcess,
-  GlobalProcess,
-} from "./baseProcess";
+import { ApplicationInstance, GlobalProcess } from "./baseProcess";
 
 interface ProcessesShape {
-  RegisterRunningProcess(newProcess: ApplicationInstance | ChildProcess): void;
-  checkIfApplicationIsAvailableProcess(
-    applicationIdentifier: string
-  ): ApplicationMetaData;
-  FindApplicationInstance(
-    applicationIdentifier: string
-  ): ApplicationInstance | false;
-  FindProcess(processIdentifier: string): GlobalProcess | false;
+  RegisterProcess(newProcess: ApplicationInstance): void;
+  FindProcess(processIdentifier: string): GlobalProcess | null;
 }
 
 export default ProcessesShape;

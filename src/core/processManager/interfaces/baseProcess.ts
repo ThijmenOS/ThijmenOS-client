@@ -1,8 +1,6 @@
 import { ApplicationMetaData } from "@thijmen-os/common";
 
 export interface GlobalProcessArgs {
-  processMetadata: ApplicationMetaData;
-  applicationIdentifier: string;
   processIdentifier: string;
 }
 
@@ -11,25 +9,17 @@ export interface GlobalProcess extends GlobalProcessArgs {
 }
 
 export interface ApplicationInstanceShape extends GlobalProcess {
-  applicationIdentifier: string;
   attachedProcesses: Array<ChildProcess>;
-  singleton?: boolean;
 
   AttachProcess(process: ChildProcess): void;
 }
 
-export abstract class ApplicationInstance implements ApplicationInstance {
-  processMetadata: ApplicationMetaData;
+export abstract class ApplicationInstance implements ApplicationInstanceShape {
   processIdentifier: string;
-  applicationIdentifier: string;
   attachedProcesses: Array<ChildProcess> = new Array<ChildProcess>();
-  singleton?: boolean;
 
-  constructor(args: ApplicationInstanceShape) {
+  constructor(args: GlobalProcessArgs) {
     this.processIdentifier = args.processIdentifier;
-    this.applicationIdentifier = args.applicationIdentifier;
-    this.processMetadata = args.processMetadata;
-    this.singleton = args.singleton;
   }
 
   public Terminate() {
@@ -46,13 +36,9 @@ export abstract class ApplicationInstance implements ApplicationInstance {
 
 export abstract class ChildProcess implements GlobalProcess {
   processIdentifier: string;
-  applicationIdentifier: string;
-  processMetadata: ApplicationMetaData;
 
   constructor(args: GlobalProcessArgs) {
     this.processIdentifier = args.processIdentifier;
-    this.applicationIdentifier = args.applicationIdentifier;
-    this.processMetadata = args.processMetadata;
   }
 
   abstract Terminate(): void;

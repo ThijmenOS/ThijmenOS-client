@@ -48,7 +48,7 @@ class Kernel implements KernelMethodShape {
   private origin = "";
 
   constructor(
-    @inject(types.Processes) processes: Processes,
+    @inject(types.ProcessManager) processes: Processes,
     @inject(types.Mediator) mediator: Mediator,
     @inject(types.CommandAccessValidation)
     accessValidator: AccessValidationMethods
@@ -103,7 +103,7 @@ class Kernel implements KernelMethodShape {
 
       const result = await this._mediator.send(
         new command(props.params),
-        application.applicationIdentifier
+        application.processIdentifier
       );
 
       if (result instanceof CommandReturn) {

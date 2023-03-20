@@ -1,62 +1,40 @@
-import ApplicationManager from "@core/ApplicationManager/ApplicationManagerMethods";
+import Memory from "@core/memory/memoryMethodShape";
+import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import CouldNotStartProcess from "@providers/error/errors/couldNotStartProcess";
-import { ApplicationMetaData } from "@thijmen-os/common";
-import { inject, injectable } from "inversify";
-import {
-  ApplicationInstance,
-  ChildProcess,
-  GlobalProcess,
-} from "./interfaces/baseProcess";
+import { injectable } from "inversify";
+import { ApplicationInstance, GlobalProcess } from "./interfaces/baseProcess";
+import ProcessesShape from "./interfaces/processesShape";
 
 @injectable()
-class Processes {
-  private readonly _applicationManager: ApplicationManager;
+class Processes implements ProcessesShape {
+  private readonly _memory: Memory = javascriptOs.get<Memory>(types.Memory);
+
+  private readonly MemoryProcessesKey = "Processes";
 
   private _runningProcesses: Array<ApplicationInstance> =
     new Array<ApplicationInstance>();
 
-  constructor(
-    @inject(types.AppManager) applicationManager?: ApplicationManager
-  ) {
-    this._applicationManager = applicationManager!;
-  }
+  public RegisterProcess = (newProcess: ApplicationInstance) => {
+    let processes = this.loadProcesses();
 
-  public RegisterRunningProcess = (
-    newProcess: ApplicationInstance | ChildProcess
-  ) => {
-    if (newProcess instanceof ApplicationInstance) {
-      this._runningProcesses.push(newProcess);
-      return;
-    }
+    processes
+      ? processes.push(newProcess)
+      : (processes = new Array(newProcess));
 
-    const runningProcess = this._runningProcesses.find(
-      (p) => p.applicationIdentifier === newProcess.applicationIdentifier
+    this._memory.saveToMemory<Array<ApplicationInstance>>(
+      this.MemoryProcessesKey,
+      processes
     );
 
-    if (!runningProcess) {
-      throw new CouldNotStartProcess("The target process could not be started");
-    }
-
-    runningProcess.AttachProcess(newProcess);
+    console.log(processes);
   };
 
-  public checkIfApplicationIsAvailableProcess = (
-    applicationIdentifier: string
-  ): ApplicationMetaData =>
-    this._applicationManager.CheckIfApplicationIsAvailableProcess(
-      applicationIdentifier
-    );
+  public FindProcess(processIdentifier: string): GlobalProcess | null {
+    const processes = this.loadProcesses();
 
-  public FindApplicationInstance = (
-    applicationIdentifier: string
-  ): ApplicationInstance | false =>
-    this._runningProcesses.find(
-      (process) => process.applicationIdentifier === applicationIdentifier
-    ) ?? false;
+    if (!processes) return null;
 
-  public FindProcess(processIdentifier: string): GlobalProcess | false {
-    const targetProcess = this._runningProcesses.find(
+    const targetProcess = processes.find(
       (x) =>
         x.processIdentifier === processIdentifier ||
         x.attachedProcesses?.find(
@@ -64,18 +42,33 @@ class Processes {
         )
     );
 
-    if (!targetProcess) return false;
+    if (!targetProcess) return null;
 
     return targetProcess;
   }
 
-  protected RemoveApplicationInstance = (applicationIdentifier: string) =>
-    this._runningProcesses.splice(
-      this._runningProcesses.findIndex(
-        (x) => x.applicationIdentifier === applicationIdentifier
-      ),
-      1
+  protected RemoveApplicationInstance = (processIdentifier: string) => {
+    const processes = this.loadProcesses();
+
+    if (!processes) return;
+
+    const targetIndex = processes.findIndex(
+      (x) => x.processIdentifier === processIdentifier
     );
+
+    console.log(targetIndex);
+    console.log(processes);
+
+    processes.splice(targetIndex, 1);
+
+    this._memory.saveToMemory(this.MemoryProcessesKey, processes);
+  };
+
+  private loadProcesses(): Array<ApplicationInstance> | undefined {
+    return this._memory.loadFromMemory<Array<ApplicationInstance>>(
+      this.MemoryProcessesKey
+    );
+  }
 }
 
 export default Processes;
