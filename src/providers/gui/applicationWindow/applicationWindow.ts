@@ -26,6 +26,7 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
   private windowContentElement!: HTMLDivElement;
   private windowFrozenElement!: HTMLDivElement;
   public windowContainerElement!: HTMLDivElement;
+  public windowContent!: HTMLIFrameElement;
 
   private fullScreen = false;
 
@@ -157,7 +158,8 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.InitMovement();
   }
   public Render(content: string): void {
-    this.windowContentElement.innerHTML = content;
+    this.windowContent = CreateElementFromString<HTMLIFrameElement>(content);
+    this.windowContentElement.appendChild(this.windowContent);
 
     document
       .getElementById("main-application-container")!

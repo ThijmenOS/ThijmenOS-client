@@ -30,11 +30,7 @@ class Processes implements ProcessesShape {
     if (!processes) return null;
 
     const targetProcess = processes.find(
-      (x) =>
-        x.processIdentifier === processIdentifier ||
-        x.attachedProcesses?.find(
-          (y) => y.processIdentifier === processIdentifier
-        )
+      (x) => x.processIdentifier === processIdentifier
     );
 
     if (!targetProcess) return null;

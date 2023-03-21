@@ -74,7 +74,6 @@ class Startup implements StartupMethodShape {
   }
 
   private async userAuthenticated() {
-    this._kernel.ListenToCommunication();
     this._appManager.FetchInstalledApps();
     this._desktop.LoadDesktop();
   }

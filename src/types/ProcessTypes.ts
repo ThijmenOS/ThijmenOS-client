@@ -21,6 +21,8 @@ export enum EventName {
   PermissionRevoked = "permissionRevoked",
 
   OpenedExternalApplication = "OpenedExternalApplication",
+
+  ListedProcesses = "listedProcesses",
 }
 
 export const system = "system";

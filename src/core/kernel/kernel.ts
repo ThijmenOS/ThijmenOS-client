@@ -19,9 +19,9 @@ import types from "@ostypes/types";
 //Types
 import {
   KernelMethods,
-  ValidMethods,
   JsOsCommunicationMessage,
 } from "@core/kernel/kernelTypes";
+import { ValidMethods } from "./kernelMethods";
 import Mediator from "./commands/Mediator";
 import TouchCommand from "./commands/filesystem/touchCommand";
 import rmdirCommand from "./commands/filesystem/rmdirCommand";
@@ -30,29 +30,27 @@ import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
 import ReadFileCommand from "./commands/filesystem/readFileCommand";
 import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
-import { system } from "@ostypes/ProcessTypes";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
 import AskPermissionCommand from "./commands/settings/askPermissionCommand";
 import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
 import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 import AccessValidationMethods from "./accessValidationMethods";
-import Processes from "@core/processManager/interfaces/processesShape";
 import Communication from "./commands/application/communication";
+import StartProcess from "./commands/processes/startProcess";
+import TerminateProcess from "./commands/processes/terminateProcess";
+import SpawnWindow from "./commands/processes/spawnWindow";
 
 @injectable()
 class Kernel implements KernelMethodShape {
-  private readonly _processManager: Processes;
   private readonly _mediator: Mediator;
   private readonly _commandAccessValidator: AccessValidationMethods;
 
   constructor(
-    @inject(types.ProcessManager) processes: Processes,
     @inject(types.Mediator) mediator: Mediator,
     @inject(types.CommandAccessValidation)
     accessValidator: AccessValidationMethods
   ) {
-    this._processManager = processes;
     this._mediator = mediator;
     this._commandAccessValidator = accessValidator;
   }
@@ -81,34 +79,26 @@ class Kernel implements KernelMethodShape {
     askPermission: AskPermissionCommand,
     revokeAllPermissions: RevokeAllPermissionCommand,
     revokePermission: RevokePermissionCommand,
+
+    startProcess: StartProcess,
+    terminateProcess: TerminateProcess,
+    spawnWindow: SpawnWindow,
   };
 
-  public ListenToCommunication(): void {
-    window.onmessage = (event: MessageEvent) => {
-      const messageData: JsOsCommunicationMessage = event.data;
-
-      this.ProcessMethod(messageData);
-    };
-  }
-
-  private async ProcessMethod(props: JsOsCommunicationMessage) {
-    console.log(props);
+  public async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
-      const application = this._processManager.FindProcess(props.origin);
-      if (!application) throw new Error("AA");
-
       const command = this.kernelMethods[props.method as ValidMethods];
 
       const result = await this._mediator.send(
         new command(props.params),
-        application.processIdentifier
+        props.processIdentifier
       );
 
       if (result instanceof CommandReturn) {
         new Communication({
           data: result.data,
           eventName: result.event,
-          processIdentifier: system,
+          worker: props.origin,
         }).Handle();
       }
     } catch (error) {

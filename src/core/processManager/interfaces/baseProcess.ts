@@ -1,45 +1,48 @@
-import { ApplicationMetaData } from "@thijmen-os/common";
-
-export interface GlobalProcessArgs {
+export interface GlobalProcessArgs<T extends Worker | Window> {
   processIdentifier: string;
+  origin: T;
 }
 
-export interface GlobalProcess extends GlobalProcessArgs {
+export interface GlobalProcess {
   Terminate(): void;
+  AddEventListener(): void;
 }
 
-export interface ApplicationInstanceShape extends GlobalProcess {
-  attachedProcesses: Array<ChildProcess>;
-
-  AttachProcess(process: ChildProcess): void;
-}
-
-export abstract class ApplicationInstance implements ApplicationInstanceShape {
+export abstract class ApplicationInstance<T extends Worker | Window = any>
+  implements GlobalProcess, GlobalProcessArgs<T>
+{
   processIdentifier: string;
-  attachedProcesses: Array<ChildProcess> = new Array<ChildProcess>();
+  origin: T;
 
-  constructor(args: GlobalProcessArgs) {
+  constructor(args: GlobalProcessArgs<T>) {
     this.processIdentifier = args.processIdentifier;
+    this.origin = args.origin;
   }
 
-  public Terminate() {
-    this.attachedProcesses.forEach((process, index) => {
-      process.Terminate();
-      this.attachedProcesses.splice(index, 1);
-    });
-  }
+  public abstract Terminate(): void;
+  // this.attachedProcesses.forEach((process, index) => {
+  //   process.Terminate();
+  //   this.attachedProcesses.splice(index, 1);
+  // });
 
-  public AttachProcess(process: ChildProcess): void {
-    this.attachedProcesses?.push(process);
-  }
+  public abstract AddEventListener(): void;
+
+  // public AttachProcess(process: ChildProcess): void {
+  //   this.attachedProcesses?.push(process);
+  // }
 }
 
-export abstract class ChildProcess implements GlobalProcess {
+export abstract class ChildProcess<T extends Worker | Window>
+  implements GlobalProcess
+{
   processIdentifier: string;
+  origin: T;
 
-  constructor(args: GlobalProcessArgs) {
+  constructor(args: GlobalProcessArgs<T>) {
     this.processIdentifier = args.processIdentifier;
+    this.origin = args.origin;
   }
 
   abstract Terminate(): void;
+  abstract AddEventListener(): void;
 }

@@ -1,7 +1,8 @@
 import { EventName } from "@ostypes/ProcessTypes";
+import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
 
 interface ApplicationCommunicationModel<T> {
-  processIdentifier: string;
+  worker: Worker | Window;
   data: T;
   eventName: EventName;
 }

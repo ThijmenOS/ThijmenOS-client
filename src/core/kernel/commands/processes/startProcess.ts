@@ -1,15 +1,11 @@
+import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
 import Processes from "@core/processManager/processes";
-import WindowProcess from "@core/processManager/processes/windowProcess";
-import javascriptOs from "@inversify/inversify.config";
+import WorkerProcess from "@core/processManager/processes/workerProcess";
 import { ICommand } from "@ostypes/CommandTypes";
-import types from "@ostypes/types";
-import CreateWindow from "@providers/gui/applicationWindow/createApplicationWindow";
-import createApplicationWindowMethodShape from "@providers/gui/applicationWindow/interfaces/createApplicationWindowMethodShape";
+import { host } from "@thijmen-os/common";
+import GenerateUUID from "@utils/generateUUID";
 
 class StartProcess extends Processes implements ICommand {
-  private readonly _window: CreateWindow =
-    javascriptOs.get<createApplicationWindowMethodShape>(types.CreateWindow);
-
   private exePath: string;
 
   constructor(exePath: string) {
@@ -20,39 +16,28 @@ class StartProcess extends Processes implements ICommand {
 
   public async Handle() {
     //Op basis van exe pad  het process starten en runnen.
-    // this.RegisterProcess(this.InitialiseProcess(this.exePath));
-
-    const blob = new Blob(
-      [
-        "importScripts('" +
-          "http://localhost:8080/static/C/ProgramFiles/testProgram/test23.js" +
-          "');",
-      ],
-      { type: "application/javascript" }
-    );
-    const url = URL.createObjectURL(blob);
-    const worker = new Worker(url);
-
-    worker.postMessage("hello worker!");
-
-    worker.addEventListener(
-      "message",
-      function (e) {
-        console.log("Worker said: ", e.data);
-      },
-      false
-    );
+    this.RegisterProcess(this.InitialiseProcess(this.exePath));
   }
 
-  private InitialiseProcess(executionLocation: string): WindowProcess {
-    const applicationWindow = this._window.Application(executionLocation);
-
-    return new WindowProcess(
+  private InitialiseProcess(
+    executionLocation: string
+  ): ApplicationInstance<Worker> {
+    const blob = new Blob(
+      [`importScripts('${host}/static/${executionLocation}');`],
       {
-        processIdentifier: applicationWindow.windowOptions.windowIdentifier,
-      },
-      applicationWindow
+        type: "application/javascript",
+      }
     );
+    const url = URL.createObjectURL(blob);
+
+    const process = new WorkerProcess({
+      processIdentifier: GenerateUUID(),
+      origin: new Worker(url),
+    });
+
+    process.AddEventListener();
+
+    return process;
   }
 }
 
