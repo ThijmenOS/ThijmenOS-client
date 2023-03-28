@@ -24,7 +24,7 @@ class Processes implements ProcessesShape {
     );
   };
 
-  public FindProcess(processIdentifier: string): GlobalProcess | null {
+  public FindProcess(processIdentifier: string): ApplicationInstance | null {
     const processes = this.loadProcesses();
 
     if (!processes) return null;

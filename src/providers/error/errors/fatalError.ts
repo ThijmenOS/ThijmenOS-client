@@ -1,12 +1,19 @@
 import { AddElement, CreateElementFromString } from "@providers/gui/helpers";
 import { fatalError } from "../defaults";
+import { OSErrors } from "../defaults/errors";
 
-function FatalError() {
-  const errorWindow = CreateElementFromString<HTMLDivElement>(fatalError);
+class FatalError extends Error {
+  constructor(message: string, error: OSErrors) {
+    super(message);
 
-  AddElement(errorWindow);
+    this.name = "FatalError";
 
-  throw new Error("Fatal error");
+    const errorWindow = CreateElementFromString<HTMLDivElement>(
+      fatalError(error)
+    );
+
+    AddElement(errorWindow);
+  }
 }
 
 export default FatalError;

@@ -40,6 +40,7 @@ import Communication from "./commands/application/communication";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
 import SpawnWindow from "./commands/processes/spawnWindow";
+import CommunicateToProcess from "./commands/processes/communicateToProcess";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -83,6 +84,7 @@ class Kernel implements KernelMethodShape {
     startProcess: StartProcess,
     terminateProcess: TerminateProcess,
     spawnWindow: SpawnWindow,
+    communicateToProcess: CommunicateToProcess,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {

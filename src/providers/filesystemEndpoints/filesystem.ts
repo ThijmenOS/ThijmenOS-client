@@ -1,8 +1,13 @@
 import api from "./api";
 import { Mkdir, Directory, Path, AccessMap } from "@thijmen-os/common";
 
-export async function ShowFilesInDir(path = ""): Promise<Array<Directory>> {
-  const { data } = await api.get(`/filesystem/showUserFiles?dir=${path}`);
+export async function ShowFilesInDir(
+  path?: string,
+  errorHandler?: () => any
+): Promise<Array<Directory>> {
+  const { data } = await api
+    .get(`/filesystem/showUserFiles?dir=${path}`)
+    .catch((err) => errorHandler && errorHandler());
   return data;
 }
 

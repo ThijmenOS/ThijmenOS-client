@@ -1,7 +1,8 @@
 import Processes from "@core/processManager/processes";
 import WindowProcess from "@core/processManager/processes/windowProcess";
 import javascriptOs from "@inversify/inversify.config";
-import { ICommand } from "@ostypes/CommandTypes";
+import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { EventName } from "@ostypes/ProcessTypes";
 import types from "@ostypes/types";
 import CreateWindow from "@providers/gui/applicationWindow/createApplicationWindow";
 import createApplicationWindowMethodShape from "@providers/gui/applicationWindow/interfaces/createApplicationWindowMethodShape";
@@ -18,9 +19,15 @@ class SpawnWindow extends Processes implements ICommand {
     this.guiPath = guiPath;
   }
 
-  public async Handle() {
+  public Handle(): CommandReturn<string> {
     //Op basis van exe pad  het process starten en runnen.
-    this.RegisterProcess(this.InitialiseProcess(this.guiPath));
+    const iframe = this.InitialiseProcess(this.guiPath);
+    this.RegisterProcess(iframe);
+
+    return new CommandReturn(
+      iframe.processIdentifier,
+      EventName.WindowLaunched
+    );
   }
 
   private InitialiseProcess(executionLocation: string): WindowProcess {

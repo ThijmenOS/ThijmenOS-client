@@ -20,7 +20,11 @@ class Communication<T> implements ICommand {
       eventData: this.props.data,
     };
 
-    this.props.worker.postMessage(event);
+    if (this.props.worker) {
+      setTimeout(() => {
+        this.props.worker.postMessage(event, { targetOrigin: "*" });
+      }, 1000);
+    }
 
     // WaitForElm<HTMLIFrameElement>(this.props.processIdentifier).then(
     //   (res: HTMLIFrameElement) => {

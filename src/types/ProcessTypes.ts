@@ -21,6 +21,7 @@ export enum EventName {
   PermissionRevoked = "permissionRevoked",
 
   OpenedExternalApplication = "OpenedExternalApplication",
+  WindowLaunched = "WindowLaunched",
 
   ListedProcesses = "listedProcesses",
 }

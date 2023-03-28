@@ -8,6 +8,8 @@ import DesktopMethods from "./desktopMethods";
 import IFileIcon from "@providers/gui/fileIcon/fileIconMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import { imagetypes } from "@ostypes/imageTypes";
+import FatalError from "@providers/error/errors/fatalError";
+import { OSErrors } from "@providers/error/defaults/errors";
 
 @injectable()
 class Desktop implements DesktopMethods {
@@ -31,8 +33,17 @@ class Desktop implements DesktopMethods {
     this.SetBackground(signedInUser.preferences.background);
 
     const desktopFiles = await ShowFilesInDir(
-      this.ConstructDesktopPath(signedInUser)
+      this.ConstructDesktopPath(signedInUser),
+      () =>
+        new FatalError("Could not load desktop", OSErrors.couldNotLoadDesktop)
     );
+
+    if (!desktopFiles) {
+      new FatalError(
+        "Desktop could not be loaded",
+        OSErrors.couldNotLoadDesktop
+      );
+    }
 
     this._cache.saveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
 

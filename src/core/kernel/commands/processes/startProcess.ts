@@ -1,7 +1,8 @@
 import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
 import Processes from "@core/processManager/processes";
 import WorkerProcess from "@core/processManager/processes/workerProcess";
-import { ICommand } from "@ostypes/CommandTypes";
+import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { EventName } from "@ostypes/ProcessTypes";
 import { host } from "@thijmen-os/common";
 import GenerateUUID from "@utils/generateUUID";
 
@@ -14,9 +15,15 @@ class StartProcess extends Processes implements ICommand {
     this.exePath = exePath;
   }
 
-  public async Handle() {
+  public Handle(): CommandReturn<ApplicationInstance<Worker>> {
     //Op basis van exe pad  het process starten en runnen.
-    this.RegisterProcess(this.InitialiseProcess(this.exePath));
+    const applicationInstance = this.InitialiseProcess(this.exePath);
+    this.RegisterProcess(applicationInstance);
+
+    return new CommandReturn<ApplicationInstance<Worker>>(
+      applicationInstance,
+      EventName.StartedApplication
+    );
   }
 
   private InitialiseProcess(

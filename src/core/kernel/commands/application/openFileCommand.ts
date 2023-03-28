@@ -32,11 +32,11 @@ class OpenFileCommand implements ICommand {
       this.OpenFileWithApplication(this.props);
     }
 
-    new StartProcess(DefaultAppToOpen!.exeLocation).Handle();
+    const worker = new StartProcess(DefaultAppToOpen!.exeLocation).Handle();
     new Communication<string>({
       data: this.props.filePath,
       eventName: EventName.OpenFile,
-      processIdentifier: DefaultAppToOpen!.applicationIdentifier,
+      worker: worker.data.origin,
     }).Handle();
 
     return new CommandReturn<boolean>(true, EventName.OpenFile);
@@ -58,11 +58,13 @@ class OpenFileCommand implements ICommand {
       const application = installedAppsWithDesiredMimetype.find(
         (app) => app.name === selectedApp
       )!;
-      new StartProcess(application.applicationIdentifier).Handle();
+      const worker = new StartProcess(
+        application.applicationIdentifier
+      ).Handle();
       new Communication<string>({
         data: file.filePath,
         eventName: EventName.OpenFile,
-        processIdentifier: application.applicationIdentifier,
+        worker: worker.data.origin,
       }).Handle();
     });
   }
