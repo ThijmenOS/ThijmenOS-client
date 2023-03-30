@@ -18,10 +18,12 @@ class CommunicateToProcess extends Processes implements ICommand {
     //Op basis van exe pad  het process starten en runnen.
     const targetProcess = this.FindProcess(this._pid);
 
+    if (!targetProcess) return;
+
     new Communication({
       data: this._data,
       eventName: EventName.SelfInvoked,
-      worker: targetProcess?.origin,
+      worker: targetProcess.origin,
     }).Handle();
   }
 }

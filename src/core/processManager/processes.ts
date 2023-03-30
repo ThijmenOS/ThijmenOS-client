@@ -52,7 +52,7 @@ class Processes implements ProcessesShape {
     this._memory.SaveToMemory(this._memoryProcessesKey, processes);
   };
 
-  private LoadProcesses(): Array<ApplicationInstance> | undefined {
+  private LoadProcesses(): Array<ApplicationInstance> | null {
     return this._memory.LoadFromMemory<Array<ApplicationInstance>>(
       this._memoryProcessesKey
     );

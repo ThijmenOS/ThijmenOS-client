@@ -1,6 +1,9 @@
 import { ICommand } from "@ostypes/CommandTypes";
 import ApplicationCommunicationModel from "@core/kernel/models/applicationCommunication";
 import { CommunicationEvent } from "@core/kernel/models/CommunicationEvent";
+import { WaitForElm } from "@providers/gui/helpers/WaitForElement";
+import WorkerProcess from "@core/processManager/processes/workerProcess";
+import WindowProcess from "@core/processManager/processes/windowProcess";
 
 class Communication<T> implements ICommand {
   private readonly _props: ApplicationCommunicationModel<T>;
@@ -19,20 +22,31 @@ class Communication<T> implements ICommand {
       eventName: this._props.eventName,
       eventData: this._props.data,
     };
-
-    if (this._props.worker) {
-      setTimeout(() => {
-        this._props.worker.postMessage(event, { targetOrigin: "*" });
-      }, 1000);
+    if (!this._props.worker.origin) {
+      return;
     }
 
-    // WaitForElm<HTMLIFrameElement>(this.props.processIdentifier).then(
-    //   (res: HTMLIFrameElement) => {
-    //     setTimeout(() => {
-    //       res.contentWindow?.postMessage(event, "*");
-    //     }, 200);
-    //   }
-    // );
+    if (this._props.worker instanceof WorkerProcess) {
+      this.WorkerMessage(this._props.worker.origin, event);
+    }
+
+    if (this._props.worker instanceof WindowProcess) {
+      this.WindowMessage(this._props.worker.origin, event);
+    }
+  }
+
+  private WorkerMessage(worker: Worker, event: CommunicationEvent<T>) {
+    worker.postMessage(event);
+  }
+
+  private WindowMessage(window: Window, event: CommunicationEvent<T>) {
+    WaitForElm<HTMLIFrameElement>(this._props.worker.processIdentifier).then(
+      () => {
+        setTimeout(() => {
+          window.postMessage(event, "*");
+        }, 100);
+      }
+    );
   }
 }
 

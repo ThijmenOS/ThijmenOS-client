@@ -6,23 +6,34 @@ import { EventName } from "@ostypes/ProcessTypes";
 import types from "@ostypes/types";
 import CreateWindow from "@providers/gui/applicationWindow/createApplicationWindow";
 import createApplicationWindowMethodShape from "@providers/gui/applicationWindow/interfaces/createApplicationWindowMethodShape";
+import Communication from "../application/communication";
 
 class SpawnWindow extends Processes implements ICommand {
   private readonly _window: CreateWindow =
     javascriptOs.get<createApplicationWindowMethodShape>(types.CreateWindow);
 
-  private readonly _guiPath: string;
+  private _guiPath: string;
+  private _args?: string;
 
-  constructor(guiPath: string) {
+  constructor(props: { guiPath: string; args?: string }) {
     super();
 
-    this._guiPath = guiPath;
+    this._guiPath = props.guiPath;
+    this._args = props.args;
   }
 
   public Handle(): CommandReturn<string> {
     //Op basis van exe pad  het process starten en runnen.
     const iframe = this.InitialiseProcess(this._guiPath);
     this.RegisterProcess(iframe);
+
+    if (this._args) {
+      new Communication({
+        data: this._args,
+        eventName: EventName.StartedApplication,
+        worker: iframe,
+      }).Handle();
+    }
 
     return new CommandReturn(
       iframe.processIdentifier,

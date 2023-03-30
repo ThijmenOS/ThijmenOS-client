@@ -3,6 +3,7 @@ import javascriptOs from "@inversify/inversify.config";
 import { AccessObjectMap } from "@ostypes/FileSystemTypes";
 import { accesskey, userKey } from "@ostypes/memoryKeys";
 import types from "@ostypes/types";
+import NoPermission from "@providers/error/errors/NoPermission";
 import { readAccessFile } from "@providers/filesystemEndpoints/root";
 import { Access, AccessMap, Path, User } from "@thijmen-os/common";
 import { injectable } from "inversify";
@@ -46,7 +47,7 @@ class CommandAccessValidation implements AccessValidationMethods {
       return true;
     }
 
-    return false;
+    throw new NoPermission("Resource access denied");
   }
 
   protected LoadUserData(): User {

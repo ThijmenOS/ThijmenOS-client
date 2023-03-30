@@ -33,7 +33,7 @@ class WindowProcess extends ApplicationInstance<Window> {
       if (message.origin !== this.processIdentifier) return;
 
       this._kernel.ProcessMethod({
-        origin: this.origin,
+        origin: this,
         processIdentifier: message.origin,
         method: message.method,
         params: message.params,

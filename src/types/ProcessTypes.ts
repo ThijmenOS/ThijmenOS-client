@@ -1,6 +1,13 @@
 export type Event<T> = { eventName: string; eventSender: string; eventData: T };
 
 export enum EventName {
+  ChangeDir = "changeDir",
+  MkDir = "mkDir",
+  ReadFile = "readFile",
+  RmDir = "rmDir",
+  ListFiles = "listFiles",
+  Touch = "touch",
+
   TestCommand = "testCommand",
   SelfInvoked = "selfInvoked",
 

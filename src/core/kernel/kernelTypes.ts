@@ -1,8 +1,9 @@
+import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
 import { Class, ICommand } from "../../types/CommandTypes";
 import { ValidMethods } from "./kernelMethods";
 
 export type JsOsCommunicationMessage = {
-  origin: Worker | Window;
+  origin: ApplicationInstance;
   processIdentifier: string;
   method: string;
   params: unknown;

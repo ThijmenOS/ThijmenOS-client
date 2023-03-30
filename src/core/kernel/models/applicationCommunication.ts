@@ -1,7 +1,7 @@
+import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
 import { EventName } from "@ostypes/ProcessTypes";
-
 interface ApplicationCommunicationModel<T> {
-  worker: Worker | Window;
+  worker: ApplicationInstance;
   data: T;
   eventName: EventName;
 }
