@@ -3,6 +3,7 @@ import javascriptOs from "@inversify/inversify.config";
 import { AccessObjectMap } from "@ostypes/FileSystemTypes";
 import { accesskey, userKey } from "@ostypes/memoryKeys";
 import types from "@ostypes/types";
+import NoPermission from "@providers/error/errors/NoPermission";
 import { readAccessFile } from "@providers/filesystemEndpoints/root";
 import { Access, AccessMap, Path, User } from "@thijmen-os/common";
 import { injectable } from "inversify";
@@ -24,7 +25,7 @@ class CommandAccessValidation implements AccessValidationMethods {
 
   public async loadAccessFile(): Promise<void> {
     const accessMap = await readAccessFile();
-    this._memory.saveToMemory<AccessObjectMap>(accesskey, accessMap);
+    this._memory.SaveToMemory<AccessObjectMap>(accesskey, accessMap);
   }
 
   protected validateAccess(object: Path, accesslevel: Access): boolean {
@@ -46,11 +47,11 @@ class CommandAccessValidation implements AccessValidationMethods {
       return true;
     }
 
-    return false;
+    throw new NoPermission("Resource access denied");
   }
 
   protected loadUserData(): User {
-    const user = this._memory.loadFromMemory<User>(userKey);
+    const user = this._memory.LoadFromMemory<User>(userKey);
     //TODO: Throw kernel panic
     if (!user) {
       throw new Error();
@@ -60,7 +61,7 @@ class CommandAccessValidation implements AccessValidationMethods {
   }
 
   private loadAccessData(): AccessObjectMap | false {
-    const accessMap = this._memory.loadFromMemory<AccessObjectMap>(accesskey);
+    const accessMap = this._memory.LoadFromMemory<AccessObjectMap>(accesskey);
 
     //TODO: Implement invalid signature error
     if (!accessMap) return false;

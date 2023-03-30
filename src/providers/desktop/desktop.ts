@@ -45,14 +45,14 @@ class Desktop implements DesktopMethods {
       );
     }
 
-    this._cache.saveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
+    this._cache.SaveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
 
     this.RenderIcon(desktopFiles);
   }
 
   public async RefreshDesktop(): Promise<void> {
     const cacheFiles =
-      this._cache.loadFromMemory<Array<Directory>>("desktopFiles");
+      this._cache.LoadFromMemory<Array<Directory>>("desktopFiles");
 
     if (!cacheFiles) throw new Error();
     const loggedInUser = this._authentication.CheckAuthenticationState();

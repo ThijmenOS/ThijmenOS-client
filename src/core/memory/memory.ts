@@ -1,12 +1,21 @@
-import { cacheObject } from "@ostypes/CacheTypes";
+import { memoryObject } from "@ostypes/CacheTypes";
 import { injectable } from "inversify";
 import MemoryMethodShape from "./memoryMethodShape";
 
 @injectable()
 class Memory implements MemoryMethodShape {
-  private memory: cacheObject = {};
+  private memory: memoryObject = {};
 
-  public saveToMemory<T>(key: string, object: T, localstorage?: boolean): void {
+  public AllocateMemory(pid: Array<string>): boolean {
+    const memoryKey = this.GenerateProcessKey(pid);
+
+    if (this.memory[memoryKey]) return false;
+
+    this.memory[memoryKey] = {};
+    return true;
+  }
+
+  public SaveToMemory<T>(key: string, object: T, localstorage?: boolean): void {
     this.memory[key] = object;
 
     if (localstorage) {
@@ -14,7 +23,7 @@ class Memory implements MemoryMethodShape {
     }
   }
 
-  public loadFromMemory<T>(key: string): T | undefined {
+  public LoadFromMemory<T>(key: string): T | null {
     const localCache = this.memory[key];
 
     if (localCache) {
@@ -27,8 +36,16 @@ class Memory implements MemoryMethodShape {
       return JSON.parse(localstorage) as T;
     }
 
-    return undefined;
+    return null;
   }
+
+  private GenerateProcessKey = (pid: Array<string>): string =>
+    pid
+      .map((id) => {
+        const fist = id.substring(0, 5);
+        fist.concat(id.substring(id.length - 5, id.length));
+      })
+      .join();
 }
 
 export default Memory;

@@ -28,7 +28,7 @@ import rmdirCommand from "./commands/filesystem/rmdirCommand";
 import mkdirCommand from "./commands/filesystem/mkdirCommand";
 import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
 import ReadFileCommand from "./commands/filesystem/readFileCommand";
-import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
+import ListFilesCommand from "./commands/filesystem/listFilesCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
@@ -60,7 +60,7 @@ class Kernel implements KernelMethodShape {
   }
 
   private kernelMethods: KernelMethods = {
-    filesInDir: ShowFilesInDirCommand,
+    listFiles: ListFilesCommand,
 
     readFile: ReadFileCommand,
 

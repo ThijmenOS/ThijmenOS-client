@@ -18,7 +18,7 @@ class Authentication implements AuthenticationMethodShape {
   }
 
   public CheckAuthenticationState(): false | User {
-    const authenticatedUser = this._memory.loadFromMemory<User>(userKey);
+    const authenticatedUser = this._memory.LoadFromMemory<User>(userKey);
 
     if (authenticatedUser) return authenticatedUser;
 
@@ -77,7 +77,7 @@ class Authentication implements AuthenticationMethodShape {
       detail: user,
     });
 
-    this._memory.saveToMemory<User>(userKey, user, true);
+    this._memory.SaveToMemory<User>(userKey, user, true);
 
     document
       .querySelector("#thijmen-os-login-page")

@@ -67,7 +67,7 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       ) as windowDataActions;
 
       if (action === windowDataActions.Close)
-        new TerminateProcess(this.windowOptions.windowIdentifier).Handle();
+        new TerminateProcess().Handle(this.windowOptions.windowIdentifier);
       if (action === windowDataActions.Maximize)
         this.MaxOrMin(ClassOperation.ADD);
       if (action === windowDataActions.Minimize)

@@ -17,7 +17,7 @@ class WorkerProcess extends ApplicationInstance<Worker> {
   public AddEventListener(): void {
     this.origin.addEventListener("message", (event) => {
       this._kernel.ProcessMethod({
-        origin: this.origin,
+        origin: this,
         processIdentifier: this.processIdentifier,
         ...event.data,
       });

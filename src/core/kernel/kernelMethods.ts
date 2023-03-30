@@ -1,6 +1,6 @@
 export enum ValidMethods {
   //File system
-  filesInDir = "filesInDir",
+  listFiles = "listFiles",
   readFile = "readFile",
   changeDir = "changeDir",
   mkdir = "mkdir",

@@ -18,7 +18,7 @@ class Processes implements ProcessesShape {
       ? processes.push(newProcess)
       : (processes = new Array(newProcess));
 
-    this._memory.saveToMemory<Array<ApplicationInstance>>(
+    this._memory.SaveToMemory<Array<ApplicationInstance>>(
       this.MemoryProcessesKey,
       processes
     );
@@ -49,11 +49,11 @@ class Processes implements ProcessesShape {
 
     processes.splice(targetIndex, 1);
 
-    this._memory.saveToMemory(this.MemoryProcessesKey, processes);
+    this._memory.SaveToMemory(this.MemoryProcessesKey, processes);
   };
 
-  private loadProcesses(): Array<ApplicationInstance> | undefined {
-    return this._memory.loadFromMemory<Array<ApplicationInstance>>(
+  private loadProcesses(): Array<ApplicationInstance> | null {
+    return this._memory.LoadFromMemory<Array<ApplicationInstance>>(
       this.MemoryProcessesKey
     );
   }
