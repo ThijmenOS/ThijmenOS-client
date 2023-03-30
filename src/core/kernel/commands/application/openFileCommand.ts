@@ -1,7 +1,7 @@
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import ApplicationManager from "@core/ApplicationManager/ApplicationManagerMethods";
+import ApplicationManager from "@core/applicationManager/ApplicationManagerMethods";
 import { EventName } from "@ostypes/ProcessTypes";
 import { OpenFileType } from "@core/kernel/models/fileMetadata";
 import Settings from "@core/settings/settingsMethodShape";
@@ -9,6 +9,7 @@ import NoAppForFiletypeError from "@providers/error/errors/noApplicationForFilet
 import StartProcess from "../processes/startProcess";
 import SelectAppPrompt from "@providers/dialog/selectApp";
 import Communication from "./communication";
+import { ApplicationMetaData } from "@thijmen-os/common";
 
 class OpenFileCommand implements ICommand {
   private readonly _applicationManager: ApplicationManager =
@@ -46,7 +47,9 @@ class OpenFileCommand implements ICommand {
     const installedAppsWithDesiredMimetype =
       this._applicationManager.FindInstalledAppsWithMimetype(file.mimeType);
 
-    const resultTitles = installedAppsWithDesiredMimetype.map((a) => a.name);
+    const resultTitles = installedAppsWithDesiredMimetype.map(
+      (a: ApplicationMetaData) => a.name
+    );
 
     if (!resultTitles.length) {
       new NoAppForFiletypeError(
@@ -56,7 +59,7 @@ class OpenFileCommand implements ICommand {
 
     new SelectAppPrompt(resultTitles, async (selectedApp: string) => {
       const application = installedAppsWithDesiredMimetype.find(
-        (app) => app.name === selectedApp
+        (app: ApplicationMetaData) => app.name === selectedApp
       )!;
       const worker = new StartProcess(
         application.applicationIdentifier
