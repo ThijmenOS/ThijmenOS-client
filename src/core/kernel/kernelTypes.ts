@@ -1,31 +1,17 @@
-import { MimeTypes } from "@thijmen-os/common";
 import { Class, ICommand } from "../../types/CommandTypes";
+import { ValidMethods } from "./kernelMethods";
 
 export type JsOsCommunicationMessage = {
+  origin: Worker | Window;
+  processIdentifier: string;
+  method: string;
+  params: any;
+};
+
+export type ProcessMessage = {
   origin: string;
   method: string;
   params: any;
 };
 
-export enum ValidMethods {
-  //File system
-  filesInDir = "filesInDir",
-  readFile = "readFile",
-  changeDir = "changeDir",
-  mkdir = "mkdir",
-  rmdir = "rmdir",
-  touch = "touch",
-
-  //Window operations
-  closeSelf = "closeSelf",
-  openFile = "openFile",
-
-  //Settings
-  askPermission = "askPermission",
-  revokePermission = "revokePermission",
-  revokeAllPermissions = "revokeAllPermissions",
-}
-
 export type KernelMethods = { [key in ValidMethods]: Class<ICommand> };
-
-export type OpenFileType = { mimeType: MimeTypes; filePath: string };

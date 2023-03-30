@@ -5,9 +5,11 @@ import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import { Directory, host, User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import DesktopMethods from "./desktopMethods";
-import IFileIcon from "@core/fileIcon/fileIconMethodShape";
+import IFileIcon from "@providers/gui/fileIcon/fileIconMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import { imagetypes } from "@ostypes/imageTypes";
+import FatalError from "@providers/error/errors/fatalError";
+import { OSErrors } from "@providers/error/defaults/errors";
 
 @injectable()
 class Desktop implements DesktopMethods {
@@ -15,7 +17,7 @@ class Desktop implements DesktopMethods {
   private readonly _authentication: AuthenticationMethodShape;
 
   constructor(
-    @inject(types.Cache) cache: MemoryMethodShape,
+    @inject(types.Memory) cache: MemoryMethodShape,
     @inject(types.Authentication) authentication: AuthenticationMethodShape
   ) {
     this._cache = cache;
@@ -28,9 +30,20 @@ class Desktop implements DesktopMethods {
     //TODO: Throw kernel panic
     if (!signedInUser) throw new Error();
 
+    this.SetBackground(signedInUser.preferences.background);
+
     const desktopFiles = await ShowFilesInDir(
-      this.ConstructDesktopPath(signedInUser)
+      this.ConstructDesktopPath(signedInUser),
+      () =>
+        new FatalError("Could not load desktop", OSErrors.couldNotLoadDesktop)
     );
+
+    if (!desktopFiles) {
+      new FatalError(
+        "Desktop could not be loaded",
+        OSErrors.couldNotLoadDesktop
+      );
+    }
 
     this._cache.saveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
 

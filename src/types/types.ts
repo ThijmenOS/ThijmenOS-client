@@ -1,6 +1,7 @@
 const types = {
   Startup: Symbol.for("Startup"),
   AppManager: Symbol.for("AppManager"),
+  ProcessManager: Symbol.for("Processes"),
   FileIcon: Symbol.for("FileIcon"),
   Kernel: Symbol.for("Kernel"),
   window: Symbol.for("window"),
@@ -11,7 +12,7 @@ const types = {
   Settings: Symbol.for("Settings"),
   ApplicationSettings: Symbol.for("ApplicationSettings"),
   ErrorManager: Symbol.for("ErrorManager"),
-  Cache: Symbol.for("Cache"),
+  Memory: Symbol.for("Cache"),
   Mediator: Symbol.for("Mediator"),
   Authentication: Symbol.for("Authentication"),
   AuthenticationGui: Symbol.for("AuthenticationGui"),

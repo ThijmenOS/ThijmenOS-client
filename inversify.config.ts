@@ -2,22 +2,24 @@ import "reflect-metadata";
 
 import { Container } from "inversify";
 import types from "@ostypes/types";
-import IFileIcon from "@core/fileIcon/fileIconMethodShape";
-import FileIcon from "./src/core/fileIcon/fileIcon";
+import IFileIcon from "@providers/gui/fileIcon/fileIconMethodShape";
+import FileIcon from "@providers/gui/fileIcon/fileIcon";
 import IStartup from "@core/startup/startupMethodShape";
 import Startup from "@core/startup/startup";
-import IAppManager from "@core/applicationManager/applicationManagerMethodShape";
-import AppManager from "@core/applicationManager/applicationManager";
+import ApplicationManagerMethods from "@core/applicationManager/applicationManagerMethods";
+import ApplicationManager from "@core/applicationManager/applicationManager";
+import ProcessesShape from "@core/processManager/interfaces/processesShape";
+import Processes from "@core/processManager/processes";
 import IKernel from "@core/kernel/kernelMethodShape";
 import Kernel from "@core/kernel/kernel";
 import ISettings from "@core/settings/settingsMethodShape";
 import Settings from "@core/settings/settings";
-import ICache from "@core/memory/memoryMethodShape";
-import Cache from "@core/memory/memory";
-import Window from "@core/applicationWindow/applicationWindow";
-import CreateWindow from "@core/applicationWindow/createApplicationWindow";
-import IWindow from "@core/applicationWindow/interfaces/applicationWindowMethodShape";
-import ICreateWindow from "@core/applicationWindow/interfaces/createApplicationWindowMethodShape";
+import MemoryMethods from "@core/memory/memoryMethodShape";
+import Memory from "@core/memory/memory";
+import Window from "@providers/gui/applicationWindow/applicationWindow";
+import CreateWindow from "@providers/gui/applicationWindow/createApplicationWindow";
+import IWindow from "@providers/gui/applicationWindow/interfaces/applicationWindowMethodShape";
+import ICreateWindow from "@providers/gui/applicationWindow/interfaces/createApplicationWindowMethodShape";
 import Mediator from "@core/kernel/commands/Mediator";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import Authentication from "@providers/authentication/authentication";
@@ -41,11 +43,15 @@ javascriptOs
 javascriptOs.bind<IFileIcon>(types.FileIcon).to(FileIcon).inRequestScope();
 javascriptOs.bind<IStartup>(types.Startup).to(Startup);
 javascriptOs
-  .bind<IAppManager>(types.AppManager)
-  .to(AppManager)
+  .bind<ApplicationManagerMethods>(types.AppManager)
+  .to(ApplicationManager)
+  .inSingletonScope();
+javascriptOs
+  .bind<ProcessesShape>(types.ProcessManager)
+  .to(Processes)
   .inSingletonScope();
 javascriptOs.bind<IKernel>(types.Kernel).to(Kernel);
-javascriptOs.bind<ICache>(types.Cache).to(Cache).inSingletonScope();
+javascriptOs.bind<MemoryMethods>(types.Memory).to(Memory).inSingletonScope();
 javascriptOs.bind<IWindow>(types.window).to(Window);
 javascriptOs.bind<ICreateWindow>(types.CreateWindow).to(CreateWindow);
 javascriptOs.bind<Mediator>(types.Mediator).to(Mediator);

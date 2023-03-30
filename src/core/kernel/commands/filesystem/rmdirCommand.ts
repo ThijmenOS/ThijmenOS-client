@@ -2,7 +2,7 @@ import { Access, Path, Permissions } from "@thijmen-os/common";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
 import CommandAccessValidation from "@core/kernel/accessValidation";
-import { EventName } from "@ostypes/AppManagerTypes";
+import { EventName } from "@ostypes/ProcessTypes";
 
 class rmdirCommand extends CommandAccessValidation implements ICommand {
   private props: Path;

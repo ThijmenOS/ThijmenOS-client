@@ -1,8 +1,9 @@
 import { Permissions } from "@thijmen-os/common";
-import { EventName } from "./AppManagerTypes";
+import { EventName } from "./ProcessTypes";
 
 export interface ICommand {
   requiredPermission?: Permissions;
+
   Handle(
     applicationId?: string
   ):

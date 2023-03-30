@@ -4,18 +4,18 @@ import MemoryMethodShape from "./memoryMethodShape";
 
 @injectable()
 class Memory implements MemoryMethodShape {
-  cacheData: cacheObject = {};
+  private memory: cacheObject = {};
 
-  saveToMemory<T>(key: string, object: T, localstorage?: boolean): void {
-    this.cacheData[key] = object;
+  public saveToMemory<T>(key: string, object: T, localstorage?: boolean): void {
+    this.memory[key] = object;
 
     if (localstorage) {
       localStorage.setItem(key, JSON.stringify(object));
     }
   }
 
-  loadFromMemory<T>(key: string): T | undefined {
-    const localCache = this.cacheData[key];
+  public loadFromMemory<T>(key: string): T | undefined {
+    const localCache = this.memory[key];
 
     if (localCache) {
       return localCache as T;

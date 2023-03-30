@@ -1,36 +1,12 @@
-/* <Class Documentation>
-
-  <Class Description>
-    The window class manages everything that has to do with an application window
-
-  <Method Descriptions>
-    Destroy(): Destroys the window and removes it from the DOM
-    Freese(): Makes the window unresponsible for everything
-      |_ This method is used when this window is involved by a prompt or an error for example
-    UnFreese(): Makes the window responsive again
-    Onclick() - DblClick() - mouseDown(): These are behaviour methods. These methods are called when one of these actions occur. These methods then call their responsible handler
-    RegisterEventListeners(): Registers the above actions as event listener
-    RemoveEventListener(): Removes the event listeneners.
-     |_ This method is used by the Freese() method to make the window unresponsive
-     NewWindow(): sets the window settings on this class. It is used as an entry for other classes to make a new window
-     InitTemplate(): This method initialises the DOM elements to prepare it for the DOM
-     InitBehaviour(): This method class the other nessecery methods to add behaviour and responsiveness to the window
-     InitMovement(): Initialises the movement of the window
-     UpdateStyle(): Updates the classes necesery for displaying the window
-     UpdateUI(): Updates the UI elements for displaying the window
-     Render(): Renders the finished class to the DOM
-
-*/
-
 //DI
 
 //Interfaces
 import ApplicationWindowMethodShape from "./interfaces/applicationWindowMethodShape";
-import ApplicationManager from "@core/applicationManager/applicationManagerMethodShape";
 
 //Types
 import { window, windowDataActions, windowSelectors } from "./defaults";
-import { ClassOperation, host, WindowOptions } from "@thijmen-os/common";
+import { WindowOptions } from "./interfaces/window";
+import { ClassOperation } from "@thijmen-os/common";
 
 //Other
 import {
@@ -40,28 +16,23 @@ import {
   InitMovement,
 } from "@thijmen-os/graphics";
 import { injectable } from "inversify";
-import types from "@ostypes/types";
-import javascriptOs from "@inversify/inversify.config";
+import TerminateProcess from "@core/kernel/commands/processes/terminateProcess";
 
-let windowCount = 0;
 let lastWindowOnTop: ApplicationWindow;
 
 @injectable()
 class ApplicationWindow implements ApplicationWindowMethodShape {
-  private readonly _applicationManager: ApplicationManager =
-    javascriptOs.get<ApplicationManager>(types.AppManager);
-
   private windowHeaderElement!: HTMLDivElement;
   private windowContentElement!: HTMLDivElement;
   private windowFrozenElement!: HTMLDivElement;
   public windowContainerElement!: HTMLDivElement;
+  public windowContent!: HTMLIFrameElement;
 
   private fullScreen = false;
 
   public windowOptions!: WindowOptions;
 
   constructor(windowOptions: WindowOptions) {
-    windowCount++;
     this.windowOptions = windowOptions;
   }
 
@@ -96,9 +67,7 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       ) as windowDataActions;
 
       if (action === windowDataActions.Close)
-        this._applicationManager.CloseExecutable(
-          this.windowOptions.windowIdentifier
-        );
+        new TerminateProcess(this.windowOptions.windowIdentifier).Handle();
       if (action === windowDataActions.Maximize)
         this.MaxOrMin(ClassOperation.ADD);
       if (action === windowDataActions.Minimize)
@@ -144,21 +113,6 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.windowContainerElement!.style.width =
       this.windowOptions.windowWidth + "px";
   }
-  private UpdateUI() {
-    const staticURL = host + "/static/";
-    GetElementByClass<HTMLDivElement>(
-      this.windowContainerElement,
-      windowSelectors.windowTitle
-    ).innerHTML = this.windowOptions.windowTitle;
-    GetElementByClass<HTMLDivElement>(
-      this.windowContainerElement,
-      `${windowSelectors.windowIcon} > div`
-    ).style.backgroundImage = `url('${
-      this.windowOptions.iconLocation?.includes(staticURL)
-        ? this.windowOptions.iconLocation
-        : staticURL + this.windowOptions.iconLocation
-    }')`;
-  }
 
   public Destroy(): void {
     if (this.windowContainerElement) this.windowContainerElement.remove();
@@ -190,18 +144,12 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       "<div style='height: 100%;width:100%;background-color:rgba(142,142,142,0.2);position:absolute;'></div>"
     );
 
-    this.windowHeaderElement.setAttribute(
-      "data-id",
-      this.windowOptions.windowTitle + windowCount.toString()
-    );
-
     this.windowContainerElement.setAttribute(
       "data-id",
       this.windowOptions.windowIdentifier
     );
 
     this.UpdateStyle();
-    this.UpdateUI();
 
     return this;
   }
@@ -210,7 +158,8 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.InitMovement();
   }
   public Render(content: string): void {
-    this.windowContentElement.innerHTML = content;
+    this.windowContent = CreateElementFromString<HTMLIFrameElement>(content);
+    this.windowContentElement.appendChild(this.windowContent);
 
     document
       .getElementById("main-application-container")!

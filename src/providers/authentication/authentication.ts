@@ -13,7 +13,7 @@ class Authentication implements AuthenticationMethodShape {
 
   private userAccounts: Array<User> = new Array<User>();
 
-  constructor(@inject(types.Cache) memory: MemoryMethodShape) {
+  constructor(@inject(types.Memory) memory: MemoryMethodShape) {
     this._memory = memory;
   }
 

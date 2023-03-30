@@ -1,6 +1,6 @@
 import Settings from "@core/settings/settings";
 import javascriptOs from "@inversify/inversify.config";
-import { EventName } from "@ostypes/AppManagerTypes";
+import { EventName } from "@ostypes/ProcessTypes";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import { PermissionRequestDto } from "@thijmen-os/common";

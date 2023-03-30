@@ -19,7 +19,7 @@ class CommandAccessValidation implements AccessValidationMethods {
   };
 
   constructor() {
-    this._memory = javascriptOs.get<MemoryMethodShape>(types.Cache);
+    this._memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
   }
 
   public async loadAccessFile(): Promise<void> {
