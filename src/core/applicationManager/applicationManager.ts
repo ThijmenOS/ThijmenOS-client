@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import types from "@ostypes/types";
 
 //DI interfaces
-import ProcessManagerMethods from "./ApplicationManagerMethods";
+import ProcessManagerMethods from "./applicationManagerMethods";
 
 //Types
 import { ApplicationMetaData, MimeTypes } from "@thijmen-os/common";
