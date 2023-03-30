@@ -5,7 +5,7 @@ import {
   promptFooterActions,
   promptFooters,
   promptSelectors,
-} from "../defaults";
+} from "./defaults";
 
 class GrantPermission extends Prompt {
   promptCallback: (

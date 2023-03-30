@@ -7,7 +7,7 @@ export async function ShowFilesInDir(
 ): Promise<Array<Directory>> {
   const { data } = await api
     .get(`/filesystem/showUserFiles?dir=${path}`)
-    .catch((err) => errorHandler && errorHandler());
+    .catch(() => errorHandler && errorHandler());
   return data;
 }
 

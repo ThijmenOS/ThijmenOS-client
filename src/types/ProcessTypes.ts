@@ -1,5 +1,3 @@
-import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-
 export type Event<T> = { eventName: string; eventSender: string; eventData: T };
 
 export enum EventName {

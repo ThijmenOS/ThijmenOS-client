@@ -1,10 +1,8 @@
 //DI
-import types from "@ostypes/types";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 
 //Interfaces
 import IFileIcon from "./fileIconMethodShape";
-import ProcessManager from "@core/ApplicationManager/ApplicationManagerMethods";
 
 //Types
 import fileIcons from "./mimetypeFIleNameMap";
@@ -28,8 +26,6 @@ import OpenFileCommand from "@core/kernel/commands/application/openFileCommand";
 
 @injectable()
 class FileIcon implements IFileIcon {
-  private readonly _processManager: ProcessManager;
-
   private iconContainerElement!: HTMLDivElement;
   private iconImageElement!: HTMLObjectElement;
   private iconTitleElement!: HTMLParagraphElement;
@@ -42,10 +38,6 @@ class FileIcon implements IFileIcon {
     iconLocation: "",
     mimeType: MimeTypes.thijm,
   };
-
-  constructor(@inject(types.AppManager) applicationManager: ProcessManager) {
-    this._processManager = applicationManager;
-  }
 
   private async GetFileConfigurations(
     location: string

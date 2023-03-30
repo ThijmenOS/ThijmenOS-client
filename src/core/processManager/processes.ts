@@ -2,7 +2,7 @@ import Memory from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { injectable } from "inversify";
-import { ApplicationInstance, GlobalProcess } from "./interfaces/baseProcess";
+import { ApplicationInstance } from "./interfaces/baseProcess";
 import ProcessesShape from "./interfaces/processesShape";
 
 @injectable()
