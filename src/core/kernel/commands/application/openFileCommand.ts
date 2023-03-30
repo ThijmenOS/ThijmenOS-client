@@ -1,7 +1,7 @@
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import ApplicationManager from "@core/applicationManager/ApplicationManagerMethods";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethods";
 import { EventName } from "@ostypes/ProcessTypes";
 import { OpenFileType } from "@core/kernel/models/fileMetadata";
 import Settings from "@core/settings/settingsMethodShape";

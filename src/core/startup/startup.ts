@@ -6,7 +6,7 @@ import types from "@ostypes/types";
 //Interfaces
 import UpdateTime from "@utils/updateTime";
 import Kernel from "@core/kernel/kernelMethodShape";
-import ApplicationManager from "@core/applicationManager/ApplicationManagerMethods";
+import ApplicationManager from "@core/applicationManager/applicationManagerMethods";
 
 //Types
 import Settings from "@core/settings/settingsMethodShape";
