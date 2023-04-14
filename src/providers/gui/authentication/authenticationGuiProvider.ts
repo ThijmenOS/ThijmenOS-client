@@ -11,18 +11,18 @@ import { AuthenticationForm } from "./authenticationFromElement";
 class AuthenticationGui implements AuthenticationGuiShape {
   private readonly _authorization: AuthorizationMethodShape;
 
-  private readonly authenticationForm: AuthenticationForm;
+  private readonly _authenticationForm: AuthenticationForm;
 
   constructor(
     @inject(types.Authentication) authorization: AuthorizationMethodShape
   ) {
     this._authorization = authorization;
-    this.authenticationForm = new AuthenticationForm();
+    this._authenticationForm = new AuthenticationForm();
   }
 
   public Authenticate() {
-    this.authenticationForm.SwitchSigninMethod();
-    this.authenticationForm.SubmitEvent((signInAction: SigninActionShape) =>
+    this._authenticationForm.SwitchSigninMethod();
+    this._authenticationForm.SubmitEvent((signInAction: SigninActionShape) =>
       this.SigninSubmitted(signInAction)
     );
     this.HideUsernameIfOneUser();
@@ -31,7 +31,7 @@ class AuthenticationGui implements AuthenticationGuiShape {
 
     if (!parentElement) throw new Error();
 
-    this.authenticationForm.Render(parentElement);
+    this._authenticationForm.Render(parentElement);
   }
 
   private async HideUsernameIfOneUser() {
@@ -42,7 +42,7 @@ class AuthenticationGui implements AuthenticationGuiShape {
       return;
     }
 
-    this.authenticationForm.UserKnown(onlyOneUserRegisterd.username);
+    this._authenticationForm.UserKnown(onlyOneUserRegisterd.username);
   }
 
   public RemoveAuthorization(): void {
@@ -67,7 +67,7 @@ class AuthenticationGui implements AuthenticationGuiShape {
     );
 
     if (!userAuthenticated) {
-      this.authenticationForm.AuthenticationError();
+      this._authenticationForm.AuthenticationError();
     }
 
     if (userAuthenticated) {

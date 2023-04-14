@@ -7,23 +7,22 @@ import ProcessManagerMethods from "./applicationManagerMethods";
 
 //Types
 import { ApplicationMetaData, MimeTypes } from "@thijmen-os/common";
-import ISettings from "@core/settings/settingsMethodShape";
+import Settings from "@core/settings/settingsMethodShape";
 import ApplicationNotFoundError from "@providers/error/errors/applicationNotFound";
 
 @injectable()
 class ApplicationManager implements ProcessManagerMethods {
-  private readonly _settings: ISettings;
+  private readonly _settings: Settings;
 
-  private _availableApplications: Array<ApplicationMetaData> =
-    new Array<ApplicationMetaData>();
+  private _availableApplications: Array<ApplicationMetaData> = [];
 
-  constructor(@inject(types.Settings) settings: ISettings) {
+  constructor(@inject(types.Settings) settings: Settings) {
     this._settings = settings;
   }
 
   public async FetchInstalledApps(): Promise<void> {
     this._availableApplications =
-      this._settings.settings.applications.installedApplications;
+      this._settings.Settings.applications.installedApplications;
   }
 
   public FindApplicationByIdentifier(

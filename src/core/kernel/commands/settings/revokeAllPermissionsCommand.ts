@@ -8,22 +8,22 @@ import types from "@ostypes/types";
 class RevokeAllPermissionCommand implements ICommand {
   private readonly _settings = javascriptOs.get<Settings>(types.Settings);
 
-  private readonly applicationId: string;
+  private readonly _applicationId: string;
 
   constructor(applicationId: string) {
-    this.applicationId = applicationId;
+    this._applicationId = applicationId;
   }
 
   public async Handle(): Promise<CommandReturn<boolean>> {
     const application =
-      this._settings.settings.applications.installedApplications.find(
-        (app) => app.applicationIdentifier === this.applicationId.toString()
+      this._settings.Settings.applications.installedApplications.find(
+        (app) => app.applicationIdentifier === this._applicationId.toString()
       );
 
     if (!application) return new CommandReturn(false, EventName.Error);
 
     await this._settings.ApplicationSettings.RevokeAllApplicationPermissions(
-      this.applicationId
+      this._applicationId
     );
     await this._settings.RefreshSettings();
     return new CommandReturn<boolean>(true, EventName.PermissionRevoked);

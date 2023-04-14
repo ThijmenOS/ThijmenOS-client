@@ -1,82 +1,51 @@
 import {
   AuthenticationMethods,
   SigninActionShape,
-  singinAction,
+  SinginAction,
 } from "@providers/authentication/user";
 import { AddElement, CreateElementFromString } from "@thijmen-os/graphics";
-
-const template = (profilePicture: string) =>
-  `
-  <div id="authorization-form-container" class="authorization-form-container">
-    <div id="profile-image" class="profile-image">
-      <img
-        id="user-profile-picture"
-        class="user-profile-picture"
-        src="${profilePicture}"
-      />
-      <p id="authorization-form-username" class="authorization-form-username"></p>
-      <p id="authorization-failed" class="authorization-failed">Incorrect credentials</p>
-    </div>
-    <form id="authorization-form" class="authorization-form">
-      <input
-        type="text"
-        id="username"
-        class="authorization-username-field"
-        name="username"
-        placeholder="username"
-      />
-      <input
-        type="password"
-        class="authorization-password-field"
-        name="password"
-        placeholder="password"
-      />
-      <p id="authentication-method-selector" class="authentication-method-selector">Sign in with pincode</p>
-      <input id="submit" type="submit" value="signin" />
-    </form>
-  </div>
- `;
+import template from "./defaults/htmlTemplate";
 
 export class AuthenticationForm {
-  private readonly rootElement: HTMLElement;
-  private readonly defaultProfilePicture =
+  private readonly _rootElement: HTMLElement;
+  private readonly _defaultProfilePicture =
     "http://localhost:8080/static/C/OperatingSystem/Icons/default_profile_picture.svg";
-  private authenticationMethod = AuthenticationMethods.Password;
+  private _authenticationMethod = AuthenticationMethods.Password;
 
   constructor() {
-    this.rootElement = CreateElementFromString<HTMLDivElement>(
-      template(this.defaultProfilePicture)
+    this._rootElement = CreateElementFromString<HTMLDivElement>(
+      template(this._defaultProfilePicture)
     );
   }
 
   public SwitchSigninMethod() {
     const methodSelectorElement =
-      this.rootElement.querySelector<HTMLParagraphElement>(
+      this._rootElement.querySelector<HTMLParagraphElement>(
         ".authentication-method-selector"
       );
 
     if (!methodSelectorElement) throw new Error();
 
     const handleMethodChange = () => {
-      const methodElement = this.rootElement.querySelector(
+      const methodElement = this._rootElement.querySelector(
         ".authentication-method-selector"
       );
-      const passwordElement = this.rootElement.querySelector<HTMLInputElement>(
+      const passwordElement = this._rootElement.querySelector<HTMLInputElement>(
         ".authorization-password-field"
       );
 
       if (!methodElement || !passwordElement) throw new Error();
 
-      if (this.authenticationMethod === AuthenticationMethods.Password) {
+      if (this._authenticationMethod === AuthenticationMethods.Password) {
         methodElement.innerHTML = "Sign in with password";
         passwordElement.placeholder = "pincode";
 
-        this.authenticationMethod = AuthenticationMethods.Pincode;
+        this._authenticationMethod = AuthenticationMethods.Pincode;
       } else {
         methodElement.innerHTML = "Sign in with pincode";
         passwordElement.placeholder = "password";
 
-        this.authenticationMethod = AuthenticationMethods.Password;
+        this._authenticationMethod = AuthenticationMethods.Password;
       }
     };
 
@@ -85,10 +54,10 @@ export class AuthenticationForm {
 
   public UserKnown(username: string) {
     const usernameInputElement =
-      this.rootElement.querySelector<HTMLInputElement>(
+      this._rootElement.querySelector<HTMLInputElement>(
         ".authorization-username-field"
       );
-    const usernameElement = this.rootElement.querySelector(
+    const usernameElement = this._rootElement.querySelector(
       ".authorization-form-username"
     );
 
@@ -99,7 +68,7 @@ export class AuthenticationForm {
   }
 
   public SubmitEvent(callback: (singinAction: SigninActionShape) => void) {
-    const formElement = this.rootElement.querySelector<HTMLFormElement>(
+    const formElement = this._rootElement.querySelector<HTMLFormElement>(
       ".authorization-form"
     );
 
@@ -117,8 +86,8 @@ export class AuthenticationForm {
 
       if (!passwordField || !usernameField) throw new Error();
 
-      const signInAction = new singinAction({
-        method: this.authenticationMethod,
+      const signInAction = new SinginAction({
+        method: this._authenticationMethod,
         authenticationInput: passwordField.value,
         username: usernameField.value,
       });
@@ -131,7 +100,7 @@ export class AuthenticationForm {
 
   public AuthenticationError() {
     const authenticationErrorElement =
-      this.rootElement.querySelector<HTMLParagraphElement>(
+      this._rootElement.querySelector<HTMLParagraphElement>(
         ".authorization-failed"
       );
 
@@ -141,7 +110,7 @@ export class AuthenticationForm {
   }
 
   public Render(parentElement: HTMLElement) {
-    AddElement(this.rootElement, parentElement);
+    AddElement(this._rootElement, parentElement);
   }
 }
 

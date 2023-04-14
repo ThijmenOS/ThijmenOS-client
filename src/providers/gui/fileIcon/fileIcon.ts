@@ -26,11 +26,11 @@ import OpenFileCommand from "@core/kernel/commands/application/openFileCommand";
 
 @injectable()
 class FileIcon implements IFileIcon {
-  private iconContainerElement!: HTMLDivElement;
-  private iconImageElement!: HTMLObjectElement;
-  private iconTitleElement!: HTMLParagraphElement;
+  private _iconContainerElement!: HTMLDivElement;
+  private _iconImageElement!: HTMLObjectElement;
+  private _iconTitleElement!: HTMLParagraphElement;
 
-  private iconHasError = false;
+  private _iconHasError = false;
 
   public metaData: IconMetadataShape = {
     name: "",
@@ -89,7 +89,7 @@ class FileIcon implements IFileIcon {
     const applicationProperties = await this.GetShortcutProperties(location);
 
     if (!applicationProperties || !applicationProperties.exeLocation) {
-      this.iconHasError = true;
+      this._iconHasError = true;
       return null;
     }
 
@@ -102,17 +102,17 @@ class FileIcon implements IFileIcon {
   }
 
   private InitialiseIconElements(): string {
-    this.iconContainerElement = CreateElementFromString(appIcon);
+    this._iconContainerElement = CreateElementFromString(appIcon);
 
-    this.iconImageElement = this.iconContainerElement.querySelector(
+    this._iconImageElement = this._iconContainerElement.querySelector(
       `.${fileIconSelectors.fileIconSelector}`
     )!;
-    this.iconTitleElement =
-      this.iconContainerElement.querySelector("#file-icon-title")!;
+    this._iconTitleElement =
+      this._iconContainerElement.querySelector("#file-icon-title")!;
 
     const iconIdentifier = GenerateUUID();
 
-    this.iconContainerElement.setAttribute("data-id", iconIdentifier);
+    this._iconContainerElement.setAttribute("data-id", iconIdentifier);
 
     return iconIdentifier;
   }
@@ -130,21 +130,21 @@ class FileIcon implements IFileIcon {
       }
     };
 
-    this.iconContainerElement.addEventListener("click", listenToClick);
+    this._iconContainerElement.addEventListener("click", listenToClick);
 
     InitMovement(iconIdentifier);
   }
 
   private RenderIcon(iconName: string, iconImageSource?: string) {
-    this.iconImageElement.data =
+    this._iconImageElement.data =
       iconImageSource || `${host}${fileIconsPath}/default-app-icon.svg`;
-    this.iconTitleElement!.innerHTML = iconName;
+    this._iconTitleElement!.innerHTML = iconName;
 
-    AddElement(this.iconContainerElement);
+    AddElement(this._iconContainerElement);
   }
 
   private OpenFile(metadata: IconMetadataShape) {
-    if (this.iconHasError) ErrorManager.applicationNotFoundError();
+    if (this._iconHasError) ErrorManager.applicationNotFoundError();
 
     if (metadata.mimeType === MimeTypes.thijm) {
       //Exe path mee geven op basis daar van exe laden.
@@ -166,7 +166,7 @@ class FileIcon implements IFileIcon {
   }
 
   public Destory() {
-    this.iconContainerElement.remove();
+    this._iconContainerElement.remove();
   }
 
   public async ConstructFileIcon(filePath: string) {
@@ -174,7 +174,7 @@ class FileIcon implements IFileIcon {
 
     if (!iconMetaData) {
       //TODO: implement Couldnt get config error
-      this.iconHasError = true;
+      this._iconHasError = true;
       return;
     }
 

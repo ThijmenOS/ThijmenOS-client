@@ -11,17 +11,17 @@ class SpawnWindow extends Processes implements ICommand {
   private readonly _window: CreateWindow =
     javascriptOs.get<createApplicationWindowMethodShape>(types.CreateWindow);
 
-  private guiPath: string;
+  private readonly _guiPath: string;
 
   constructor(guiPath: string) {
     super();
 
-    this.guiPath = guiPath;
+    this._guiPath = guiPath;
   }
 
   public Handle(): CommandReturn<string> {
     //Op basis van exe pad  het process starten en runnen.
-    const iframe = this.InitialiseProcess(this.guiPath);
+    const iframe = this.InitialiseProcess(this._guiPath);
     this.RegisterProcess(iframe);
 
     return new CommandReturn(

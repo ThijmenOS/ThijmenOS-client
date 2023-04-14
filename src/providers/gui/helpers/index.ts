@@ -21,8 +21,7 @@ import { CreateElementFromString } from "./CreateElementFromString";
 import { GetElementByClass } from "./GetElementByClass";
 import { InitMovement } from "./InitMovement";
 import { WaitForElm } from "./WaitForElement";
-import { MainAppContainer } from "./graphics";
-import CreateElement from "./CreateComplexElement";
+import { mainAppContainer } from "./graphics";
 
 export {
   AddElement,
@@ -31,7 +30,6 @@ export {
   CreateElementFromString,
   GetElementByClass,
   InitMovement,
-  MainAppContainer,
+  mainAppContainer,
   WaitForElm,
-  CreateElement,
 };

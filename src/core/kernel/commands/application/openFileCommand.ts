@@ -18,24 +18,24 @@ class OpenFileCommand implements ICommand {
     types.Settings
   );
 
-  private readonly props: OpenFileType;
+  private readonly _props: OpenFileType;
 
   constructor(props: OpenFileType) {
-    this.props = props;
+    this._props = props;
   }
 
   async Handle(): Promise<CommandReturn<boolean>> {
-    const DefaultAppToOpen = this._settings.DefaultApplication(
-      this.props.mimeType
+    const defaultAppToOpen = this._settings.DefaultApplication(
+      this._props.mimeType
     );
 
-    if (!DefaultAppToOpen) {
-      this.OpenFileWithApplication(this.props);
+    if (!defaultAppToOpen) {
+      this.OpenFileWithApplication(this._props);
     }
 
-    const worker = new StartProcess(DefaultAppToOpen!.exeLocation).Handle();
+    const worker = new StartProcess(defaultAppToOpen!.exeLocation).Handle();
     new Communication<string>({
-      data: this.props.filePath,
+      data: this._props.filePath,
       eventName: EventName.OpenFile,
       worker: worker.data.origin,
     }).Handle();

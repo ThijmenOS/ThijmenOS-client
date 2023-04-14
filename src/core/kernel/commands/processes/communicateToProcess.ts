@@ -4,22 +4,22 @@ import { EventName } from "@ostypes/ProcessTypes";
 import Communication from "../application/communication";
 
 class CommunicateToProcess extends Processes implements ICommand {
-  private pid: string;
-  private data: unknown;
+  private readonly _pid: string;
+  private readonly _data: unknown;
 
   constructor(args: { data: unknown; pid: string }) {
     super();
 
-    this.pid = args.pid;
-    this.data = args.data;
+    this._pid = args.pid;
+    this._data = args.data;
   }
 
   public Handle() {
     //Op basis van exe pad  het process starten en runnen.
-    const targetProcess = this.FindProcess(this.pid);
+    const targetProcess = this.FindProcess(this._pid);
 
     new Communication({
-      data: this.data,
+      data: this._data,
       eventName: EventName.SelfInvoked,
       worker: targetProcess?.origin,
     }).Handle();

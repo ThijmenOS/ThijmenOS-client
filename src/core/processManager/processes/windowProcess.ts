@@ -12,7 +12,7 @@ class WindowProcess extends ApplicationInstance<Window> {
   private readonly _kernel: KernelMethodShape =
     javascriptOs.get<KernelMethodShape>(types.Kernel);
 
-  private applicationWindow: ApplicationWindow;
+  private _applicationWindow: ApplicationWindow;
 
   constructor(
     args: GlobalProcessArgs<Window>,
@@ -20,7 +20,7 @@ class WindowProcess extends ApplicationInstance<Window> {
   ) {
     super(args);
 
-    this.applicationWindow = applicationWindow;
+    this._applicationWindow = applicationWindow;
   }
 
   public AddEventListener(): void {
@@ -41,7 +41,7 @@ class WindowProcess extends ApplicationInstance<Window> {
     });
   }
   Terminate(): void {
-    this.applicationWindow.Destroy();
+    this._applicationWindow.Destroy();
   }
 }
 

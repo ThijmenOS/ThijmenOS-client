@@ -1,5 +1,5 @@
 interface AccessValidationMethods {
-  loadAccessFile(): void;
+  LoadAccessFile(): void;
 }
 
 export default AccessValidationMethods;

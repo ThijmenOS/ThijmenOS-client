@@ -9,23 +9,23 @@ import ProcessesShape from "./interfaces/processesShape";
 class Processes implements ProcessesShape {
   private readonly _memory: Memory = javascriptOs.get<Memory>(types.Memory);
 
-  private readonly MemoryProcessesKey = "Processes";
+  private readonly _memoryProcessesKey = "Processes";
 
   public RegisterProcess = (newProcess: ApplicationInstance) => {
-    let processes = this.loadProcesses();
+    let processes = this.LoadProcesses();
 
     processes
       ? processes.push(newProcess)
       : (processes = new Array(newProcess));
 
-    this._memory.saveToMemory<Array<ApplicationInstance>>(
-      this.MemoryProcessesKey,
+    this._memory.SaveToMemory<Array<ApplicationInstance>>(
+      this._memoryProcessesKey,
       processes
     );
   };
 
   public FindProcess(processIdentifier: string): ApplicationInstance | null {
-    const processes = this.loadProcesses();
+    const processes = this.LoadProcesses();
 
     if (!processes) return null;
 
@@ -39,7 +39,7 @@ class Processes implements ProcessesShape {
   }
 
   protected RemoveApplicationInstance = (processIdentifier: string) => {
-    const processes = this.loadProcesses();
+    const processes = this.LoadProcesses();
 
     if (!processes) return;
 
@@ -49,12 +49,12 @@ class Processes implements ProcessesShape {
 
     processes.splice(targetIndex, 1);
 
-    this._memory.saveToMemory(this.MemoryProcessesKey, processes);
+    this._memory.SaveToMemory(this._memoryProcessesKey, processes);
   };
 
-  private loadProcesses(): Array<ApplicationInstance> | undefined {
-    return this._memory.loadFromMemory<Array<ApplicationInstance>>(
-      this.MemoryProcessesKey
+  private LoadProcesses(): Array<ApplicationInstance> | undefined {
+    return this._memory.LoadFromMemory<Array<ApplicationInstance>>(
+      this._memoryProcessesKey
     );
   }
 }

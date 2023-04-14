@@ -13,7 +13,7 @@ export interface SigninActionShape {
   method: AuthenticationMethods;
 }
 
-export class singinAction implements SigninActionShape {
+export class SinginAction implements SigninActionShape {
   username?: string | undefined;
   authenticationInput: string;
   method: AuthenticationMethods;
@@ -33,11 +33,11 @@ export class UserClass implements User, UserMethodShape {
   pincode?: string;
   preferences: {
     background: string;
-    colors: any;
-    themes: any;
-    lockscreen: any;
-    startMenu: any;
-    fonts: any;
+    colors: unknown;
+    themes: unknown;
+    lockscreen: unknown;
+    startMenu: unknown;
+    fonts: unknown;
   };
 
   constructor(props: User) {
