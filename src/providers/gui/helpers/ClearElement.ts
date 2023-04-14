@@ -1,8 +1,8 @@
-import { MainAppContainer } from "./graphics";
+import { mainAppContainer } from "./graphics";
 
 export function ClearElement(element?: HTMLElement): void {
   if (!element) {
-    MainAppContainer.innerHTML = "";
+    mainAppContainer.innerHTML = "";
     return;
   }
 

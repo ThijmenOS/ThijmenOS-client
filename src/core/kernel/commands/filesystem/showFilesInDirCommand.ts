@@ -8,21 +8,21 @@ class ShowFilesInDirCommand
   extends CommandAccessValidation
   implements ICommand
 {
-  private props: Path;
+  private _props: Path;
 
   public readonly requiredPermission = Permissions.fileSystem;
 
   constructor(props: Path) {
     super();
 
-    this.props = props;
+    this._props = props;
   }
 
   public async Handle(): Promise<CommandReturn<Array<Directory>>> {
-    const validated = this.validateAccess(this.props, Access.r);
+    const validated = this.ValidateAccess(this._props, Access.r);
     if (!validated) return new CommandReturn([], EventName.NoAccess);
 
-    const result = await ShowFilesInDir(this.props);
+    const result = await ShowFilesInDir(this._props);
 
     return new CommandReturn(result, EventName.SelfInvoked);
   }

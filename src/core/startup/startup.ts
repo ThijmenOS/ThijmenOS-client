@@ -41,7 +41,7 @@ class Startup implements StartupMethodShape {
 
   public async InitialiseOperatingSystem() {
     await this._settings.Initialise();
-    this._kernel.loadKernel();
+    this._kernel.LoadKernel();
 
     const userAuthenticated =
       this._authenticationProvider.CheckAuthenticationState();
@@ -52,11 +52,11 @@ class Startup implements StartupMethodShape {
       const loginPage = document.querySelector("#thijmen-os-login-page")!;
 
       loginPage.addEventListener("authenticated", () => {
-        this.userAuthenticated();
+        this.UserAuthenticated();
       });
     } else {
       this._authenticationGuiProvider.RemoveAuthorization();
-      this.userAuthenticated();
+      this.UserAuthenticated();
     }
 
     UpdateTime();
@@ -73,7 +73,7 @@ class Startup implements StartupMethodShape {
     }, 1000);
   }
 
-  private async userAuthenticated() {
+  private async UserAuthenticated() {
     this._appManager.FetchInstalledApps();
     this._desktop.LoadDesktop();
   }

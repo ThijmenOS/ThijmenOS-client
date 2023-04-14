@@ -11,14 +11,14 @@ import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
 class Authentication implements AuthenticationMethodShape {
   private readonly _memory: MemoryMethodShape;
 
-  private userAccounts: Array<User> = new Array<User>();
+  private _userAccounts: Array<User> = new Array<User>();
 
   constructor(@inject(types.Memory) memory: MemoryMethodShape) {
     this._memory = memory;
   }
 
   public CheckAuthenticationState(): false | User {
-    const authenticatedUser = this._memory.loadFromMemory<User>(userKey);
+    const authenticatedUser = this._memory.LoadFromMemory<User>(userKey);
 
     if (authenticatedUser) return authenticatedUser;
 
@@ -26,20 +26,20 @@ class Authentication implements AuthenticationMethodShape {
   }
 
   public async CheckForsingleUserAccount(): Promise<false | User> {
-    this.userAccounts = await GetAllUsers();
+    this._userAccounts = await GetAllUsers();
 
-    const moreThenOneUser = this.userAccounts.length > 1;
+    const moreThenOneUser = this._userAccounts.length > 1;
     if (moreThenOneUser) {
       return false;
     }
 
-    return this.userAccounts[0];
+    return this._userAccounts[0];
   }
 
   public LookupUser(username: string): boolean | User {
     if (!username) return false;
 
-    const user = this.userAccounts.find(
+    const user = this._userAccounts.find(
       (user) =>
         user.username.toLocaleLowerCase() === username.toLocaleLowerCase()
     );
@@ -77,7 +77,7 @@ class Authentication implements AuthenticationMethodShape {
       detail: user,
     });
 
-    this._memory.saveToMemory<User>(userKey, user, true);
+    this._memory.SaveToMemory<User>(userKey, user, true);
 
     document
       .querySelector("#thijmen-os-login-page")

@@ -8,33 +8,33 @@ import {
 export async function FetchInstalledApplications(): Promise<
   Array<ApplicationMetaDataObject>
 > {
-  const { data } = await api.get("/root/readRegisteredApplications");
+  const { data } = await api.Get("/root/readRegisteredApplications");
   return data;
 }
 
 export async function FetchSettings(): Promise<OSSettings> {
-  const { data } = await api.get("/root/readSettings");
+  const { data } = await api.Get("/root/readSettings");
   return data;
 }
 
 export async function GrantApplicationPermission(
   props: PermissionRequestDto
 ): Promise<boolean> {
-  const { data } = await api.post("/settings/grantPermission", props);
+  const { data } = await api.Post("/settings/grantPermission", props);
   return data;
 }
 
 export async function RevokeApplicationPermission(
   props: PermissionRequestDto
 ): Promise<boolean> {
-  const { data } = await api.delete("/settings/grantPermission", props);
+  const { data } = await api.Delete("/settings/grantPermission", props);
   return data;
 }
 
 export async function RevokeAllApplicationPermissions(
   applicationId: string
 ): Promise<boolean> {
-  const { data } = await api.delete("/settings/allPermissions", {
+  const { data } = await api.Delete("/settings/allPermissions", {
     applicationId: applicationId,
   });
   return data;

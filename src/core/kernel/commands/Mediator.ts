@@ -5,7 +5,7 @@ import { injectable } from "inversify";
 
 @injectable()
 class Mediator {
-  public async send(command: ICommand, requestingApplicationId: string) {
+  public async Send(command: ICommand, requestingApplicationId: string) {
     return command.Handle(requestingApplicationId);
 
     // if (command.requiredPermission === undefined) {

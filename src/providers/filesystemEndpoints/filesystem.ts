@@ -6,18 +6,18 @@ export async function ShowFilesInDir(
   errorHandler?: () => any
 ): Promise<Array<Directory>> {
   const { data } = await api
-    .get(`/filesystem/showUserFiles?dir=${path}`)
+    .Get(`/filesystem/showUserFiles?dir=${path}`)
     .catch(() => errorHandler && errorHandler());
   return data;
 }
 
 export async function OpenFile(path: string) {
-  const { data } = await api.get(`/filesystem/openUserFile?file=${path}`);
+  const { data } = await api.Get(`/filesystem/openUserFile?file=${path}`);
   return data;
 }
 
 export async function ChangeDirectory(path: Path): Promise<string> {
-  const { data } = await api.get(`/root/changeDirectory?path=${path}`);
+  const { data } = await api.Get(`/root/changeDirectory?path=${path}`);
   return data;
 }
 
@@ -26,7 +26,7 @@ export async function MakeDirectory(props: {
   userId: string;
   access: AccessMap;
 }): Promise<string> {
-  const { data } = await api.post("/filesystem/makeDirectory", props);
+  const { data } = await api.Post("/filesystem/makeDirectory", props);
   return data;
 }
 
@@ -35,12 +35,12 @@ export async function CreateFile(props: {
   userId: string;
   access: AccessMap;
 }): Promise<string> {
-  const { data } = await api.post("/filesystem/makeFile", props);
+  const { data } = await api.Post("/filesystem/makeFile", props);
   return data;
 }
 
 export async function RemoveDirectory(props: Path): Promise<boolean> {
-  const { data } = await api.post("/filesystem/removeDirectory", {
+  const { data } = await api.Post("/filesystem/removeDirectory", {
     Path: props,
   });
   return data;

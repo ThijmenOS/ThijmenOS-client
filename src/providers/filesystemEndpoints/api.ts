@@ -12,13 +12,13 @@ class Api {
     this._baseURL = props.baseURL;
   }
 
-  public async get(url: string) {
+  public async Get(url: string) {
     const response = await fetch(this._baseURL + url);
 
     return await response.json();
   }
 
-  public async post(url: string, data: object) {
+  public async Post(url: string, data: object) {
     const response = await fetch(this._baseURL + url, {
       method: "POST",
       headers: {
@@ -30,7 +30,7 @@ class Api {
     return response.json();
   }
 
-  public async delete(url: string, data?: object) {
+  public async Delete(url: string, data?: object) {
     const response = await fetch(this._baseURL + url, {
       method: "DELETE",
       headers: {

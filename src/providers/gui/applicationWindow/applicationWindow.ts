@@ -4,7 +4,7 @@
 import ApplicationWindowMethodShape from "./interfaces/applicationWindowMethodShape";
 
 //Types
-import { window, windowDataActions, windowSelectors } from "./defaults";
+import { window, WindowDataActions, windowSelectors } from "./defaults";
 import { WindowOptions } from "./interfaces/window";
 import { ClassOperation } from "@thijmen-os/common";
 
@@ -22,13 +22,13 @@ let lastWindowOnTop: ApplicationWindow;
 
 @injectable()
 class ApplicationWindow implements ApplicationWindowMethodShape {
-  private windowHeaderElement!: HTMLDivElement;
-  private windowContentElement!: HTMLDivElement;
-  private windowFrozenElement!: HTMLDivElement;
+  private _windowHeaderElement!: HTMLDivElement;
+  private _windowContentElement!: HTMLDivElement;
+  private _windowFrozenElement!: HTMLDivElement;
   public windowContainerElement!: HTMLDivElement;
   public windowContent!: HTMLIFrameElement;
 
-  private fullScreen = false;
+  private _fullScreen = false;
 
   public windowOptions!: WindowOptions;
 
@@ -36,20 +36,32 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.windowOptions = windowOptions;
   }
 
-  private onclick = (ev: Event) => this.Click(ev);
-  private dblClick = () => this.DblClick();
-  private mouseDown = () => this.MouseDown();
+  private OnclickCallback = (ev: Event) => this.Click(ev);
+  private DblClickCallback = () => this.DblClick();
+  private MouseDownCallback = () => this.MouseDown();
   private RegisterEventListeners() {
-    this.windowContainerElement.addEventListener("click", this.onclick);
-    this.windowContainerElement.addEventListener("dblclick", this.dblClick);
-    this.windowContainerElement.addEventListener("mousedown", this.mouseDown);
+    this.windowContainerElement.addEventListener("click", this.OnclickCallback);
+    this.windowContainerElement.addEventListener(
+      "dblclick",
+      this.DblClickCallback
+    );
+    this.windowContainerElement.addEventListener(
+      "mousedown",
+      this.MouseDownCallback
+    );
   }
   private RemoveEventListeners() {
-    this.windowContainerElement.removeEventListener("click", this.onclick);
-    this.windowContainerElement.removeEventListener("dblclick", this.dblClick);
+    this.windowContainerElement.removeEventListener(
+      "click",
+      this.OnclickCallback
+    );
+    this.windowContainerElement.removeEventListener(
+      "dblclick",
+      this.DblClickCallback
+    );
     this.windowContainerElement.removeEventListener(
       "mousedown",
-      this.mouseDown
+      this.MouseDownCallback
     );
   }
   private InitMovement(): void {
@@ -62,20 +74,20 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     );
 
     if (hitButton) {
-      const action: windowDataActions = target.getAttribute(
+      const action: WindowDataActions = target.getAttribute(
         "data-action"
-      ) as windowDataActions;
+      ) as WindowDataActions;
 
-      if (action === windowDataActions.Close)
+      if (action === WindowDataActions.Close)
         new TerminateProcess(this.windowOptions.windowIdentifier).Handle();
-      if (action === windowDataActions.Maximize)
+      if (action === WindowDataActions.Maximize)
         this.MaxOrMin(ClassOperation.ADD);
-      if (action === windowDataActions.Minimize)
+      if (action === WindowDataActions.Minimize)
         this.MaxOrMin(ClassOperation.REMOVE);
     }
   }
   private DblClick() {
-    !this.fullScreen
+    !this._fullScreen
       ? this.MaxOrMin(ClassOperation.ADD)
       : this.MaxOrMin(ClassOperation.REMOVE);
   }
@@ -98,11 +110,11 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
   }
   private MaxOrMin(operation: ClassOperation) {
     operation === ClassOperation.ADD
-      ? (this.fullScreen = true)
-      : (this.fullScreen = false);
+      ? (this._fullScreen = true)
+      : (this._fullScreen = false);
 
     AddOrRemoveClass(
-      [this.windowContainerElement, this.windowHeaderElement],
+      [this.windowContainerElement, this._windowHeaderElement],
       ["window-full-screen"],
       operation
     );
@@ -121,26 +133,26 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     InitMovement(this.windowOptions.windowIdentifier, { disabled: true });
 
     this.RemoveEventListeners();
-    this.windowContentElement.before(this.windowFrozenElement);
+    this._windowContentElement.before(this._windowFrozenElement);
   }
   public Unfreese(): void {
     InitMovement(this.windowOptions.windowIdentifier, { disabled: false });
 
     this.RegisterEventListeners();
-    this.windowFrozenElement.remove();
+    this._windowFrozenElement.remove();
   }
   public InitTemplate(): ApplicationWindow {
     this.windowContainerElement = CreateElementFromString(window);
 
-    this.windowHeaderElement = GetElementByClass<HTMLDivElement>(
+    this._windowHeaderElement = GetElementByClass<HTMLDivElement>(
       this.windowContainerElement,
       windowSelectors.windowHeaderSelector
     );
-    this.windowContentElement = GetElementByClass<HTMLDivElement>(
+    this._windowContentElement = GetElementByClass<HTMLDivElement>(
       this.windowContainerElement,
       windowSelectors.windowContent
     );
-    this.windowFrozenElement = CreateElementFromString(
+    this._windowFrozenElement = CreateElementFromString(
       "<div style='height: 100%;width:100%;background-color:rgba(142,142,142,0.2);position:absolute;'></div>"
     );
 
@@ -159,7 +171,7 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
   }
   public Render(content: string): void {
     this.windowContent = CreateElementFromString<HTMLIFrameElement>(content);
-    this.windowContentElement.appendChild(this.windowContent);
+    this._windowContentElement.appendChild(this.windowContent);
 
     document
       .getElementById("main-application-container")!

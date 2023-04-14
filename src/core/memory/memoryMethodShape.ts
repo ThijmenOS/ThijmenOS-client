@@ -1,8 +1,8 @@
 export default interface MemoryMethodShape {
-  saveToMemory<T extends object>(
+  SaveToMemory<T extends object>(
     key: string,
     object: T,
     localStorage?: boolean
   ): void;
-  loadFromMemory<T>(key: string): T | undefined;
+  LoadFromMemory<T>(key: string): T | undefined;
 }

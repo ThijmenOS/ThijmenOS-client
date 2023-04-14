@@ -11,23 +11,23 @@ class TouchCommand extends CommandAccessValidation implements ICommand {
     types.Desktop
   );
 
-  private props: Mkdir;
+  private _props: Mkdir;
 
   readonly requiredPermission = Permissions.fileSystem;
 
   constructor(props: Mkdir) {
     super();
 
-    this.props = props;
+    this._props = props;
   }
   public async Handle(): Promise<void> {
-    const validated = this.validateAccess(this.props.directoryPath, Access.w);
+    const validated = this.ValidateAccess(this._props.directoryPath, Access.w);
     if (!validated) return;
 
-    const userId = this.loadUserData().userId;
+    const userId = this.LoadUserData().userId;
 
     await CreateFile({
-      props: this.props,
+      props: this._props,
       userId: userId,
       access: this.tempDefaultAccess,
     });

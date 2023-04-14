@@ -2,7 +2,7 @@ import { CreateElementFromString } from "@thijmen-os/graphics";
 import Prompt from "./prompt";
 import { PermissionRequestDto, Permissions } from "@thijmen-os/common";
 import {
-  promptFooterActions,
+  PromptFooterActions,
   promptFooters,
   promptSelectors,
 } from "./defaults";
@@ -35,13 +35,13 @@ class GrantPermission extends Prompt {
 
     this.SetFooter(promptFooters.allowDenyFooter);
 
-    this.promptElement.addEventListener("click", this.onclick);
+    this.promptElement.addEventListener("click", this.Onclick);
 
     this.Render();
     this.InitMovement();
   }
 
-  private onclick = (ev: Event) => this.Click(ev);
+  private Onclick = (ev: Event) => this.Click(ev);
   private Click(ev: Event) {
     const target: HTMLDivElement = ev.target as HTMLDivElement;
     const hitButton: boolean = target.classList.contains(
@@ -49,11 +49,11 @@ class GrantPermission extends Prompt {
     );
 
     if (hitButton) {
-      const action: promptFooterActions = target.getAttribute(
+      const action: PromptFooterActions = target.getAttribute(
         "data-action"
-      ) as promptFooterActions;
+      ) as PromptFooterActions;
 
-      if (action === promptFooterActions.Allow) {
+      if (action === PromptFooterActions.Allow) {
         this.promptCallback(true, this.props);
         this.Close();
       } else {

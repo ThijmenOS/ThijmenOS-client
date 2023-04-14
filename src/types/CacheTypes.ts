@@ -1,1 +1,1 @@
-export type cacheObject = Record<string, any>;
+export type CacheObject = Record<string, any>;

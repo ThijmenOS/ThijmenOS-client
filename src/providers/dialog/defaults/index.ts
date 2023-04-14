@@ -9,7 +9,7 @@ export const promptSelectors = {
   promptButton: "thijmenos-prompt-button",
 };
 
-export enum promptFooterActions {
+export enum PromptFooterActions {
   Allow = "allow",
   Deny = "deny",
 }
@@ -27,8 +27,8 @@ export const prompt = `<div class="${promptSelectors.promptMessage}">
             </div>`;
 
 const allowDenyFooter = `<span class='footer-wrapper'>
-              <p class="allow-button ${promptSelectors.promptButton}" data-action="${promptFooterActions.Allow}">allow</p>
-              <p class="deny-button ${promptSelectors.promptButton}" data-action="${promptFooterActions.Deny}">deny</p>
+              <p class="allow-button ${promptSelectors.promptButton}" data-action="${PromptFooterActions.Allow}">allow</p>
+              <p class="deny-button ${promptSelectors.promptButton}" data-action="${PromptFooterActions.Deny}">deny</p>
             </span>`;
 
 export const promptFooters = {

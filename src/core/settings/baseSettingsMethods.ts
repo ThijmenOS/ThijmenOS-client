@@ -1,7 +1,7 @@
 import { OSSettings } from "@thijmen-os/common";
 
 interface BaseSettingsMethods {
-  get settings(): OSSettings;
+  get Settings(): OSSettings;
   Initialise(): Promise<void>;
 }
 

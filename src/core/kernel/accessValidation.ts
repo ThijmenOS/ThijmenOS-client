@@ -22,14 +22,14 @@ class CommandAccessValidation implements AccessValidationMethods {
     this._memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
   }
 
-  public async loadAccessFile(): Promise<void> {
+  public async LoadAccessFile(): Promise<void> {
     const accessMap = await readAccessFile();
-    this._memory.saveToMemory<AccessObjectMap>(accesskey, accessMap);
+    this._memory.SaveToMemory<AccessObjectMap>(accesskey, accessMap);
   }
 
-  protected validateAccess(object: Path, accesslevel: Access): boolean {
-    const user = this.loadUserData();
-    const accessData = this.loadAccessData();
+  protected ValidateAccess(object: Path, accesslevel: Access): boolean {
+    const user = this.LoadUserData();
+    const accessData = this.LoadAccessData();
     if (!accessData) return false;
 
     const targetObject = Object.keys(accessData).find((x) =>
@@ -49,8 +49,8 @@ class CommandAccessValidation implements AccessValidationMethods {
     return false;
   }
 
-  protected loadUserData(): User {
-    const user = this._memory.loadFromMemory<User>(userKey);
+  protected LoadUserData(): User {
+    const user = this._memory.LoadFromMemory<User>(userKey);
     //TODO: Throw kernel panic
     if (!user) {
       throw new Error();
@@ -59,8 +59,8 @@ class CommandAccessValidation implements AccessValidationMethods {
     return user;
   }
 
-  private loadAccessData(): AccessObjectMap | false {
-    const accessMap = this._memory.loadFromMemory<AccessObjectMap>(accesskey);
+  private LoadAccessData(): AccessObjectMap | false {
+    const accessMap = this._memory.LoadFromMemory<AccessObjectMap>(accesskey);
 
     //TODO: Implement invalid signature error
     if (!accessMap) return false;

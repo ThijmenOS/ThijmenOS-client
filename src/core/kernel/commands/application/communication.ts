@@ -3,10 +3,10 @@ import ApplicationCommunicationModel from "@core/kernel/models/applicationCommun
 import { CommunicationEvent } from "@core/kernel/models/CommunicationEvent";
 
 class Communication<T> implements ICommand {
-  private readonly props: ApplicationCommunicationModel<T>;
+  private readonly _props: ApplicationCommunicationModel<T>;
 
   constructor(args: ApplicationCommunicationModel<T>) {
-    this.props = args;
+    this._props = args;
   }
 
   Handle(): void {
@@ -16,13 +16,13 @@ class Communication<T> implements ICommand {
     //TODO: Create logger
 
     const event: CommunicationEvent<T> = {
-      eventName: this.props.eventName,
-      eventData: this.props.data,
+      eventName: this._props.eventName,
+      eventData: this._props.data,
     };
 
-    if (this.props.worker) {
+    if (this._props.worker) {
       setTimeout(() => {
-        this.props.worker.postMessage(event, { targetOrigin: "*" });
+        this._props.worker.postMessage(event, { targetOrigin: "*" });
       }, 1000);
     }
 

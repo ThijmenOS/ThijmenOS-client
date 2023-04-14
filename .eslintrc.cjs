@@ -25,5 +25,27 @@ module.exports = {
     "dot-notation": "error",
     eqeqeq: ["error", "always"],
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        selector: ["interface", "class", "typeAlias", "enum", "method"],
+        format: ["PascalCase"],
+      },
+      {
+        selector: "variable",
+        format: ["camelCase"],
+      },
+      {
+        selector: "memberLike",
+        modifiers: ["private"],
+        format: ["camelCase"],
+        leadingUnderscore: "require",
+      },
+      {
+        selector: "memberLike",
+        modifiers: ["public", "protected"],
+        format: ["camelCase"],
+      },
+    ],
   },
 };

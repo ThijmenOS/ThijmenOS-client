@@ -4,22 +4,22 @@ import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
 import CommandAccessValidation from "@core/kernel/accessValidation";
 import { EventName } from "@ostypes/ProcessTypes";
 
-class rmdirCommand extends CommandAccessValidation implements ICommand {
-  private props: Path;
+class RmdirCommand extends CommandAccessValidation implements ICommand {
+  private readonly _props: Path;
 
   readonly requiredPermission = Permissions.fileSystem;
 
   constructor(props: Path) {
     super();
 
-    this.props = props;
+    this._props = props;
   }
 
   public async Handle(): Promise<CommandReturn<boolean | null>> {
-    const validated = this.validateAccess(this.props, Access.w);
+    const validated = this.ValidateAccess(this._props, Access.w);
     if (!validated) return new CommandReturn<null>(null, EventName.NoAccess);
 
-    const result = await RemoveDirectory(this.props);
+    const result = await RemoveDirectory(this._props);
 
     const eventName = result
       ? EventName.DirectoryRemoved
@@ -29,4 +29,4 @@ class rmdirCommand extends CommandAccessValidation implements ICommand {
   }
 }
 
-export default rmdirCommand;
+export default RmdirCommand;

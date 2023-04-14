@@ -3,7 +3,7 @@ import "reflect-metadata";
 import Authentication from "@providers/authentication/authentication";
 import {
   AuthenticationMethods,
-  singinAction,
+  SinginAction,
   UserClass,
 } from "@providers/authentication/user";
 
@@ -37,7 +37,7 @@ describe("authentication", () => {
   });
 
   it("TC-1", () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       authenticationInput: "Welkom01",
       username: "user-1",
       method: AuthenticationMethods.Password,
@@ -48,7 +48,7 @@ describe("authentication", () => {
   });
 
   it("TC-2", () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       authenticationInput: "12345",
       username: "user-1",
       method: AuthenticationMethods.Pincode,
@@ -59,7 +59,7 @@ describe("authentication", () => {
   });
 
   it("TC-3", async () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       authenticationInput: "Welkom01",
       method: AuthenticationMethods.Password,
     });
@@ -69,7 +69,7 @@ describe("authentication", () => {
   });
 
   it("TC-4", async () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       authenticationInput: "12345",
       method: AuthenticationMethods.Pincode,
     });
@@ -80,7 +80,7 @@ describe("authentication", () => {
 
   it("TC-5", async () => {
     //@ts-ignore
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       username: "user-1",
       method: AuthenticationMethods.Pincode,
     });
@@ -90,7 +90,7 @@ describe("authentication", () => {
   });
 
   it("TC-6", async () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       authenticationInput: "Welkom01",
       method: AuthenticationMethods.Pincode,
     });
@@ -104,7 +104,7 @@ describe("authentication", () => {
   });
 
   it("TC-7", async () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       authenticationInput: "Welkom01",
       method: AuthenticationMethods.Pincode,
     });
@@ -118,7 +118,7 @@ describe("authentication", () => {
   });
 
   it("TC-8", async () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       //@ts-ignore
       authenticationInput: null,
       method: AuthenticationMethods.Pincode,
@@ -129,7 +129,7 @@ describe("authentication", () => {
   });
 
   it("TC-9", async () => {
-    const testCredentials = new singinAction({
+    const testCredentials = new SinginAction({
       //@ts-ignore
       authenticationInput: undefined,
       method: AuthenticationMethods.Pincode,

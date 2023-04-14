@@ -7,17 +7,17 @@ import { host } from "@thijmen-os/common";
 import GenerateUUID from "@utils/generateUUID";
 
 class StartProcess extends Processes implements ICommand {
-  private exePath: string;
+  private readonly _exePath: string;
 
   constructor(exePath: string) {
     super();
 
-    this.exePath = exePath;
+    this._exePath = exePath;
   }
 
   public Handle(): CommandReturn<ApplicationInstance<Worker>> {
     //Op basis van exe pad  het process starten en runnen.
-    const applicationInstance = this.InitialiseProcess(this.exePath);
+    const applicationInstance = this.InitialiseProcess(this._exePath);
     this.RegisterProcess(applicationInstance);
 
     return new CommandReturn<ApplicationInstance<Worker>>(

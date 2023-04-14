@@ -55,11 +55,11 @@ class Kernel implements KernelMethodShape {
     this._commandAccessValidator = accessValidator;
   }
 
-  public loadKernel(): void {
-    this._commandAccessValidator.loadAccessFile();
+  public LoadKernel(): void {
+    this._commandAccessValidator.LoadAccessFile();
   }
 
-  private kernelMethods: KernelMethods = {
+  private readonly _kernelMethods: KernelMethods = {
     filesInDir: ShowFilesInDirCommand,
 
     readFile: ReadFileCommand,
@@ -87,9 +87,9 @@ class Kernel implements KernelMethodShape {
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {
     try {
-      const command = this.kernelMethods[props.method as ValidMethods];
+      const command = this._kernelMethods[props.method as ValidMethods];
 
-      const result = await this._mediator.send(
+      const result = await this._mediator.Send(
         new command(props.params),
         props.processIdentifier
       );

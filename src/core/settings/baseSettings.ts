@@ -7,7 +7,7 @@ import BaseSettingsMethods from "./baseSettingsMethods";
 @injectable()
 class BaseSettings implements BaseSettingsMethods {
   protected _settings!: OSSettings;
-  public get settings(): OSSettings {
+  public get Settings(): OSSettings {
     return this._settings;
   }
 

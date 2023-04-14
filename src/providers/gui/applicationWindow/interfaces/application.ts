@@ -1,3 +1,0 @@
-interface ApplicationModel {
-  exeLocation: string;
-}
