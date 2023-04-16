@@ -3,11 +3,7 @@ import { ProcessMessage } from "@core/kernel/kernelTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import {
-  ProcessArgs,
-  ApplicationInstance,
-  Process,
-} from "../interfaces/baseProcess";
+import { ProcessArgs, ApplicationInstance } from "../interfaces/baseProcess";
 
 class WindowProcess extends ApplicationInstance<Window> {
   private readonly _kernel: KernelMethodShape =

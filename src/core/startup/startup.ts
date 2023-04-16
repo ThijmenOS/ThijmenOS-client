@@ -13,7 +13,6 @@ import Settings from "@core/settings/settingsMethodShape";
 import StartupMethodShape from "./startupMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import DesktopMethods from "@providers/desktop/desktopMethods";
-import AllocateMemory from "@core/kernel/commands/filesystem/allocateMemory";
 
 @injectable()
 class Startup implements StartupMethodShape {

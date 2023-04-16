@@ -6,12 +6,19 @@ import { injectable } from "inversify";
 import { ApplicationInstance } from "./interfaces/baseProcess";
 import ProcessesShape from "./interfaces/processesShape";
 import WorkerProcess from "./processes/workerProcess";
+import GenerateUUID from "@utils/generateUUID";
+import { processkey } from "@ostypes/memoryKeys";
+import { ErrorExit } from "@providers/error/systemErrors/systemError";
 
 @injectable()
 class Processes implements ProcessesShape {
   private readonly _memory: Memory = javascriptOs.get<Memory>(types.Memory);
 
-  private readonly _memoryProcessesKey = "Processes";
+  private readonly _pid: string = GenerateUUID();
+
+  constructor() {
+    this._memory.AllocateMemory(this._pid, processkey, []);
+  }
 
   public RegisterProcess = (newProcess: ApplicationInstance) => {
     let processes = this.LoadProcesses();
@@ -21,7 +28,8 @@ class Processes implements ProcessesShape {
       : (processes = new Array(newProcess));
 
     this._memory.SaveToMemory<Array<ApplicationInstance>>(
-      this._memoryProcessesKey,
+      this._pid,
+      processkey,
       processes
     );
   };
@@ -73,13 +81,18 @@ class Processes implements ProcessesShape {
 
     processes.splice(targetIndex, 1);
 
-    this._memory.SaveToMemory(this._memoryProcessesKey, processes);
+    this._memory.SaveToMemory(this._pid, processkey, processes);
   };
 
   private LoadProcesses(): Array<ApplicationInstance> | null {
-    return this._memory.LoadFromMemory<Array<WorkerProcess>>(
-      this._memoryProcessesKey
+    const processes = this._memory.LoadFromMemory<Array<WorkerProcess>>(
+      this._pid,
+      processkey
     );
+
+    if (processes instanceof ErrorExit) throw new Error();
+
+    return processes;
   }
 }
 

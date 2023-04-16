@@ -7,7 +7,6 @@ import { ErrorExit } from "@providers/error/systemErrors/systemError";
 import MemKeyAlreadyAllocated from "./errors/MemKeyAlreadyAllocated";
 import MemAllocationDoesNotExist from "./errors/MemAllocationDoesNotExist";
 import NoWriteAccessToMemAllocation from "./errors/NoWriteAccessToMemAllocation";
-import UnknownError from "@providers/error/systemErrors/unknownError";
 import NoReadAccessToMemAllocation from "./errors/NoReadAccessToMemAllocation";
 
 //TODO: When memory is stored in localstorage, on startup all localstorage items to memory
@@ -34,8 +33,7 @@ class Memory implements MemoryMethodShape {
   public SaveToMemory<T>(
     pid: string,
     key: string,
-    data: T,
-    localstorage?: boolean
+    data: T
   ): ErrorExit | number {
     const memoryEntry = this._memory[key];
 
@@ -48,14 +46,6 @@ class Memory implements MemoryMethodShape {
       return new NoWriteAccessToMemAllocation();
 
     this._memory[key].data = data;
-
-    if (localstorage) {
-      try {
-        localStorage.setItem(key, JSON.stringify({ ...memoryEntry, data }));
-      } catch {
-        return new UnknownError();
-      }
-    }
 
     return 0;
   }

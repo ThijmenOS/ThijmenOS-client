@@ -7,6 +7,7 @@ import AuthenticationMethodShape from "./authenticationMethodShape";
 import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
 import { ErrorExit } from "@providers/error/systemErrors/systemError";
 import GenerateUUID from "@utils/generateUUID";
+import { userKey } from "@ostypes/memoryKeys";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
@@ -15,18 +16,17 @@ class Authentication implements AuthenticationMethodShape {
   private _userAccounts: Array<User> = new Array<User>();
 
   private readonly _pid: string = GenerateUUID();
-  private readonly _memoryKey: string = "user:authentication";
 
   constructor(@inject(types.Memory) memory: MemoryMethodShape) {
     this._memory = memory;
 
-    this._memory.AllocateMemory(this._pid, this._memoryKey, []);
+    this._memory.AllocateMemory(this._pid, userKey, []);
   }
 
   public CheckAuthenticationState(): false | User {
     const authenticatedUser = this._memory.LoadFromMemory<User>(
       this._pid,
-      this._memoryKey
+      userKey
     );
 
     console.log(authenticatedUser);
@@ -90,7 +90,7 @@ class Authentication implements AuthenticationMethodShape {
       detail: user,
     });
 
-    this._memory.SaveToMemory<User>(this._pid, this._memoryKey, user, true);
+    this._memory.SaveToMemory<User>(this._pid, userKey, user);
 
     document
       .querySelector("#thijmen-os-login-page")

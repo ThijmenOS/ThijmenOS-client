@@ -4,7 +4,6 @@ import types from "@ostypes/types";
 import {
   ProcessArgs,
   ApplicationInstance,
-  Process,
   WorkerProcessMethods,
 } from "../interfaces/baseProcess";
 

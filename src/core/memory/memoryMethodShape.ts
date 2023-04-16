@@ -10,8 +10,7 @@ export default interface MemoryMethodShape {
   SaveToMemory<T extends object>(
     pid: string,
     key: string,
-    data: T,
-    localstorage?: boolean
+    data: T
   ): ErrorExit | number;
   LoadFromMemory<T>(pid: string, key: string): T | ErrorExit;
 }

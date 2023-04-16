@@ -3,26 +3,26 @@ import Processes from "@core/processManager/processes";
 import { Process } from "@core/processManager/interfaces/baseProcess";
 
 class Terminate extends Processes implements ICommand {
-  private _pid: string;
+  private _targetPid: string;
 
-  constructor(pid: string) {
+  constructor(targetPid: string) {
     super();
 
-    this._pid = pid;
+    this._targetPid = targetPid;
   }
 
   Handle(Process?: Process): void {
     if (Process) {
-      this._pid = Process.processIdentifier;
+      this._targetPid = Process.processIdentifier;
     }
 
-    const targetProcess = this.FindProcess(this._pid);
+    const targetProcess = this.FindProcess(this._targetPid);
     if (!targetProcess) {
       return;
     }
 
     targetProcess.Terminate();
-    this.RemoveApplicationInstance(this._pid);
+    this.RemoveApplicationInstance(this._targetPid);
   }
 }
 

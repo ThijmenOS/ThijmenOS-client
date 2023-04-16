@@ -1,11 +1,9 @@
-import MemoryAccess from "@core/memory/models/memoryAccess";
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import { Process } from "@core/processManager/interfaces/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { ErrorExit } from "@providers/error/systemErrors/systemError";
 import types from "@ostypes/types";
-import MemKeyAlreadyAllocated from "@core/memory/errors/MemKeyAlreadyAllocated";
 import { EventName } from "@ostypes/ProcessTypes";
 import ParameterError from "@providers/error/systemErrors/paramError";
 
