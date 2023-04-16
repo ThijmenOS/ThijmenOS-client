@@ -5,7 +5,7 @@ import ApplicationManager from "@core/applicationManager/applicationManagerMetho
 import { EventName } from "@ostypes/ProcessTypes";
 import { OpenFileType } from "@core/kernel/models/fileMetadata";
 import Settings from "@core/settings/settingsMethodShape";
-import NoAppForFiletypeError from "@providers/error/errors/noApplicationForFiletypeError";
+import NoAppForFiletypeError from "@providers/error/userErrors/noApplicationForFiletypeError";
 import StartProcess from "../processes/startProcess";
 import SelectAppPrompt from "@providers/dialog/selectApp";
 import Communication from "./communication";

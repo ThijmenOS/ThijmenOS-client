@@ -1,51 +1,82 @@
-import { MemoryObject } from "@ostypes/CacheTypes";
+import { MemoryObject } from "./models/memoryObject";
 import { injectable } from "inversify";
 import MemoryMethodShape from "./memoryMethodShape";
+import MemoryEntry from "./models/memoryEntry";
+import MemoryAccess from "./models/memoryAccess";
+import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import MemKeyAlreadyAllocated from "./errors/MemKeyAlreadyAllocated";
+import MemAllocationDoesNotExist from "./errors/MemAllocationDoesNotExist";
+import NoWriteAccessToMemAllocation from "./errors/NoWriteAccessToMemAllocation";
+import UnknownError from "@providers/error/systemErrors/unknownError";
+import NoReadAccessToMemAllocation from "./errors/NoReadAccessToMemAllocation";
 
+//TODO: When memory is stored in localstorage, on startup all localstorage items to memory
 @injectable()
 class Memory implements MemoryMethodShape {
   private _memory: MemoryObject = {};
 
-  public AllocateMemory(pid: Array<string>): boolean {
-    const memoryKey = this.GenerateProcessKey(pid);
+  public AllocateMemory(
+    pid: string,
+    memoryKey: string,
+    memoryAccess: Array<MemoryAccess>
+  ): ErrorExit | 0 {
+    const memoryObject: MemoryEntry<any> = {
+      ownerPid: pid,
+      access: memoryAccess,
+    };
 
-    if (this._memory[memoryKey]) return false;
+    if (this._memory[memoryKey]) return new MemKeyAlreadyAllocated();
 
-    this._memory[memoryKey] = {};
-    return true;
+    this._memory[memoryKey] = memoryObject;
+    return 0;
   }
 
-  public SaveToMemory<T>(key: string, object: T, localstorage?: boolean): void {
-    this._memory[key] = object;
+  public SaveToMemory<T>(
+    pid: string,
+    key: string,
+    data: T,
+    localstorage?: boolean
+  ): ErrorExit | number {
+    const memoryEntry = this._memory[key];
+
+    if (!memoryEntry) return new MemAllocationDoesNotExist();
+
+    if (
+      memoryEntry.ownerPid !== pid &&
+      !this.ValidateMemoryAccess(memoryEntry.access, MemoryAccess.MEM_WRITE)
+    )
+      return new NoWriteAccessToMemAllocation();
+
+    this._memory[key].data = data;
 
     if (localstorage) {
-      localStorage.setItem(key, JSON.stringify(object));
+      try {
+        localStorage.setItem(key, JSON.stringify({ ...memoryEntry, data }));
+      } catch {
+        return new UnknownError();
+      }
     }
+
+    return 0;
   }
 
-  public LoadFromMemory<T>(key: string): T | null {
-    const localCache = this._memory[key];
+  public LoadFromMemory<T>(pid: string, key: string): T | ErrorExit {
+    const memoryEntry = this._memory[key];
+    if (!memoryEntry) return new MemAllocationDoesNotExist();
 
-    if (localCache) {
-      return localCache as T;
-    }
+    if (
+      memoryEntry.ownerPid !== pid &&
+      !this.ValidateMemoryAccess(memoryEntry.access, MemoryAccess.MEM_READ)
+    )
+      return new NoReadAccessToMemAllocation();
 
-    const localstorage = localStorage.getItem(key);
-
-    if (localstorage) {
-      return JSON.parse(localstorage) as T;
-    }
-
-    return null;
+    return memoryEntry.data as T;
   }
 
-  private GenerateProcessKey = (pid: Array<string>): string =>
-    pid
-      .map((id) => {
-        const fist = id.substring(0, 5);
-        fist.concat(id.substring(id.length - 5, id.length));
-      })
-      .join();
+  private ValidateMemoryAccess = (
+    memoryAccess: Array<MemoryAccess>,
+    validationTarget: MemoryAccess
+  ): boolean => memoryAccess.includes(validationTarget);
 }
 
 export default Memory;

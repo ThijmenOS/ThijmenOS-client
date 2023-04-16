@@ -8,20 +8,27 @@ import DesktopMethods from "./desktopMethods";
 import IFileIcon from "@providers/gui/fileIcon/fileIconMethodShape";
 import AuthenticationMethodShape from "@providers/authentication/authenticationMethodShape";
 import { imagetypes } from "@ostypes/imageTypes";
-import FatalError from "@providers/error/errors/fatalError";
+import FatalError from "@providers/error/userErrors/fatalError";
 import { OSErrors } from "@providers/error/defaults/errors";
+import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import GenerateUUID from "@utils/generateUUID";
 
 @injectable()
 class Desktop implements DesktopMethods {
-  private readonly _cache: MemoryMethodShape;
+  private readonly _memory: MemoryMethodShape;
   private readonly _authentication: AuthenticationMethodShape;
 
+  private readonly _pid: string = GenerateUUID();
+  private readonly _memoryKey: string = "desktop:files";
+
   constructor(
-    @inject(types.Memory) cache: MemoryMethodShape,
+    @inject(types.Memory) memory: MemoryMethodShape,
     @inject(types.Authentication) authentication: AuthenticationMethodShape
   ) {
-    this._cache = cache;
+    this._memory = memory;
     this._authentication = authentication;
+
+    this._memory.AllocateMemory(this._pid, this._memoryKey, []);
   }
 
   public async LoadDesktop(): Promise<void> {
@@ -45,16 +52,22 @@ class Desktop implements DesktopMethods {
       );
     }
 
-    this._cache.SaveToMemory<Array<Directory>>("desktopFiles", desktopFiles);
+    this._memory.SaveToMemory<Array<Directory>>(
+      this._pid,
+      this._memoryKey,
+      desktopFiles
+    );
 
     this.RenderIcon(desktopFiles);
   }
 
   public async RefreshDesktop(): Promise<void> {
-    const cacheFiles =
-      this._cache.LoadFromMemory<Array<Directory>>("desktopFiles");
+    const cacheFiles = this._memory.LoadFromMemory<Array<Directory>>(
+      this._pid,
+      this._memoryKey
+    );
 
-    if (!cacheFiles) throw new Error();
+    if (cacheFiles instanceof ErrorExit) throw new Error();
     const loggedInUser = this._authentication.CheckAuthenticationState();
 
     //This error should never happen. Therefore implement kernel panic where os is rebooted;

@@ -1,15 +1,18 @@
 import { Permissions } from "@thijmen-os/common";
 import { EventName } from "./ProcessTypes";
+import { Process } from "@core/processManager/interfaces/baseProcess";
+import { ErrorExit } from "@providers/error/systemErrors/systemError";
 
 export interface ICommand {
   requiredPermission?: Permissions;
 
   Handle(
-    applicationId?: string
+    Process?: Process
   ):
     | CommandReturn<unknown>
     | Promise<CommandReturn<unknown>>
     | Promise<void>
+    | ErrorExit
     | void;
 }
 

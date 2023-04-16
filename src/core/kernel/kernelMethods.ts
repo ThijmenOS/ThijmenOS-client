@@ -6,6 +6,9 @@ export enum ValidMethods {
   mkdir = "mkdir",
   rmdir = "rmdir",
   touch = "touch",
+  memAlloc = "memAlloc",
+  memRead = "memRead",
+  memWrite = "memWrite",
 
   //Window operations
   openFile = "openFile",

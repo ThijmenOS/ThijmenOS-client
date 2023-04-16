@@ -1,9 +1,11 @@
+/* eslint-disable consistent-return */
 import Memory from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { injectable } from "inversify";
 import { ApplicationInstance } from "./interfaces/baseProcess";
 import ProcessesShape from "./interfaces/processesShape";
+import WorkerProcess from "./processes/workerProcess";
 
 @injectable()
 class Processes implements ProcessesShape {
@@ -29,13 +31,35 @@ class Processes implements ProcessesShape {
 
     if (!processes) return null;
 
-    const targetProcess = processes.find(
-      (x) => x.processIdentifier === processIdentifier
+    const targetProcess = this.RecursiveFindProcess(
+      processes,
+      processIdentifier
     );
 
     if (!targetProcess) return null;
 
     return targetProcess;
+  }
+
+  private RecursiveFindProcess(
+    processes: Array<ApplicationInstance>,
+    pid: string
+  ): ApplicationInstance | undefined {
+    if (!processes) return;
+
+    for (let i = 0; i < processes.length; i++) {
+      if (processes[i].processIdentifier === pid) {
+        return processes[i];
+      }
+
+      const childs = processes[i]._childProcesses;
+      if (childs) {
+        const found = this.RecursiveFindProcess(childs, pid);
+        if (found) return found;
+      }
+    }
+
+    return;
   }
 
   protected RemoveApplicationInstance = (processIdentifier: string) => {
@@ -53,7 +77,7 @@ class Processes implements ProcessesShape {
   };
 
   private LoadProcesses(): Array<ApplicationInstance> | null {
-    return this._memory.LoadFromMemory<Array<ApplicationInstance>>(
+    return this._memory.LoadFromMemory<Array<WorkerProcess>>(
       this._memoryProcessesKey
     );
   }

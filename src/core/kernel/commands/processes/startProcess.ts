@@ -1,4 +1,7 @@
-import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
+import {
+  ApplicationInstance,
+  Process,
+} from "@core/processManager/interfaces/baseProcess";
 import Processes from "@core/processManager/processes";
 import WorkerProcess from "@core/processManager/processes/workerProcess";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
@@ -15,9 +18,19 @@ class StartProcess extends Processes implements ICommand {
     this._exePath = exePath;
   }
 
-  public Handle(): CommandReturn<ApplicationInstance<Worker>> {
+  public Handle(process?: Process): CommandReturn<ApplicationInstance<Worker>> {
     //Op basis van exe pad  het process starten en runnen.
     const applicationInstance = this.InitialiseProcess(this._exePath);
+
+    if (process && process instanceof WorkerProcess) {
+      process.AddChildProcess(applicationInstance);
+
+      return new CommandReturn<ApplicationInstance<Worker>>(
+        applicationInstance,
+        EventName.StartedApplication
+      );
+    }
+
     this.RegisterProcess(applicationInstance);
 
     return new CommandReturn<ApplicationInstance<Worker>>(

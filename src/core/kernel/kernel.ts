@@ -40,6 +40,9 @@ import Communication from "./commands/application/communication";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
 import SpawnWindow from "./commands/processes/spawnWindow";
+import AllocateMemory from "./commands/filesystem/allocateMemory";
+import ReadMemory from "./commands/filesystem/readMemory";
+import WriteMemory from "./commands/filesystem/writeMemory";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -61,16 +64,14 @@ class Kernel implements KernelMethodShape {
 
   private readonly _kernelMethods: KernelMethods = {
     listFiles: ListFilesCommand,
-
     readFile: ReadFileCommand,
-
     changeDir: ChangeDirCommand,
-
     mkdir: mkdirCommand,
-
     rmdir: rmdirCommand,
-
     touch: TouchCommand,
+    memAlloc: AllocateMemory,
+    memRead: ReadMemory,
+    memWrite: WriteMemory,
 
     //Window operations
     openFile: OpenFileCommand,
@@ -91,7 +92,7 @@ class Kernel implements KernelMethodShape {
 
       const result = await this._mediator.Send(
         new command(props.params),
-        props.processIdentifier
+        props.origin
       );
 
       if (result instanceof CommandReturn) {

@@ -4,8 +4,9 @@ import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
 import {
-  GlobalProcessArgs,
+  ProcessArgs,
   ApplicationInstance,
+  Process,
 } from "../interfaces/baseProcess";
 
 class WindowProcess extends ApplicationInstance<Window> {
@@ -14,10 +15,7 @@ class WindowProcess extends ApplicationInstance<Window> {
 
   private _applicationWindow: ApplicationWindow;
 
-  constructor(
-    args: GlobalProcessArgs<Window>,
-    applicationWindow: ApplicationWindow
-  ) {
+  constructor(args: ProcessArgs<Window>, applicationWindow: ApplicationWindow) {
     super(args);
 
     this._applicationWindow = applicationWindow;
@@ -40,7 +38,8 @@ class WindowProcess extends ApplicationInstance<Window> {
       });
     });
   }
-  Terminate(): void {
+
+  public Terminate(): void {
     this._applicationWindow.Destroy();
   }
 }

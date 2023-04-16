@@ -7,6 +7,8 @@ export enum EventName {
   RmDir = "rmDir",
   ListFiles = "listFiles",
   Touch = "touch",
+  ReadMemory = "ReadMemory",
+  WriteMemory = "WriteMemory",
 
   TestCommand = "testCommand",
   SelfInvoked = "selfInvoked",
@@ -29,6 +31,8 @@ export enum EventName {
   WindowLaunched = "WindowLaunched",
 
   ListedProcesses = "listedProcesses",
+
+  ParameterError = "ParameterError",
 }
 
 export const system = "system";
