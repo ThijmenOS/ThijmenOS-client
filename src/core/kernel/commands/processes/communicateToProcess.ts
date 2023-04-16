@@ -20,6 +20,8 @@ class CommunicateToProcess extends Processes implements ICommand {
 
     if (!targetProcess) return;
 
+    if (!targetProcess) return;
+
     new Communication({
       data: this._data,
       eventName: EventName.SelfInvoked,
