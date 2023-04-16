@@ -1,15 +1,24 @@
+/* eslint-disable consistent-return */
 import Memory from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { injectable } from "inversify";
 import { ApplicationInstance } from "./interfaces/baseProcess";
 import ProcessesShape from "./interfaces/processesShape";
+import WorkerProcess from "./processes/workerProcess";
+import GenerateUUID from "@utils/generateUUID";
+import { processkey } from "@ostypes/memoryKeys";
+import { ErrorExit } from "@providers/error/systemErrors/systemError";
 
 @injectable()
 class Processes implements ProcessesShape {
   private readonly _memory: Memory = javascriptOs.get<Memory>(types.Memory);
 
-  private readonly _memoryProcessesKey = "Processes";
+  private readonly _pid: string = GenerateUUID();
+
+  constructor() {
+    this._memory.AllocateMemory(this._pid, processkey, []);
+  }
 
   public RegisterProcess = (newProcess: ApplicationInstance) => {
     let processes = this.LoadProcesses();
@@ -19,7 +28,8 @@ class Processes implements ProcessesShape {
       : (processes = new Array(newProcess));
 
     this._memory.SaveToMemory<Array<ApplicationInstance>>(
-      this._memoryProcessesKey,
+      this._pid,
+      processkey,
       processes
     );
   };
@@ -29,13 +39,35 @@ class Processes implements ProcessesShape {
 
     if (!processes) return null;
 
-    const targetProcess = processes.find(
-      (x) => x.processIdentifier === processIdentifier
+    const targetProcess = this.RecursiveFindProcess(
+      processes,
+      processIdentifier
     );
 
     if (!targetProcess) return null;
 
     return targetProcess;
+  }
+
+  private RecursiveFindProcess(
+    processes: Array<ApplicationInstance>,
+    pid: string
+  ): ApplicationInstance | undefined {
+    if (!processes) return;
+
+    for (let i = 0; i < processes.length; i++) {
+      if (processes[i].processIdentifier === pid) {
+        return processes[i];
+      }
+
+      const childs = processes[i]._childProcesses;
+      if (childs) {
+        const found = this.RecursiveFindProcess(childs, pid);
+        if (found) return found;
+      }
+    }
+
+    return;
   }
 
   protected RemoveApplicationInstance = (processIdentifier: string) => {
@@ -49,13 +81,18 @@ class Processes implements ProcessesShape {
 
     processes.splice(targetIndex, 1);
 
-    this._memory.SaveToMemory(this._memoryProcessesKey, processes);
+    this._memory.SaveToMemory(this._pid, processkey, processes);
   };
 
-  private LoadProcesses(): Array<ApplicationInstance> | undefined {
-    return this._memory.LoadFromMemory<Array<ApplicationInstance>>(
-      this._memoryProcessesKey
+  private LoadProcesses(): Array<ApplicationInstance> | null {
+    const processes = this._memory.LoadFromMemory<Array<WorkerProcess>>(
+      this._pid,
+      processkey
     );
+
+    if (processes instanceof ErrorExit) throw new Error();
+
+    return processes;
   }
 }
 

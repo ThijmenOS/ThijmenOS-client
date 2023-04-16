@@ -16,6 +16,7 @@ module.exports = {
     quotes: ["error", "double"],
     "no-await-in-loop": "error",
     "no-unused-private-class-members": "error",
+    "@typescript-eslint/ban-ts-comment": "off",
     "block-scoped-var": "error",
     camelcase: "error",
     "consistent-return": "error",

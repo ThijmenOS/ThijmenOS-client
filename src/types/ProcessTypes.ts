@@ -1,6 +1,15 @@
 export type Event<T> = { eventName: string; eventSender: string; eventData: T };
 
 export enum EventName {
+  ChangeDir = "changeDir",
+  MkDir = "mkDir",
+  ReadFile = "readFile",
+  RmDir = "rmDir",
+  ListFiles = "listFiles",
+  Touch = "touch",
+  ReadMemory = "ReadMemory",
+  WriteMemory = "WriteMemory",
+
   TestCommand = "testCommand",
   SelfInvoked = "selfInvoked",
 
@@ -22,6 +31,8 @@ export enum EventName {
   WindowLaunched = "WindowLaunched",
 
   ListedProcesses = "listedProcesses",
+
+  ParameterError = "ParameterError",
 }
 
 export const system = "system";

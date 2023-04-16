@@ -3,10 +3,7 @@ import { ProcessMessage } from "@core/kernel/kernelTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import {
-  GlobalProcessArgs,
-  ApplicationInstance,
-} from "../interfaces/baseProcess";
+import { ProcessArgs, ApplicationInstance } from "../interfaces/baseProcess";
 
 class WindowProcess extends ApplicationInstance<Window> {
   private readonly _kernel: KernelMethodShape =
@@ -14,10 +11,7 @@ class WindowProcess extends ApplicationInstance<Window> {
 
   private _applicationWindow: ApplicationWindow;
 
-  constructor(
-    args: GlobalProcessArgs<Window>,
-    applicationWindow: ApplicationWindow
-  ) {
+  constructor(args: ProcessArgs<Window>, applicationWindow: ApplicationWindow) {
     super(args);
 
     this._applicationWindow = applicationWindow;
@@ -33,14 +27,15 @@ class WindowProcess extends ApplicationInstance<Window> {
       if (message.origin !== this.processIdentifier) return;
 
       this._kernel.ProcessMethod({
-        origin: this.origin,
+        origin: this,
         processIdentifier: message.origin,
         method: message.method,
         params: message.params,
       });
     });
   }
-  Terminate(): void {
+
+  public Terminate(): void {
     this._applicationWindow.Destroy();
   }
 }

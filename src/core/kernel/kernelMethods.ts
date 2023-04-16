@@ -1,11 +1,14 @@
 export enum ValidMethods {
   //File system
-  filesInDir = "filesInDir",
+  listFiles = "listFiles",
   readFile = "readFile",
   changeDir = "changeDir",
   mkdir = "mkdir",
   rmdir = "rmdir",
   touch = "touch",
+  memAlloc = "memAlloc",
+  memRead = "memRead",
+  memWrite = "memWrite",
 
   //Window operations
   openFile = "openFile",

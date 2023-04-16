@@ -1,20 +1,27 @@
-export interface GlobalProcessArgs<T extends Worker | Window> {
+export interface ProcessArgs<T extends Worker | Window> {
   processIdentifier: string;
   origin: T;
 }
 
-export interface GlobalProcess {
+export interface Process<T extends Worker | Window = any>
+  extends ProcessArgs<T> {
   Terminate(): void;
   AddEventListener(): void;
 }
 
+export interface WorkerProcessMethods {
+  AddChildProcess(process: Process): void;
+}
+
 export abstract class ApplicationInstance<T extends Worker | Window = any>
-  implements GlobalProcess, GlobalProcessArgs<T>
+  implements Process<T>
 {
   processIdentifier: string;
   origin: T;
 
-  constructor(args: GlobalProcessArgs<T>) {
+  public _childProcesses?: Array<ApplicationInstance> = [];
+
+  constructor(args: ProcessArgs<T>) {
     this.processIdentifier = args.processIdentifier;
     this.origin = args.origin;
   }
@@ -27,22 +34,11 @@ export abstract class ApplicationInstance<T extends Worker | Window = any>
 
   public abstract AddEventListener(): void;
 
+  public AddChildProcess(process: ApplicationInstance): void {
+    this._childProcesses?.push(process);
+  }
+
   // public AttachProcess(process: ChildProcess): void {
   //   this.attachedProcesses?.push(process);
   // }
-}
-
-export abstract class ChildProcess<T extends Worker | Window>
-  implements GlobalProcess
-{
-  processIdentifier: string;
-  origin: T;
-
-  constructor(args: GlobalProcessArgs<T>) {
-    this.processIdentifier = args.processIdentifier;
-    this.origin = args.origin;
-  }
-
-  abstract Terminate(): void;
-  abstract AddEventListener(): void;
 }

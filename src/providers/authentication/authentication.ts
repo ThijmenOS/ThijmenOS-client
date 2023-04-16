@@ -1,11 +1,13 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
-import { userKey } from "@ostypes/memoryKeys";
 import types from "@ostypes/types";
 import { GetAllUsers } from "@providers/filesystemEndpoints/authentication";
 import { User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import AuthenticationMethodShape from "./authenticationMethodShape";
 import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
+import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import GenerateUUID from "@utils/generateUUID";
+import { userKey } from "@ostypes/memoryKeys";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
@@ -13,12 +15,23 @@ class Authentication implements AuthenticationMethodShape {
 
   private _userAccounts: Array<User> = new Array<User>();
 
+  private readonly _pid: string = GenerateUUID();
+
   constructor(@inject(types.Memory) memory: MemoryMethodShape) {
     this._memory = memory;
+
+    this._memory.AllocateMemory(this._pid, userKey, []);
   }
 
   public CheckAuthenticationState(): false | User {
-    const authenticatedUser = this._memory.LoadFromMemory<User>(userKey);
+    const authenticatedUser = this._memory.LoadFromMemory<User>(
+      this._pid,
+      userKey
+    );
+
+    console.log(authenticatedUser);
+
+    if (authenticatedUser instanceof ErrorExit) throw new Error();
 
     if (authenticatedUser) return authenticatedUser;
 
@@ -77,7 +90,7 @@ class Authentication implements AuthenticationMethodShape {
       detail: user,
     });
 
-    this._memory.SaveToMemory<User>(userKey, user, true);
+    this._memory.SaveToMemory<User>(this._pid, userKey, user);
 
     document
       .querySelector("#thijmen-os-login-page")

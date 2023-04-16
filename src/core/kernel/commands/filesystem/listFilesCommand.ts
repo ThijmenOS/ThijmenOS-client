@@ -4,10 +4,7 @@ import { EventName } from "@ostypes/ProcessTypes";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import CommandAccessValidation from "@core/kernel/accessValidation";
 
-class ShowFilesInDirCommand
-  extends CommandAccessValidation
-  implements ICommand
-{
+class ListFilesCommand extends CommandAccessValidation implements ICommand {
   private _props: Path;
 
   public readonly requiredPermission = Permissions.fileSystem;
@@ -24,8 +21,8 @@ class ShowFilesInDirCommand
 
     const result = await ShowFilesInDir(this._props);
 
-    return new CommandReturn(result, EventName.SelfInvoked);
+    return new CommandReturn(result, EventName.ListFiles);
   }
 }
 
-export default ShowFilesInDirCommand;
+export default ListFilesCommand;

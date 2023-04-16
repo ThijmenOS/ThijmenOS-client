@@ -5,7 +5,7 @@ import ApplicationManager from "@core/applicationManager/applicationManagerMetho
 import { EventName } from "@ostypes/ProcessTypes";
 import { OpenFileType } from "@core/kernel/models/fileMetadata";
 import Settings from "@core/settings/settingsMethodShape";
-import NoAppForFiletypeError from "@providers/error/errors/noApplicationForFiletypeError";
+import NoAppForFiletypeError from "@providers/error/userErrors/noApplicationForFiletypeError";
 import StartProcess from "../processes/startProcess";
 import SelectAppPrompt from "@providers/dialog/selectApp";
 import Communication from "./communication";
@@ -37,7 +37,7 @@ class OpenFileCommand implements ICommand {
     new Communication<string>({
       data: this._props.filePath,
       eventName: EventName.OpenFile,
-      worker: worker.data.origin,
+      worker: worker.data,
     }).Handle();
 
     return new CommandReturn<boolean>(true, EventName.OpenFile);
@@ -61,13 +61,11 @@ class OpenFileCommand implements ICommand {
       const application = installedAppsWithDesiredMimetype.find(
         (app: ApplicationMetaData) => app.name === selectedApp
       )!;
-      const worker = new StartProcess(
-        application.applicationIdentifier
-      ).Handle();
+      const worker = new StartProcess(application.exeLocation).Handle();
       new Communication<string>({
         data: file.filePath,
         eventName: EventName.OpenFile,
-        worker: worker.data.origin,
+        worker: worker.data,
       }).Handle();
     });
   }

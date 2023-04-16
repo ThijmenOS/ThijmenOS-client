@@ -1,2 +1,3 @@
-export const accesskey = "os:access";
-export const userKey = "user:authenticated";
+export const rootkey = "os:root:access:secret";
+export const processkey = "os:root:processes";
+export const userKey = "user:authentication";

@@ -1,23 +1,29 @@
-import Processes from "@core/processManager/processes";
 import { ICommand } from "@ostypes/CommandTypes";
+import Processes from "@core/processManager/processes";
+import { Process } from "@core/processManager/interfaces/baseProcess";
 
-class TerminateProcess extends Processes implements ICommand {
-  private readonly _processIdentifier: string;
+class Terminate extends Processes implements ICommand {
+  private _targetPid: string;
 
-  constructor(processIdentifier: string) {
+  constructor(targetPid: string) {
     super();
 
-    this._processIdentifier = processIdentifier;
+    this._targetPid = targetPid;
   }
 
-  public Handle() {
-    const targetProcess = this.FindProcess(this._processIdentifier);
-    if (!targetProcess) return;
+  Handle(Process?: Process): void {
+    if (Process) {
+      this._targetPid = Process.processIdentifier;
+    }
+
+    const targetProcess = this.FindProcess(this._targetPid);
+    if (!targetProcess) {
+      return;
+    }
 
     targetProcess.Terminate();
-
-    this.RemoveApplicationInstance(this._processIdentifier);
+    this.RemoveApplicationInstance(this._targetPid);
   }
 }
 
-export default TerminateProcess;
+export default Terminate;

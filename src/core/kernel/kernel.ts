@@ -28,7 +28,7 @@ import rmdirCommand from "./commands/filesystem/rmdirCommand";
 import mkdirCommand from "./commands/filesystem/mkdirCommand";
 import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
 import ReadFileCommand from "./commands/filesystem/readFileCommand";
-import ShowFilesInDirCommand from "./commands/filesystem/showFilesInDirCommand";
+import ListFilesCommand from "./commands/filesystem/listFilesCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
 import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
@@ -40,6 +40,9 @@ import Communication from "./commands/application/communication";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
 import SpawnWindow from "./commands/processes/spawnWindow";
+import AllocateMemory from "./commands/filesystem/allocateMemory";
+import ReadMemory from "./commands/filesystem/readMemory";
+import WriteMemory from "./commands/filesystem/writeMemory";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -60,17 +63,15 @@ class Kernel implements KernelMethodShape {
   }
 
   private readonly _kernelMethods: KernelMethods = {
-    filesInDir: ShowFilesInDirCommand,
-
+    listFiles: ListFilesCommand,
     readFile: ReadFileCommand,
-
     changeDir: ChangeDirCommand,
-
     mkdir: mkdirCommand,
-
     rmdir: rmdirCommand,
-
     touch: TouchCommand,
+    memAlloc: AllocateMemory,
+    memRead: ReadMemory,
+    memWrite: WriteMemory,
 
     //Window operations
     openFile: OpenFileCommand,
@@ -91,7 +92,7 @@ class Kernel implements KernelMethodShape {
 
       const result = await this._mediator.Send(
         new command(props.params),
-        props.processIdentifier
+        props.origin
       );
 
       if (result instanceof CommandReturn) {

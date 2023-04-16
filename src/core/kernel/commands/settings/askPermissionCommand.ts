@@ -5,6 +5,7 @@ import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import { Permissions } from "@thijmen-os/common";
 import { GrantPermission } from "@thijmen-os/prompt";
+import { Process } from "@core/processManager/interfaces/baseProcess";
 
 class AskPermissionCommand implements ICommand {
   private readonly _settings = javascriptOs.get<Settings>(types.Settings);
@@ -15,10 +16,11 @@ class AskPermissionCommand implements ICommand {
     this._requestedPermission = props;
   }
 
-  public async Handle(applicationId: string): Promise<CommandReturn<boolean>> {
+  public async Handle(Process: Process): Promise<CommandReturn<boolean>> {
     const application =
       this._settings.Settings.applications.installedApplications.find(
-        (app) => app.applicationIdentifier === applicationId.toString()
+        (app) =>
+          app.applicationIdentifier === Process.processIdentifier.toString()
       );
 
     if (!application) return new CommandReturn(false, EventName.Error);
@@ -33,7 +35,7 @@ class AskPermissionCommand implements ICommand {
     const userInteraction = new Promise((resolve) => {
       new GrantPermission(
         this._requestedPermission,
-        applicationId,
+        Process.processIdentifier,
         application!.name,
         (res: boolean): void => {
           resolve(res);
@@ -47,7 +49,7 @@ class AskPermissionCommand implements ICommand {
     }
 
     await this._settings.ApplicationSettings.GrantPermissionsToApplication({
-      applicationId: applicationId,
+      applicationId: Process.processIdentifier,
       permission: this._requestedPermission,
     });
     await this._settings.RefreshSettings();

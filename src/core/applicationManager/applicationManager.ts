@@ -8,7 +8,7 @@ import ProcessManagerMethods from "./applicationManagerMethods";
 //Types
 import { ApplicationMetaData, MimeTypes } from "@thijmen-os/common";
 import Settings from "@core/settings/settingsMethodShape";
-import ApplicationNotFoundError from "@providers/error/errors/applicationNotFound";
+import ApplicationNotFoundError from "@providers/error/userErrors/applicationNotFound";
 
 @injectable()
 class ApplicationManager implements ProcessManagerMethods {
