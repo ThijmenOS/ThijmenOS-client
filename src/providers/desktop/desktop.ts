@@ -10,7 +10,7 @@ import AuthenticationMethodShape from "@providers/authentication/authenticationM
 import { imagetypes } from "@ostypes/imageTypes";
 import FatalError from "@providers/error/userErrors/fatalError";
 import { OSErrors } from "@providers/error/defaults/errors";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 import GenerateUUID from "@utils/generateUUID";
 
 @injectable()
@@ -62,12 +62,12 @@ class Desktop implements DesktopMethods {
   }
 
   public async RefreshDesktop(): Promise<void> {
-    const cacheFiles = this._memory.LoadFromMemory<Array<Directory>>(
+    const result = this._memory.LoadFromMemory<Array<Directory>>(
       this._pid,
       this._memoryKey
     );
 
-    if (cacheFiles instanceof ErrorExit) throw new Error();
+    if (result instanceof Exit) throw new Error(result.event);
     const loggedInUser = this._authentication.CheckAuthenticationState();
 
     //This error should never happen. Therefore implement kernel panic where os is rebooted;
@@ -79,7 +79,7 @@ class Desktop implements DesktopMethods {
     );
 
     const newFiles = allFiles.filter(
-      (x) => !cacheFiles.find((y) => x.filePath === y.filePath)
+      (x) => !result.find((y) => x.filePath === y.filePath)
     );
 
     this.RenderIcon(newFiles);

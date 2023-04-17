@@ -3,7 +3,7 @@ import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import { Process } from "@core/processManager/interfaces/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 import types from "@ostypes/types";
 import ParameterError from "@providers/error/systemErrors/paramError";
 
@@ -18,22 +18,22 @@ class AllocateMemory implements ICommand {
     this._memoryAccess = args.memoryAccess;
   }
 
-  public Handle(Process: Process): ErrorExit | void {
+  public Handle(Process: Process): Exit {
     if (!this._memoryAccess || !this._memoryKey) {
       return new ParameterError("AllocMem");
     }
 
-    const allocated = this._memory.AllocateMemory(
+    const result = this._memory.AllocateMemory(
       Process.processIdentifier,
       this._memoryKey,
       this._memoryAccess
     );
 
-    if (allocated instanceof ErrorExit) {
-      return allocated;
+    if (result instanceof Exit) {
+      return result;
     }
 
-    return undefined;
+    return new Exit();
   }
 }
 

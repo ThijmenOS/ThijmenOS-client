@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import MemoryMethodShape from "./memoryMethodShape";
 import MemoryEntry from "./models/memoryEntry";
 import MemoryAccess from "./models/memoryAccess";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 import MemKeyAlreadyAllocated from "./errors/MemKeyAlreadyAllocated";
 import MemAllocationDoesNotExist from "./errors/MemAllocationDoesNotExist";
 import NoWriteAccessToMemAllocation from "./errors/NoWriteAccessToMemAllocation";
@@ -18,7 +18,7 @@ class Memory implements MemoryMethodShape {
     pid: string,
     memoryKey: string,
     memoryAccess: Array<MemoryAccess>
-  ): ErrorExit | 0 {
+  ): Exit | 0 {
     const memoryObject: MemoryEntry<any> = {
       ownerPid: pid,
       access: memoryAccess,
@@ -30,11 +30,7 @@ class Memory implements MemoryMethodShape {
     return 0;
   }
 
-  public SaveToMemory<T>(
-    pid: string,
-    key: string,
-    data: T
-  ): ErrorExit | number {
+  public SaveToMemory<T>(pid: string, key: string, data: T): Exit | number {
     const memoryEntry = this._memory[key];
 
     if (!memoryEntry) return new MemAllocationDoesNotExist();
@@ -50,7 +46,7 @@ class Memory implements MemoryMethodShape {
     return 0;
   }
 
-  public LoadFromMemory<T>(pid: string, key: string): T | ErrorExit {
+  public LoadFromMemory<T>(pid: string, key: string): T | Exit {
     const memoryEntry = this._memory[key];
     if (!memoryEntry) return new MemAllocationDoesNotExist();
 

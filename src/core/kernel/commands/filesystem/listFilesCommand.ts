@@ -2,22 +2,29 @@ import { Access, Directory, Path, Permissions } from "@thijmen-os/common";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/ProcessTypes";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
-import CommandAccessValidation from "@core/kernel/accessValidation";
+import javascriptOs from "@inversify/inversify.config";
+import AccessValidationMethods from "@core/kernel/accessValidationMethods";
+import types from "@ostypes/types";
+import Exit from "@providers/error/systemErrors/Exit";
+import NoResourceAccess from "./errors/NoResourceAccess";
 
-class ListFilesCommand extends CommandAccessValidation implements ICommand {
+class ListFilesCommand implements ICommand {
+  private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
+    types.CommandAccessValidation
+  );
+
   private _props: Path;
 
   public readonly requiredPermission = Permissions.fileSystem;
+  private readonly _access = Access.r;
 
   constructor(props: Path) {
-    super();
-
     this._props = props;
   }
 
-  public async Handle(): Promise<CommandReturn<Array<Directory>>> {
-    const validated = this.ValidateAccess(this._props, Access.r);
-    if (!validated) return new CommandReturn([], EventName.NoAccess);
+  public async Handle(): Promise<CommandReturn<Array<Directory>> | Exit> {
+    const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
+    if (!validated) return new NoResourceAccess(this._props);
 
     const result = await ShowFilesInDir(this._props);
 

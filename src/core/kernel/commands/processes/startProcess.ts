@@ -2,19 +2,23 @@ import {
   ApplicationInstance,
   Process,
 } from "@core/processManager/interfaces/baseProcess";
-import Processes from "@core/processManager/processes";
+import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import WorkerProcess from "@core/processManager/processes/workerProcess";
+import javascriptOs from "@inversify/inversify.config";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/ProcessTypes";
+import types from "@ostypes/types";
 import { host } from "@thijmen-os/common";
 import GenerateUUID from "@utils/generateUUID";
 
-class StartProcess extends Processes implements ICommand {
+class StartProcess implements ICommand {
+  private readonly _processes = javascriptOs.get<ProcessesShape>(
+    types.ProcessManager
+  );
+
   private readonly _exePath: string;
 
   constructor(exePath: string) {
-    super();
-
     this._exePath = exePath;
   }
 
@@ -31,7 +35,7 @@ class StartProcess extends Processes implements ICommand {
       );
     }
 
-    this.RegisterProcess(applicationInstance);
+    this._processes.RegisterProcess(applicationInstance);
 
     return new CommandReturn<ApplicationInstance<Worker>>(
       applicationInstance,

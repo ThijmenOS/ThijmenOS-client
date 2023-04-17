@@ -4,35 +4,39 @@ import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
 import DesktopMethods from "@providers/desktop/desktopMethods";
-import CommandAccessValidation from "@core/kernel/accessValidation";
+import AccessValidationMethods from "@core/kernel/accessValidationMethods";
+import Exit from "@providers/error/systemErrors/Exit";
+import NoResourceAccess from "./errors/NoResourceAccess";
 
-class TouchCommand extends CommandAccessValidation implements ICommand {
-  private _desktop: DesktopMethods = javascriptOs.get<DesktopMethods>(
-    types.Desktop
+class TouchCommand implements ICommand {
+  private _desktop = javascriptOs.get<DesktopMethods>(types.Desktop);
+  private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
+    types.CommandAccessValidation
   );
 
   private _props: Mkdir;
 
   readonly requiredPermission = Permissions.fileSystem;
+  private readonly _access = Access.w;
 
   constructor(props: Mkdir) {
-    super();
-
     this._props = props;
   }
-  public async Handle(): Promise<void> {
-    const validated = this.ValidateAccess(this._props.directoryPath, Access.w);
-    if (!validated) return;
-
-    const userId = this.LoadUserData().userId;
+  public async Handle(): Promise<Exit> {
+    const validated = this._cmdAccess.ValidateAccess(
+      this._props.directoryPath,
+      this._access
+    );
+    if (!validated) return new NoResourceAccess(this._props.directoryPath);
 
     await CreateFile({
       props: this._props,
-      userId: userId,
-      access: this.tempDefaultAccess,
+      userId: this._cmdAccess.UserId,
+      access: this._cmdAccess.tempDefaultAccess,
     });
 
     this._desktop.RefreshDesktop();
+    return new Exit();
   }
 }
 

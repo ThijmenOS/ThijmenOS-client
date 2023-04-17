@@ -1,13 +1,17 @@
 import { ICommand } from "@ostypes/CommandTypes";
-import Processes from "@core/processManager/processes";
 import { Process } from "@core/processManager/interfaces/baseProcess";
+import ProcessesShape from "@core/processManager/interfaces/processesShape";
+import javascriptOs from "@inversify/inversify.config";
+import types from "@ostypes/types";
 
-class Terminate extends Processes implements ICommand {
+class Terminate implements ICommand {
+  private readonly _processes = javascriptOs.get<ProcessesShape>(
+    types.ProcessManager
+  );
+
   private _targetPid: string;
 
   constructor(targetPid: string) {
-    super();
-
     this._targetPid = targetPid;
   }
 
@@ -16,13 +20,13 @@ class Terminate extends Processes implements ICommand {
       this._targetPid = Process.processIdentifier;
     }
 
-    const targetProcess = this.FindProcess(this._targetPid);
+    const targetProcess = this._processes.FindProcess(this._targetPid);
     if (!targetProcess) {
       return;
     }
 
     targetProcess.Terminate();
-    this.RemoveApplicationInstance(this._targetPid);
+    this._processes.RemoveProcess(this._targetPid);
   }
 }
 

@@ -1,8 +1,9 @@
 import { ApplicationInstance, Process } from "./baseProcess";
 
 interface ProcessesShape {
-  RegisterProcess(newProcess: ApplicationInstance): void;
-  FindProcess(processIdentifier: string): Process | null;
+  RegisterProcess(process: ApplicationInstance): void;
+  FindProcess(pid: string): Process | null;
+  RemoveProcess(pid: string): void;
 }
 
 export default ProcessesShape;

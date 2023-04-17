@@ -5,7 +5,7 @@ import { User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import AuthenticationMethodShape from "./authenticationMethodShape";
 import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 import GenerateUUID from "@utils/generateUUID";
 import { userKey } from "@ostypes/memoryKeys";
 
@@ -24,16 +24,11 @@ class Authentication implements AuthenticationMethodShape {
   }
 
   public CheckAuthenticationState(): false | User {
-    const authenticatedUser = this._memory.LoadFromMemory<User>(
-      this._pid,
-      userKey
-    );
+    const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
 
-    console.log(authenticatedUser);
+    if (result instanceof Exit) throw new Error(result.event);
 
-    if (authenticatedUser instanceof ErrorExit) throw new Error();
-
-    if (authenticatedUser) return authenticatedUser;
+    if (result) return result;
 
     return false;
   }

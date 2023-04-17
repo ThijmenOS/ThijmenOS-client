@@ -1,6 +1,6 @@
-import { ErrorExit } from "./systemError";
+import Exit from "./Exit";
 
-class UnknownError extends ErrorExit {
+class UnknownError extends Exit {
   constructor() {
     super(1001, "Unknown_Error", "An Unknown error has occured");
   }

@@ -1,6 +1,6 @@
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 
-class MemAllocationDoesNotExist extends ErrorExit {
+class MemAllocationDoesNotExist extends Exit {
   constructor() {
     super(
       1,

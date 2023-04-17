@@ -9,13 +9,13 @@ import { Access, AccessMap, Path, User } from "@thijmen-os/common";
 import { injectable } from "inversify";
 import AccessValidationMethods from "./accessValidationMethods";
 import GenerateUUID from "@utils/generateUUID";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 
 @injectable()
 class CommandAccessValidation implements AccessValidationMethods {
   private readonly _memory: MemoryMethodShape;
   //TODO: Find temp solution for access
-  protected readonly tempDefaultAccess: AccessMap = {
+  public readonly tempDefaultAccess: AccessMap = {
     r: true,
     w: true,
     x: true,
@@ -29,12 +29,16 @@ class CommandAccessValidation implements AccessValidationMethods {
     this._memory.AllocateMemory(this._pid, rootkey, []);
   }
 
+  public get UserId(): string {
+    return this.LoadUserData().userId;
+  }
+
   public async LoadAccessFile(): Promise<void> {
     const accessMap = await readAccessFile();
     this._memory.SaveToMemory<AccessObjectMap>(this._pid, rootkey, accessMap);
   }
 
-  protected ValidateAccess(object: Path, accesslevel: Access): boolean {
+  public ValidateAccess(object: Path, accesslevel: Access): boolean {
     const user = this.LoadUserData();
     const accessData = this.LoadAccessData();
     if (!accessData) return false;
@@ -56,26 +60,28 @@ class CommandAccessValidation implements AccessValidationMethods {
     throw new NoPermission("Resource access denied");
   }
 
-  protected LoadUserData(): User {
-    const user = this._memory.LoadFromMemory<User>(this._pid, userKey);
+  private LoadUserData(): User {
+    const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
     //TODO: Throw kernel panic
-    if (user instanceof ErrorExit) {
-      throw new Error();
+    if (result instanceof Exit) {
+      throw new Error(result.event);
     }
 
-    return user;
+    return result;
   }
 
-  private LoadAccessData(): AccessObjectMap | false {
-    const accessMap = this._memory.LoadFromMemory<AccessObjectMap>(
+  private LoadAccessData(): AccessObjectMap {
+    const result = this._memory.LoadFromMemory<AccessObjectMap>(
       this._pid,
       rootkey
     );
 
     //TODO: Implement invalid signature error
-    if (accessMap instanceof ErrorExit) return false;
+    if (result instanceof Exit) {
+      throw new Error(result.event);
+    }
 
-    return accessMap;
+    return result;
   }
 }
 

@@ -1,6 +1,6 @@
-import { ErrorExit } from "./systemError";
+import Exit from "./Exit";
 
-class ParameterError extends ErrorExit {
+class ParameterError extends Exit {
   constructor(sysCall: string) {
     super(
       1000,
