@@ -1,4 +1,4 @@
-import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
+import { ApplicationInstance } from "@core/processManager/processes/baseProcess";
 import { Class, ICommand } from "../../types/CommandTypes";
 import { ValidMethods } from "./kernelMethods";
 

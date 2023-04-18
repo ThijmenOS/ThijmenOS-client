@@ -1,8 +1,7 @@
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import ApplicationManager from "@core/applicationManager/applicationManagerMethods";
-import { EventName } from "@ostypes/ProcessTypes";
 import { OpenFileType } from "@core/kernel/models/fileMetadata";
 import Settings from "@core/settings/settingsMethodShape";
 import NoAppForFiletypeError from "@providers/error/userErrors/noApplicationForFiletypeError";
@@ -10,6 +9,8 @@ import StartProcess from "../processes/startProcess";
 import SelectAppPrompt from "@providers/dialog/selectApp";
 import Communication from "./communication";
 import { ApplicationMetaData } from "@thijmen-os/common";
+import { ApplicationInstance } from "@core/processManager/processes/baseProcess";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class OpenFileCommand implements ICommand {
   private readonly _applicationManager: ApplicationManager =
@@ -24,23 +25,24 @@ class OpenFileCommand implements ICommand {
     this._props = props;
   }
 
-  async Handle(): Promise<CommandReturn<boolean>> {
+  public async Handle(): Promise<void> {
     const defaultAppToOpen = this._settings.DefaultApplication(
       this._props.mimeType
     );
 
     if (!defaultAppToOpen) {
       this.OpenFileWithApplication(this._props);
+      return;
     }
 
-    const worker = new StartProcess(defaultAppToOpen!.exeLocation).Handle();
-    new Communication<string>({
-      data: this._props.filePath,
-      eventName: EventName.OpenFile,
-      worker: worker.data,
+    const worker = await new StartProcess({
+      exePath: defaultAppToOpen.exeLocation,
+      args: this._props.filePath,
     }).Handle();
 
-    return new CommandReturn<boolean>(true, EventName.OpenFile);
+    if (!(worker.data instanceof ApplicationInstance)) return;
+
+    return;
   }
 
   private async OpenFileWithApplication(file: OpenFileType) {
@@ -61,12 +63,12 @@ class OpenFileCommand implements ICommand {
       const application = installedAppsWithDesiredMimetype.find(
         (app: ApplicationMetaData) => app.name === selectedApp
       )!;
-      const worker = new StartProcess(application.exeLocation).Handle();
-      new Communication<string>({
-        data: file.filePath,
-        eventName: EventName.OpenFile,
-        worker: worker.data,
+      const worker = await new StartProcess({
+        exePath: application.exeLocation,
+        args: this._props.filePath,
       }).Handle();
+
+      if (!(worker.data instanceof ApplicationInstance)) return;
     });
   }
 }
