@@ -8,24 +8,23 @@ import ProcessesShape from "./interfaces/processesShape";
 import WorkerProcess from "./processes/workerProcess";
 import GenerateUUID from "@utils/generateUUID";
 import { processkey } from "@ostypes/memoryKeys";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 
 @injectable()
 class Processes implements ProcessesShape {
   private readonly _memory: Memory = javascriptOs.get<Memory>(types.Memory);
 
-  private readonly _pid: string = GenerateUUID();
+  private readonly _pid: string;
 
   constructor() {
+    this._pid = GenerateUUID();
     this._memory.AllocateMemory(this._pid, processkey, []);
   }
 
-  public RegisterProcess = (newProcess: ApplicationInstance) => {
+  public RegisterProcess = (process: ApplicationInstance) => {
     let processes = this.LoadProcesses();
 
-    processes
-      ? processes.push(newProcess)
-      : (processes = new Array(newProcess));
+    processes ? processes.push(process) : (processes = new Array(process));
 
     this._memory.SaveToMemory<Array<ApplicationInstance>>(
       this._pid,
@@ -34,15 +33,12 @@ class Processes implements ProcessesShape {
     );
   };
 
-  public FindProcess(processIdentifier: string): ApplicationInstance | null {
+  public FindProcess(pid: string): ApplicationInstance | null {
     const processes = this.LoadProcesses();
 
     if (!processes) return null;
 
-    const targetProcess = this.RecursiveFindProcess(
-      processes,
-      processIdentifier
-    );
+    const targetProcess = this.RecursiveFindProcess(processes, pid);
 
     if (!targetProcess) return null;
 
@@ -70,29 +66,27 @@ class Processes implements ProcessesShape {
     return;
   }
 
-  protected RemoveApplicationInstance = (processIdentifier: string) => {
+  public RemoveProcess(pid: string): void {
     const processes = this.LoadProcesses();
 
     if (!processes) return;
 
-    const targetIndex = processes.findIndex(
-      (x) => x.processIdentifier === processIdentifier
-    );
+    const targetIndex = processes.findIndex((x) => x.processIdentifier === pid);
 
     processes.splice(targetIndex, 1);
 
     this._memory.SaveToMemory(this._pid, processkey, processes);
-  };
+  }
 
   private LoadProcesses(): Array<ApplicationInstance> | null {
-    const processes = this._memory.LoadFromMemory<Array<WorkerProcess>>(
+    const result = this._memory.LoadFromMemory<Array<WorkerProcess>>(
       this._pid,
       processkey
     );
 
-    if (processes instanceof ErrorExit) throw new Error();
+    if (result instanceof Exit) throw new Error(result.event);
 
-    return processes;
+    return result;
   }
 }
 

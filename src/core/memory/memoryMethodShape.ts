@@ -1,4 +1,4 @@
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 import MemoryAccess from "./models/memoryAccess";
 
 export default interface MemoryMethodShape {
@@ -6,11 +6,11 @@ export default interface MemoryMethodShape {
     pid: string,
     memoryKey: string,
     memoryAccess: Array<MemoryAccess>
-  ): ErrorExit | number;
+  ): Exit | number;
   SaveToMemory<T extends object>(
     pid: string,
     key: string,
     data: T
-  ): ErrorExit | number;
-  LoadFromMemory<T>(pid: string, key: string): T | ErrorExit;
+  ): Exit | number;
+  LoadFromMemory<T>(pid: string, key: string): T | Exit;
 }

@@ -1,24 +1,26 @@
-import Processes from "@core/processManager/processes";
+import ProcessesShape from "@core/processManager/interfaces/processesShape";
+import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/ProcessTypes";
+import types from "@ostypes/types";
 import Communication from "../application/communication";
 
-class CommunicateToProcess extends Processes implements ICommand {
+class CommunicateToProcess implements ICommand {
+  private readonly _processes = javascriptOs.get<ProcessesShape>(
+    types.ProcessManager
+  );
+
   private readonly _targetPid: string;
   private readonly _data: unknown;
 
   constructor(args: { data: unknown; targetPid: string }) {
-    super();
-
     this._targetPid = args.targetPid;
     this._data = args.data;
   }
 
   public Handle() {
     //Op basis van exe pad  het process starten en runnen.
-    const targetProcess = this.FindProcess(this._targetPid);
-
-    if (!targetProcess) return;
+    const targetProcess = this._processes.FindProcess(this._targetPid);
 
     if (!targetProcess) return;
 

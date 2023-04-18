@@ -2,7 +2,7 @@ import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import { Process } from "@core/processManager/interfaces/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import { ErrorExit } from "@providers/error/systemErrors/systemError";
+import Exit from "@providers/error/systemErrors/Exit";
 import types from "@ostypes/types";
 import { EventName } from "@ostypes/ProcessTypes";
 import ParameterError from "@providers/error/systemErrors/paramError";
@@ -18,22 +18,22 @@ class WriteMemory implements ICommand {
     this._data = args.data;
   }
 
-  public Handle(Process: Process): ErrorExit | CommandReturn<unknown> {
+  public Handle(Process: Process): Exit | CommandReturn<unknown> {
     if (!this._memoryKey) {
       return new ParameterError("WriteMemory");
     }
 
-    const dataWritten = this._memory.SaveToMemory(
+    const result = this._memory.SaveToMemory(
       Process.processIdentifier,
       this._memoryKey,
       this._data
     );
 
-    if (dataWritten instanceof ErrorExit) {
-      return dataWritten;
+    if (result instanceof Exit) {
+      return result;
     }
 
-    return new CommandReturn(dataWritten, EventName.WriteMemory);
+    return new CommandReturn(result, EventName.WriteMemory);
   }
 }
 

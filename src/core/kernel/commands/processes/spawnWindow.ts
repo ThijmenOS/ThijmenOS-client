@@ -1,25 +1,21 @@
-import Processes from "@core/processManager/processes";
 import WindowProcess from "@core/processManager/processes/windowProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import { EventName } from "@ostypes/ProcessTypes";
 import types from "@ostypes/types";
-import CreateWindow from "@providers/gui/applicationWindow/createApplicationWindow";
 import createApplicationWindowMethodShape from "@providers/gui/applicationWindow/interfaces/createApplicationWindowMethodShape";
 import Communication from "../application/communication";
 import { Process } from "@core/processManager/interfaces/baseProcess";
 import WorkerProcess from "@core/processManager/processes/workerProcess";
 
-class SpawnWindow extends Processes implements ICommand {
-  private readonly _window: CreateWindow =
+class SpawnWindow implements ICommand {
+  private readonly _window =
     javascriptOs.get<createApplicationWindowMethodShape>(types.CreateWindow);
 
   private _guiPath: string;
   private _args?: string;
 
   constructor(props: { guiPath: string; args?: string }) {
-    super();
-
     this._guiPath = props.guiPath;
     this._args = props.args;
   }
@@ -38,8 +34,6 @@ class SpawnWindow extends Processes implements ICommand {
 
     if (process && process instanceof WorkerProcess) {
       process.AddChildProcess(iframe);
-
-      console.log(process._childProcesses);
 
       return new CommandReturn(
         iframe.processIdentifier,
