@@ -3,12 +3,22 @@ import Memory from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { injectable } from "inversify";
-import { ApplicationInstance } from "./interfaces/baseProcess";
+import { ApplicationInstance } from "./processes/baseProcess";
 import ProcessesShape from "./interfaces/processesShape";
 import WorkerProcess from "./processes/workerProcess";
 import GenerateUUID from "@utils/generateUUID";
 import { processkey } from "@ostypes/memoryKeys";
 import Exit from "@providers/error/systemErrors/Exit";
+import ProcessNotFound from "./errors/ProcessNotFound";
+import FatalError from "@providers/error/userErrors/fatalError";
+import { OSErrors } from "@providers/error/defaults/errors";
+
+/**
+ * Do not store the child object in the process object but save a reference to the parent on the child.
+ * Then then the child exits you can just kill it and send a message to the parent
+ * And then the parent exits you can also just kull it and send a message to the child.
+ * Then it is up to them what to do with the exit
+ */
 
 @injectable()
 class Processes implements ProcessesShape {
@@ -33,14 +43,18 @@ class Processes implements ProcessesShape {
     );
   };
 
-  public FindProcess(pid: string): ApplicationInstance | null {
+  public FindProcess(pid: string): ApplicationInstance | Exit {
     const processes = this.LoadProcesses();
 
-    if (!processes) return null;
+    if (!processes)
+      throw new FatalError(
+        "Processes could not be loaded from memory",
+        OSErrors.couldNotLoadProcesses
+      );
 
     const targetProcess = this.RecursiveFindProcess(processes, pid);
 
-    if (!targetProcess) return null;
+    if (!targetProcess) return new ProcessNotFound();
 
     return targetProcess;
   }
@@ -66,16 +80,64 @@ class Processes implements ProcessesShape {
     return;
   }
 
-  public RemoveProcess(pid: string): void {
-    const processes = this.LoadProcesses();
-
+  private RecursiveFindParentProcess(
+    processes: Array<ApplicationInstance>,
+    pid: string,
+    depth: number
+  ): { process: ApplicationInstance; depth: number } | undefined {
     if (!processes) return;
 
-    const targetIndex = processes.findIndex((x) => x.processIdentifier === pid);
+    for (let i = 0; i < processes.length; i++) {
+      const childs = processes[i]._childProcesses;
+      if (!childs) return;
 
-    processes.splice(targetIndex, 1);
+      const childFound = childs.some(
+        (child) => child.processIdentifier === pid
+      );
+      if (childFound)
+        return {
+          process: processes[i],
+          depth: depth,
+        };
+      else this.RecursiveFindParentProcess(childs, pid, depth++);
+    }
+
+    return;
+  }
+
+  public RemoveProcess(pid: string): Exit {
+    const processes = this.LoadProcesses();
+
+    if (!processes)
+      throw new FatalError(
+        "Processes could not be loaded from memory",
+        OSErrors.couldNotLoadProcesses
+      );
+
+    const result = this.RecursiveFindParentProcess(processes, pid, 0);
+
+    if (!result) return new Exit(-1);
+
+    if (result.depth === 0) {
+      const targetIndex = processes.findIndex(
+        (process) => process.processIdentifier === pid
+      );
+      if (targetIndex < 0) return new Exit(-1);
+      processes.splice(targetIndex, 1);
+    } else {
+      const targetIndex = result.process._childProcesses?.findIndex(
+        (process) => process.processIdentifier === pid
+      );
+
+      if (targetIndex === undefined || targetIndex < 0) return new Exit(-1);
+      result.process._childProcesses?.splice(targetIndex, 1);
+    }
+
+    console.log(processes);
 
     this._memory.SaveToMemory(this._pid, processkey, processes);
+
+    return new Exit();
   }
 
   private LoadProcesses(): Array<ApplicationInstance> | null {
@@ -84,7 +146,7 @@ class Processes implements ProcessesShape {
       processkey
     );
 
-    if (result instanceof Exit) throw new Error(result.event);
+    if (result instanceof Exit) throw new Error(result.data);
 
     return result;
   }

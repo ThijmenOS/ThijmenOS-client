@@ -6,11 +6,7 @@ export default interface MemoryMethodShape {
     pid: string,
     memoryKey: string,
     memoryAccess: Array<MemoryAccess>
-  ): Exit | number;
-  SaveToMemory<T extends object>(
-    pid: string,
-    key: string,
-    data: T
-  ): Exit | number;
+  ): Exit;
+  SaveToMemory<T extends object>(pid: string, key: string, data: T): Exit;
   LoadFromMemory<T>(pid: string, key: string): T | Exit;
 }

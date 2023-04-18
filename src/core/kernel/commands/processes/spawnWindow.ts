@@ -1,12 +1,11 @@
 import WindowProcess from "@core/processManager/processes/windowProcess";
 import javascriptOs from "@inversify/inversify.config";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import { EventName } from "@ostypes/ProcessTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import createApplicationWindowMethodShape from "@providers/gui/applicationWindow/interfaces/createApplicationWindowMethodShape";
-import Communication from "../application/communication";
-import { Process } from "@core/processManager/interfaces/baseProcess";
-import WorkerProcess from "@core/processManager/processes/workerProcess";
+import { ApplicationInstance } from "@core/processManager/processes/baseProcess";
+import ProcessCrashed from "./errors/processCrashed";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class SpawnWindow implements ICommand {
   private readonly _window =
@@ -20,48 +19,36 @@ class SpawnWindow implements ICommand {
     this._args = props.args;
   }
 
-  public Handle(process?: Process): CommandReturn<string> {
+  public async Handle(process?: ApplicationInstance): Promise<Exit> {
     //Op basis van exe pad  het process starten en runnen.
-    const iframe = this.InitialiseProcess(this._guiPath);
+    const iframe = await this.InitialiseProcess(this._guiPath);
 
-    if (this._args) {
-      new Communication({
-        data: this._args,
-        eventName: EventName.StartedApplication,
-        worker: iframe,
-      }).Handle();
-    }
-
-    if (process && process instanceof WorkerProcess) {
+    if (process) {
       process.AddChildProcess(iframe);
 
-      return new CommandReturn(
-        iframe.processIdentifier,
-        EventName.WindowLaunched
-      );
+      return new Exit();
     }
 
-    return new CommandReturn(
-      iframe.processIdentifier,
-      EventName.WindowLaunched
-    );
+    return new Exit();
   }
 
-  private InitialiseProcess(executionLocation: string): WindowProcess {
-    const applicationWindow = this._window.Application(executionLocation);
+  private async InitialiseProcess(
+    executionLocation: string
+  ): Promise<WindowProcess> {
+    const applicationWindow = await this._window.Window(executionLocation);
 
-    //TODO: App crash
-    if (!applicationWindow.windowContent.contentWindow) throw new Error();
+    if (!applicationWindow.windowContent.contentWindow)
+      throw new ProcessCrashed();
 
-    const process = new WindowProcess(
-      {
-        processIdentifier: applicationWindow.windowOptions.windowIdentifier,
-        origin: applicationWindow.windowContent.contentWindow,
-      },
-      applicationWindow
-    );
+    const process = new WindowProcess({
+      processIdentifier: applicationWindow.windowOptions.windowIdentifier,
+      origin: applicationWindow.windowContent.contentWindow,
+      applicationWindow: applicationWindow,
+    });
 
     process.AddEventListener();
+
+    process.Startup(this._args);
 
     return process;
   }

@@ -1,6 +1,5 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import { EventName } from "@ostypes/ProcessTypes";
 import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
@@ -22,13 +21,13 @@ class ReadFileCommand implements ICommand {
     this._props = props;
   }
 
-  public async Handle(): Promise<CommandReturn<string> | Exit> {
+  public async Handle(): Promise<Exit> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
     if (!validated) return new NoResourceAccess(this._props);
 
     const result: string = await OpenFile(this._props);
 
-    return new CommandReturn(result, EventName.SelfInvoked);
+    return new CommandReturn(result);
   }
 }
 

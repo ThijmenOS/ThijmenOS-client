@@ -27,7 +27,7 @@ class TouchCommand implements ICommand {
       this._props.directoryPath,
       this._access
     );
-    if (!validated) return new NoResourceAccess(this._props.directoryPath);
+    if (!validated) return new NoResourceAccess();
 
     await CreateFile({
       props: this._props,

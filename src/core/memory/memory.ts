@@ -18,7 +18,7 @@ class Memory implements MemoryMethodShape {
     pid: string,
     memoryKey: string,
     memoryAccess: Array<MemoryAccess>
-  ): Exit | 0 {
+  ): Exit {
     const memoryObject: MemoryEntry<any> = {
       ownerPid: pid,
       access: memoryAccess,
@@ -27,10 +27,10 @@ class Memory implements MemoryMethodShape {
     if (this._memory[memoryKey]) return new MemKeyAlreadyAllocated();
 
     this._memory[memoryKey] = memoryObject;
-    return 0;
+    return new Exit();
   }
 
-  public SaveToMemory<T>(pid: string, key: string, data: T): Exit | number {
+  public SaveToMemory<T>(pid: string, key: string, data: T): Exit {
     const memoryEntry = this._memory[key];
 
     if (!memoryEntry) return new MemAllocationDoesNotExist();
@@ -43,7 +43,7 @@ class Memory implements MemoryMethodShape {
 
     this._memory[key].data = data;
 
-    return 0;
+    return new Exit();
   }
 
   public LoadFromMemory<T>(pid: string, key: string): T | Exit {

@@ -169,9 +169,9 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.RegisterEventListeners();
     this.InitMovement();
   }
-  public Render(content: string): void {
-    this.windowContent = CreateElementFromString<HTMLIFrameElement>(content);
-    this._windowContentElement.appendChild(this.windowContent);
+  public Render(element: HTMLIFrameElement): void {
+    this.windowContent = element;
+    this._windowContentElement.appendChild(element);
 
     document
       .getElementById("main-application-container")!

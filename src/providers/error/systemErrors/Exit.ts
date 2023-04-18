@@ -1,12 +1,10 @@
-class Exit {
+class Exit<T = string> {
   public id: number;
-  public event: string;
-  public description: string;
+  public data: T | string;
 
-  constructor(id?: number, event?: string, description?: string) {
+  constructor(id?: number, data?: T) {
     this.id = id || 0;
-    this.event = event || "Success";
-    this.description = description || "Command exited with no exeptions";
+    this.data = data || "Command exited with no exeptions";
   }
 }
 

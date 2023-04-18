@@ -1,13 +1,14 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import types from "@ostypes/types";
 import { GetAllUsers } from "@providers/filesystemEndpoints/authentication";
-import { User } from "@thijmen-os/common";
+import { Access, User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import AuthenticationMethodShape from "./authenticationMethodShape";
 import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
 import Exit from "@providers/error/systemErrors/Exit";
 import GenerateUUID from "@utils/generateUUID";
 import { userKey } from "@ostypes/memoryKeys";
+import MemoryAccess from "@core/memory/models/memoryAccess";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
@@ -20,7 +21,7 @@ class Authentication implements AuthenticationMethodShape {
   constructor(@inject(types.Memory) memory: MemoryMethodShape) {
     this._memory = memory;
 
-    this._memory.AllocateMemory(this._pid, userKey, []);
+    this._memory.AllocateMemory(this._pid, userKey, [MemoryAccess.MEM_READ]);
   }
 
   public CheckAuthenticationState(): false | User {

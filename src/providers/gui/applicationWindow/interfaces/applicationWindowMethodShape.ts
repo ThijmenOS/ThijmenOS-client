@@ -3,5 +3,5 @@ export default interface ApplicationWindowMethodShape {
   Freese(): void;
   Destroy(): void;
   Unfreese(): void;
-  Render(content: string): void;
+  Render(element: HTMLIFrameElement): void;
 }

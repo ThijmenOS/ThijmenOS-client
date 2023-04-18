@@ -1,6 +1,5 @@
 import { Permissions } from "@thijmen-os/common";
-import { EventName } from "./ProcessTypes";
-import { Process } from "@core/processManager/interfaces/baseProcess";
+import { Process } from "@core/processManager/processes/baseProcess";
 import Exit from "@providers/error/systemErrors/Exit";
 
 export interface ICommand {
@@ -9,22 +8,18 @@ export interface ICommand {
   Handle(
     Process?: Process
   ):
-    | CommandReturn<unknown>
-    | Promise<CommandReturn<unknown>>
-    | Promise<CommandReturn<unknown> | Exit>
     | Promise<void>
+    | void
     | Promise<Exit>
+    | Promise<Exit | Exit<unknown>>
     | Exit
-    | void;
+    | Exit<unknown>;
 }
 
-export class CommandReturn<T> {
-  public data: T;
-  public event: EventName;
-
-  constructor(data: T, event: EventName) {
+export class CommandReturn<T> extends Exit<T> {
+  constructor(data: T) {
+    super(0, data);
     this.data = data;
-    this.event = event;
   }
 }
 

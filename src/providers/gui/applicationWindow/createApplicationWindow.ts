@@ -9,17 +9,28 @@
 
 */
 
-import CreateApplicationWindowMethodShape from "./interfaces/createApplicationWindowMethodShape";
+import ProcessConstructorMethods from "./interfaces/createApplicationWindowMethodShape";
 import { host } from "@thijmen-os/common";
 import ApplicationWindow from "./applicationWindow";
 import { windowOptions } from "./defaults";
 import { injectable } from "inversify";
 import GenerateUUID from "@utils/generateUUID";
-import ErrorManager from "@thijmen-os/errormanager";
+import ExectutionLocationNotFound from "@providers/error/userErrors/executionLocationNotFound";
 
 @injectable()
-class CreateWindow implements CreateApplicationWindowMethodShape {
-  public Application(executionLocation: string): ApplicationWindow {
+class ProcessConstructor implements ProcessConstructorMethods {
+  public async Process(
+    executionLocation: string,
+    pid: string
+  ): Promise<HTMLIFrameElement> {
+    await this.CheckExecutionPath(executionLocation);
+
+    return this.ConstructElement(pid, executionLocation).process();
+  }
+
+  public async Window(executionLocation: string): Promise<ApplicationWindow> {
+    await this.CheckExecutionPath(executionLocation);
+
     const windowId = GenerateUUID();
 
     const window = new ApplicationWindow({
@@ -29,15 +40,10 @@ class CreateWindow implements CreateApplicationWindowMethodShape {
       windowIdentifier: windowId,
     });
 
-    fetch(`${host}/static/${executionLocation}`).then((result) => {
-      if (!result.ok) {
-        window.Destroy();
-        ErrorManager.applicationNotFoundError();
-        throw new Error();
-      }
-    });
-
-    const applicationContent = `<iframe id='${windowId}' name='${windowId}' class='app-iframe' style="height: ${windowOptions.windowHeight}px; width: ${windowOptions.windowWidth}px;" src='${host}/static/${executionLocation}'></iframe>`;
+    const applicationContent = this.ConstructElement(
+      windowId,
+      executionLocation
+    ).window(windowOptions.windowHeight, windowOptions.windowWidth);
 
     window.InitTemplate();
     window.Render(applicationContent);
@@ -45,6 +51,41 @@ class CreateWindow implements CreateApplicationWindowMethodShape {
 
     return window;
   }
+
+  private async CheckExecutionPath(executionLocation: string): Promise<void> {
+    await fetch(this.PathBuilder(executionLocation)).then((result) => {
+      if (!result.ok) {
+        new ExectutionLocationNotFound(
+          `The target execution location could not be started: ${executionLocation}`
+        );
+      }
+    });
+  }
+
+  private ConstructElement(windowId: string, src: string) {
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("id", windowId);
+    iframe.setAttribute("name", windowId);
+    iframe.src = this.PathBuilder(src);
+
+    const window = (height: number, width: number) => {
+      iframe.classList.add("app-iframe");
+      iframe.setAttribute("style", `height: ${height}px; width: ${width}px`);
+
+      return iframe;
+    };
+
+    const process = () => {
+      iframe.style.display = "none";
+
+      return iframe;
+    };
+
+    return { window, process };
+  }
+
+  private PathBuilder = (executionLocation: string) =>
+    `${host}/static/${executionLocation}`;
 }
 
-export default CreateWindow;
+export default ProcessConstructor;

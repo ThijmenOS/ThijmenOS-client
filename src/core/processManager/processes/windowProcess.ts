@@ -3,18 +3,19 @@ import { ProcessMessage } from "@core/kernel/kernelTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import { ProcessArgs, ApplicationInstance } from "../interfaces/baseProcess";
+import { ApplicationInstance } from "./baseProcess";
+import { WindowArgs } from "../interfaces/process";
 
-class WindowProcess extends ApplicationInstance<Window> {
+class WindowProcess extends ApplicationInstance {
   private readonly _kernel: KernelMethodShape =
     javascriptOs.get<KernelMethodShape>(types.Kernel);
 
   private _applicationWindow: ApplicationWindow;
 
-  constructor(args: ProcessArgs<Window>, applicationWindow: ApplicationWindow) {
+  constructor(args: WindowArgs) {
     super(args);
 
-    this._applicationWindow = applicationWindow;
+    this._applicationWindow = args.applicationWindow;
   }
 
   public AddEventListener(): void {
@@ -36,6 +37,10 @@ class WindowProcess extends ApplicationInstance<Window> {
   }
 
   public Terminate(): void {
+    this._childProcesses?.forEach((process) => {
+      process.Terminate();
+    });
+
     this._applicationWindow.Destroy();
   }
 }

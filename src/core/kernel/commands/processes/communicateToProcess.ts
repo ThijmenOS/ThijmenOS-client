@@ -1,9 +1,9 @@
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
-import { EventName } from "@ostypes/ProcessTypes";
 import types from "@ostypes/types";
 import Communication from "../application/communication";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class CommunicateToProcess implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -18,17 +18,20 @@ class CommunicateToProcess implements ICommand {
     this._data = args.data;
   }
 
-  public Handle() {
+  public Handle(): Exit {
     //Op basis van exe pad  het process starten en runnen.
-    const targetProcess = this._processes.FindProcess(this._targetPid);
+    const result = this._processes.FindProcess(this._targetPid);
 
-    if (!targetProcess) return;
+    if (result instanceof Exit) {
+      return result;
+    }
 
     new Communication({
-      data: this._data,
-      eventName: EventName.SelfInvoked,
-      worker: targetProcess.origin,
+      exit: new Exit(undefined, this._data),
+      worker: result,
     }).Handle();
+
+    return new Exit();
   }
 }
 

@@ -30,11 +30,10 @@ import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
 import ReadFileCommand from "./commands/filesystem/readFileCommand";
 import ListFilesCommand from "./commands/filesystem/listFilesCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
-import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
-import AskPermissionCommand from "./commands/settings/askPermissionCommand";
-import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
-import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
+// import AskPermissionCommand from "./commands/settings/askPermissionCommand";
+// import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
+// import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 import AccessValidationMethods from "./accessValidationMethods";
 import Communication from "./commands/application/communication";
 import StartProcess from "./commands/processes/startProcess";
@@ -43,6 +42,8 @@ import SpawnWindow from "./commands/processes/spawnWindow";
 import AllocateMemory from "./commands/filesystem/allocateMemory";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
+import Exit from "@providers/error/systemErrors/Exit";
+import SelectFile from "./commands/application/selectFile";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -72,14 +73,15 @@ class Kernel implements KernelMethodShape {
     memAlloc: AllocateMemory,
     memRead: ReadMemory,
     memWrite: WriteMemory,
+    selectFile: SelectFile,
 
     //Window operations
     openFile: OpenFileCommand,
 
     //Settings
-    askPermission: AskPermissionCommand,
-    revokeAllPermissions: RevokeAllPermissionCommand,
-    revokePermission: RevokePermissionCommand,
+    // askPermission: AskPermissionCommand,
+    // revokeAllPermissions: RevokeAllPermissionCommand,
+    // revokePermission: RevokePermissionCommand,
 
     startProcess: StartProcess,
     terminateProcess: TerminateProcess,
@@ -95,10 +97,9 @@ class Kernel implements KernelMethodShape {
         props.origin
       );
 
-      if (result instanceof CommandReturn) {
+      if (result instanceof Exit) {
         new Communication({
-          data: result.data,
-          eventName: result.event,
+          exit: result,
           worker: props.origin,
         }).Handle();
       }

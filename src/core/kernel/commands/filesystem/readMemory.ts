@@ -1,10 +1,9 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
-import { Process } from "@core/processManager/interfaces/baseProcess";
+import { Process } from "@core/processManager/interfaces/process";
 import javascriptOs from "@inversify/inversify.config";
 import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
 import Exit from "@providers/error/systemErrors/Exit";
 import types from "@ostypes/types";
-import { EventName } from "@ostypes/ProcessTypes";
 import ParameterError from "@providers/error/systemErrors/paramError";
 
 class ReadMemory implements ICommand {
@@ -16,9 +15,9 @@ class ReadMemory implements ICommand {
     this._memoryKey = memoryKey;
   }
 
-  public Handle(Process: Process): Exit | CommandReturn<unknown> {
+  public Handle(Process: Process): Exit | Exit<unknown> {
     if (!this._memoryKey) {
-      return new ParameterError("ReadMemory");
+      return new ParameterError();
     }
 
     const result = this._memory.LoadFromMemory(
@@ -30,7 +29,7 @@ class ReadMemory implements ICommand {
       return result;
     }
 
-    return new CommandReturn(result, EventName.WriteMemory);
+    return new CommandReturn(result);
   }
 }
 

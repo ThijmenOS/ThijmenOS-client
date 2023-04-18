@@ -1,6 +1,6 @@
 //geeft instantie van de class mee
 
-import { Process } from "@core/processManager/interfaces/baseProcess";
+import { Process } from "@core/processManager/interfaces/process";
 import { ICommand } from "@ostypes/CommandTypes";
 import { injectable } from "inversify";
 
