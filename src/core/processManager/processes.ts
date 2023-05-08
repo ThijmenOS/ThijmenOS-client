@@ -35,6 +35,8 @@ class Processes implements ProcessesShape {
 
     processes ? processes.push(process) : (processes = new Array(process));
 
+    console.log(processes);
+
     this._memory.SaveToMemory<Array<BaseProcess>>(
       this._pid,
       processkey,

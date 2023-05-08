@@ -37,11 +37,12 @@ import KernelMethodShape from "./kernelMethodShape";
 import AccessValidationMethods from "./accessValidationMethods";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
-import SpawnWindow from "./commands/processes/spawnWindow";
 import AllocateMemory from "./commands/filesystem/allocateMemory";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
 import SelectFile from "./commands/application/selectFile";
+import ExitProcess from "./commands/processes/exit";
+import WaitPid from "./commands/processes/waitpid";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -83,7 +84,8 @@ class Kernel implements KernelMethodShape {
 
     startProcess: StartProcess,
     terminateProcess: TerminateProcess,
-    spawnWindow: SpawnWindow,
+    exit: ExitProcess,
+    waitpid: WaitPid,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {

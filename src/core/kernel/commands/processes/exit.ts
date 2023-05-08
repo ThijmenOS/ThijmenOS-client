@@ -5,27 +5,19 @@ import types from "@ostypes/types";
 import Exit from "@providers/error/systemErrors/Exit";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
 
-class Terminate implements ICommand {
+class ExitProcess implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
     types.ProcessManager
   );
 
-  private _pid?: number;
+  private _code: number;
 
-  constructor(pid?: number) {
-    this._pid = pid;
+  constructor(code: number) {
+    this._code = code;
   }
 
-  Handle(Process?: BaseProcess): Exit {
-    if (Process && !this._pid) {
-      this._pid = Process.pid;
-    }
-
-    if (!this._pid) {
-      throw new Error("No target pid defined");
-    }
-
-    const result = this._processes.FindProcess(this._pid);
+  Handle(process: BaseProcess): Exit {
+    const result = this._processes.FindProcess(process.pid);
     if (result instanceof Exit) {
       return result;
     }
@@ -35,8 +27,8 @@ class Terminate implements ICommand {
       result.Terminate();
     }
 
-    return new Exit();
+    return new Exit(this._code);
   }
 }
 
-export default Terminate;
+export default ExitProcess;

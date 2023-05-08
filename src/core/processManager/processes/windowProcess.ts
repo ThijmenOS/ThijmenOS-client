@@ -14,14 +14,17 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
     super();
   }
 
-  public async Initialise(exePath: string, args?: string) {
+  public async Initialise(exePath: string, args?: string, parentPid?: number) {
     this.code = await this._windowConstructor.Window(exePath, this.pid);
+    this.parentPid = parentPid;
 
     this.RegisterProcess();
     this.ListenToSysCalls();
     setTimeout(() => {
       this.Startup(args);
     }, 100);
+
+    return this;
   }
 
   public Terminate(): void {
@@ -30,6 +33,7 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
 
   private ListenToSysCalls() {
     window.addEventListener("message", ({ data }) => {
+      if (Number(data.pid) !== this.pid) return;
       this._kernel.ProcessMethod({
         origin: this,
         pid: this.pid,

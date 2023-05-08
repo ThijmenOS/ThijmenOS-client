@@ -21,5 +21,6 @@ export enum ValidMethods {
 
   startProcess = "startProcess",
   terminateProcess = "terminateProcess",
-  spawnWindow = "spawnWindow",
+  exit = "exit",
+  waitpid = "waitpid",
 }

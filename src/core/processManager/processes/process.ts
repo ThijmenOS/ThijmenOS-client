@@ -7,10 +7,11 @@ import types from "@ostypes/types";
 export class ProcessV2 extends BaseProcess<Thread> {
   private readonly _kernel = javascriptOs.get<KernelMethodShape>(types.Kernel);
 
-  constructor(exePath: string, args?: string) {
+  constructor(exePath: string, args?: string, parentPid?: number) {
     super();
 
     this.code = new Thread(exePath);
+    this.parentPid = parentPid;
 
     this.RegisterProcess();
     this.ListenToSysCalls(this.code.worker);

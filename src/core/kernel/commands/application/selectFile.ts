@@ -1,22 +1,26 @@
-import { ApplicationInstance } from "@core/processManager/processes/process";
 import { ICommand } from "@ostypes/CommandTypes";
 import StartProcess from "../processes/startProcess";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class SelectFile implements ICommand {
-  private readonly _explorerPath = "C/ProgramFiles/fileexplorer/index.html";
+  private readonly _explorerPath =
+    "C/ProgramFiles/fileexplorer/fileSelectClient/gui.html";
   private readonly _args = ["--mode", "file_select"];
 
-  public Handle(process?: ApplicationInstance): void {
+  public async Handle(process?: BaseProcess): Promise<number | Exit> {
     //TODO: Make this path not hardcoded
 
     if (!process) throw new Error("process not found");
 
-    this._args.push(...["--pid", process.processIdentifier]);
+    this._args.push(...["--pid", process.pid.toString()]);
 
-    new StartProcess({
+    const pid = await new StartProcess({
       exePath: this._explorerPath,
       args: this._args.join(" "),
     }).Handle(process);
+
+    return pid;
   }
 }
 
