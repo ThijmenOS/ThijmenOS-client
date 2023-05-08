@@ -1,26 +1,19 @@
 import { Permissions } from "@thijmen-os/common";
-import { Process } from "@core/processManager/processes/baseProcess";
 import Exit from "@providers/error/systemErrors/Exit";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 
-export interface ICommand {
+export interface ICommand<T = unknown> {
   requiredPermission?: Permissions;
 
   Handle(
-    Process?: Process
+    Process?: BaseProcess
   ):
-    | Promise<void>
-    | void
     | Promise<Exit>
+    | Promise<Exit | T>
     | Promise<Exit | Exit<unknown>>
     | Exit
+    | T
     | Exit<unknown>;
-}
-
-export class CommandReturn<T> extends Exit<T> {
-  constructor(data: T) {
-    super(0, data);
-    this.data = data;
-  }
 }
 
 export type Class<I, Args extends any[] = any[]> = new (...args: Args) => I;

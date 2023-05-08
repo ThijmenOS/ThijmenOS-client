@@ -10,10 +10,10 @@ class CommunicateToProcess implements ICommand {
     types.ProcessManager
   );
 
-  private readonly _targetPid: string;
+  private readonly _targetPid: number;
   private readonly _data: unknown;
 
-  constructor(args: { data: unknown; targetPid: string }) {
+  constructor(args: { data: unknown; targetPid: number }) {
     this._targetPid = args.targetPid;
     this._data = args.data;
   }

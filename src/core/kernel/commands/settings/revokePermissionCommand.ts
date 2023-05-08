@@ -1,7 +1,7 @@
 // import Settings from "@core/settings/settings";
 // import javascriptOs from "@inversify/inversify.config";
 // import { EventName } from "@ostypes/ProcessTypes";
-// import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+// import {  ICommand } from "@ostypes/CommandTypes";
 // import types from "@ostypes/types";
 // import { PermissionRequestDto } from "@thijmen-os/common";
 
@@ -21,20 +21,20 @@
 //           app.applicationIdentifier === this._props.applicationId.toString()
 //       );
 
-//     if (!application) return new CommandReturn(false, EventName.Error);
+//     if (!application) return new Exit(false, EventName.Error);
 
 //     const hasPermission = application.permissions.some(
 //       (permission) => permission === this._props.permission
 //     );
 
 //     if (!hasPermission)
-//       return new CommandReturn(true, EventName.PermissionRevoked);
+//       return new Exit(true, EventName.PermissionRevoked);
 
 //     await this._settings.ApplicationSettings.RevokeApplicationPermission(
 //       this._props
 //     );
 //     await this._settings.RefreshSettings();
-//     return new CommandReturn<boolean>(true, EventName.PermissionRevoked);
+//     return new Exit<boolean>(true, EventName.PermissionRevoked);
 //   }
 // }
 

@@ -1,4 +1,4 @@
-import { ApplicationInstance } from "@core/processManager/processes/baseProcess";
+import { ApplicationInstance } from "@core/processManager/processes/process";
 import { ICommand } from "@ostypes/CommandTypes";
 import StartProcess from "../processes/startProcess";
 

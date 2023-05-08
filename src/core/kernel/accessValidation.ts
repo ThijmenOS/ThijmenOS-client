@@ -8,8 +8,8 @@ import { readAccessFile } from "@providers/filesystemEndpoints/root";
 import { Access, AccessMap, Path, User } from "@thijmen-os/common";
 import { injectable } from "inversify";
 import AccessValidationMethods from "./accessValidationMethods";
-import GenerateUUID from "@utils/generateUUID";
 import Exit from "@providers/error/systemErrors/Exit";
+import { GenerateId } from "@utils/generatePid";
 
 @injectable()
 class CommandAccessValidation implements AccessValidationMethods {
@@ -21,7 +21,7 @@ class CommandAccessValidation implements AccessValidationMethods {
     x: true,
   };
 
-  private readonly _pid: string = GenerateUUID();
+  private readonly _pid: number = GenerateId();
 
   constructor() {
     this._memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
@@ -64,7 +64,7 @@ class CommandAccessValidation implements AccessValidationMethods {
     const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
     //TODO: Throw kernel panic
     if (result instanceof Exit) {
-      throw new Error(result.event);
+      throw new Error(result.data);
     }
 
     return result;
@@ -78,7 +78,7 @@ class CommandAccessValidation implements AccessValidationMethods {
 
     //TODO: Implement invalid signature error
     if (result instanceof Exit) {
-      throw new Error(result.event);
+      throw new Error(result.data);
     }
 
     return result;

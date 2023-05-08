@@ -3,15 +3,14 @@ import Memory from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { injectable } from "inversify";
-import { ApplicationInstance } from "./processes/baseProcess";
 import ProcessesShape from "./interfaces/processesShape";
-import WorkerProcess from "./processes/workerProcess";
-import GenerateUUID from "@utils/generateUUID";
 import { processkey } from "@ostypes/memoryKeys";
 import Exit from "@providers/error/systemErrors/Exit";
 import ProcessNotFound from "./errors/ProcessNotFound";
 import FatalError from "@providers/error/userErrors/fatalError";
 import { OSErrors } from "@providers/error/defaults/errors";
+import { GenerateId } from "@utils/generatePid";
+import { BaseProcess } from "./processes/baseProcess";
 
 /**
  * Do not store the child object in the process object but save a reference to the parent on the child.
@@ -24,26 +23,26 @@ import { OSErrors } from "@providers/error/defaults/errors";
 class Processes implements ProcessesShape {
   private readonly _memory: Memory = javascriptOs.get<Memory>(types.Memory);
 
-  private readonly _pid: string;
+  private readonly _pid: number;
 
   constructor() {
-    this._pid = GenerateUUID();
+    this._pid = GenerateId();
     this._memory.AllocateMemory(this._pid, processkey, []);
   }
 
-  public RegisterProcess = (process: ApplicationInstance) => {
+  public RegisterProcess = (process: BaseProcess) => {
     let processes = this.LoadProcesses();
 
     processes ? processes.push(process) : (processes = new Array(process));
 
-    this._memory.SaveToMemory<Array<ApplicationInstance>>(
+    this._memory.SaveToMemory<Array<BaseProcess>>(
       this._pid,
       processkey,
       processes
     );
   };
 
-  public FindProcess(pid: string): ApplicationInstance | Exit {
+  public FindProcess(pid: number): BaseProcess | Exit {
     const processes = this.LoadProcesses();
 
     if (!processes)
@@ -52,60 +51,14 @@ class Processes implements ProcessesShape {
         OSErrors.couldNotLoadProcesses
       );
 
-    const targetProcess = this.RecursiveFindProcess(processes, pid);
+    const targetProcess = processes.find((process) => process.pid === pid);
 
     if (!targetProcess) return new ProcessNotFound();
 
     return targetProcess;
   }
 
-  private RecursiveFindProcess(
-    processes: Array<ApplicationInstance>,
-    pid: string
-  ): ApplicationInstance | undefined {
-    if (!processes) return;
-
-    for (let i = 0; i < processes.length; i++) {
-      if (processes[i].processIdentifier === pid) {
-        return processes[i];
-      }
-
-      const childs = processes[i]._childProcesses;
-      if (childs) {
-        const found = this.RecursiveFindProcess(childs, pid);
-        if (found) return found;
-      }
-    }
-
-    return;
-  }
-
-  private RecursiveFindParentProcess(
-    processes: Array<ApplicationInstance>,
-    pid: string,
-    depth: number
-  ): { process: ApplicationInstance; depth: number } | undefined {
-    if (!processes) return;
-
-    for (let i = 0; i < processes.length; i++) {
-      const childs = processes[i]._childProcesses;
-      if (!childs) return;
-
-      const childFound = childs.some(
-        (child) => child.processIdentifier === pid
-      );
-      if (childFound)
-        return {
-          process: processes[i],
-          depth: depth,
-        };
-      else this.RecursiveFindParentProcess(childs, pid, depth++);
-    }
-
-    return;
-  }
-
-  public RemoveProcess(pid: string): Exit {
+  public RemoveProcess(pid: number): Exit {
     const processes = this.LoadProcesses();
 
     if (!processes)
@@ -114,34 +67,19 @@ class Processes implements ProcessesShape {
         OSErrors.couldNotLoadProcesses
       );
 
-    const result = this.RecursiveFindParentProcess(processes, pid, 0);
+    const result = processes.findIndex((process) => process.pid === pid);
 
-    if (!result) return new Exit(-1);
+    if (result < 0) return new Exit(-1);
 
-    if (result.depth === 0) {
-      const targetIndex = processes.findIndex(
-        (process) => process.processIdentifier === pid
-      );
-      if (targetIndex < 0) return new Exit(-1);
-      processes.splice(targetIndex, 1);
-    } else {
-      const targetIndex = result.process._childProcesses?.findIndex(
-        (process) => process.processIdentifier === pid
-      );
-
-      if (targetIndex === undefined || targetIndex < 0) return new Exit(-1);
-      result.process._childProcesses?.splice(targetIndex, 1);
-    }
-
-    console.log(processes);
+    processes.splice(result, 1);
 
     this._memory.SaveToMemory(this._pid, processkey, processes);
 
     return new Exit();
   }
 
-  private LoadProcesses(): Array<ApplicationInstance> | null {
-    const result = this._memory.LoadFromMemory<Array<WorkerProcess>>(
+  private LoadProcesses(): Array<BaseProcess> | null {
+    const result = this._memory.LoadFromMemory<Array<BaseProcess>>(
       this._pid,
       processkey
     );

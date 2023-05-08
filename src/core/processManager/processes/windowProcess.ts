@@ -1,48 +1,40 @@
-import KernelMethodShape from "@core/kernel/kernelMethodShape";
-import { ProcessMessage } from "@core/kernel/kernelTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
+import WindowConstructorMethods from "@providers/gui/applicationWindow/interfaces/windowConstructorMethods";
+import { BaseProcess } from "./baseProcess";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import { ApplicationInstance } from "./baseProcess";
-import { WindowArgs } from "../interfaces/process";
+import KernelMethodShape from "@core/kernel/kernelMethodShape";
 
-class WindowProcess extends ApplicationInstance {
-  private readonly _kernel: KernelMethodShape =
-    javascriptOs.get<KernelMethodShape>(types.Kernel);
+export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
+  private readonly _kernel = javascriptOs.get<KernelMethodShape>(types.Kernel);
+  private readonly _windowConstructor =
+    javascriptOs.get<WindowConstructorMethods>(types.CreateWindow);
 
-  private _applicationWindow: ApplicationWindow;
-
-  constructor(args: WindowArgs) {
-    super(args);
-
-    this._applicationWindow = args.applicationWindow;
+  constructor() {
+    super();
   }
 
-  public AddEventListener(): void {
-    //TODO: Throw application crash
-    if (window === null) throw new Error();
+  public async Initialise(exePath: string, args?: string) {
+    this.code = await this._windowConstructor.Window(exePath, this.pid);
 
-    window.addEventListener("message", (event) => {
-      const message: ProcessMessage = event.data;
-
-      if (message.origin !== this.processIdentifier) return;
-
-      this._kernel.ProcessMethod({
-        origin: this,
-        processIdentifier: message.origin,
-        method: message.method,
-        params: message.params,
-      });
-    });
+    this.RegisterProcess();
+    this.ListenToSysCalls();
+    setTimeout(() => {
+      this.Startup(args);
+    }, 100);
   }
 
   public Terminate(): void {
-    this._childProcesses?.forEach((process) => {
-      process.Terminate();
-    });
+    this.code?.Destroy();
+  }
 
-    this._applicationWindow.Destroy();
+  private ListenToSysCalls() {
+    window.addEventListener("message", ({ data }) => {
+      this._kernel.ProcessMethod({
+        origin: this,
+        pid: this.pid,
+        ...data,
+      });
+    });
   }
 }
-
-export default WindowProcess;

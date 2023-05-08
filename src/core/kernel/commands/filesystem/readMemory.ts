@@ -1,7 +1,7 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
 import { Process } from "@core/processManager/interfaces/process";
 import javascriptOs from "@inversify/inversify.config";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import Exit from "@providers/error/systemErrors/Exit";
 import types from "@ostypes/types";
 import ParameterError from "@providers/error/systemErrors/paramError";
@@ -29,7 +29,7 @@ class ReadMemory implements ICommand {
       return result;
     }
 
-    return new CommandReturn(result);
+    return new Exit(result);
   }
 }
 

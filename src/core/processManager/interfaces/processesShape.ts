@@ -1,10 +1,10 @@
 import Exit from "@providers/error/systemErrors/Exit";
-import { ApplicationInstance } from "../processes/baseProcess";
+import { BaseProcess } from "../processes/baseProcess";
 
 interface ProcessesShape {
-  RegisterProcess(process: ApplicationInstance): void;
-  FindProcess(pid: string): ApplicationInstance | Exit;
-  RemoveProcess(pid: string): Exit;
+  RegisterProcess(process: BaseProcess): void;
+  FindProcess(pid: number): BaseProcess | Exit;
+  RemoveProcess(pid: number): Exit;
 }
 
 export default ProcessesShape;

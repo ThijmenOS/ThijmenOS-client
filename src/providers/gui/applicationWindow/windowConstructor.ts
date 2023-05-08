@@ -9,29 +9,22 @@
 
 */
 
-import ProcessConstructorMethods from "./interfaces/createApplicationWindowMethodShape";
+import WindowConstructorMethods from "./interfaces/windowConstructorMethods";
 import { host } from "@thijmen-os/common";
 import ApplicationWindow from "./applicationWindow";
 import { windowOptions } from "./defaults";
 import { injectable } from "inversify";
-import GenerateUUID from "@utils/generateUUID";
 import ExectutionLocationNotFound from "@providers/error/userErrors/executionLocationNotFound";
 
 @injectable()
-class ProcessConstructor implements ProcessConstructorMethods {
-  public async Process(
+class WindowConstructor implements WindowConstructorMethods {
+  public async Window(
     executionLocation: string,
-    pid: string
-  ): Promise<HTMLIFrameElement> {
+    pid: number
+  ): Promise<ApplicationWindow> {
     await this.CheckExecutionPath(executionLocation);
 
-    return this.ConstructElement(pid, executionLocation).process();
-  }
-
-  public async Window(executionLocation: string): Promise<ApplicationWindow> {
-    await this.CheckExecutionPath(executionLocation);
-
-    const windowId = GenerateUUID();
+    const windowId = pid.toString();
 
     const window = new ApplicationWindow({
       windowHeight: windowOptions.windowHeight,
@@ -88,4 +81,4 @@ class ProcessConstructor implements ProcessConstructorMethods {
     `${host}/static/${executionLocation}`;
 }
 
-export default ProcessConstructor;
+export default WindowConstructor;

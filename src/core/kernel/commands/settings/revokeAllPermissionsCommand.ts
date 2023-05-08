@@ -1,7 +1,7 @@
 // import Settings from "@core/settings/settings";
 // import javascriptOs from "@inversify/inversify.config";
 // import { EventName } from "@ostypes/ProcessTypes";
-// import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+// import {  ICommand } from "@ostypes/CommandTypes";
 // import types from "@ostypes/types";
 
 // //TODO: Implement root. this method can only be access by root actors
@@ -20,13 +20,13 @@
 //         (app) => app.applicationIdentifier === this._applicationId.toString()
 //       );
 
-//     if (!application) return new CommandReturn(false, EventName.Error);
+//     if (!application) return new Exit(false, EventName.Error);
 
 //     await this._settings.ApplicationSettings.RevokeAllApplicationPermissions(
 //       this._applicationId
 //     );
 //     await this._settings.RefreshSettings();
-//     return new CommandReturn<boolean>(true, EventName.PermissionRevoked);
+//     return new Exit<boolean>(true, EventName.PermissionRevoked);
 //   }
 // }
 

@@ -1,12 +1,12 @@
 //geeft instantie van de class mee
 
-import { Process } from "@core/processManager/interfaces/process";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import { ICommand } from "@ostypes/CommandTypes";
 import { injectable } from "inversify";
 
 @injectable()
 class Mediator {
-  public async Send(command: ICommand, Process: Process) {
+  public async Send(command: ICommand, Process: BaseProcess) {
     return command.Handle(Process);
 
     // if (command.requiredPermission === undefined) {
@@ -19,7 +19,7 @@ class Mediator {
     // );
 
     // if (!applicationCanExecuteCommand)
-    //   return new CommandReturn<string>(
+    //   return new Exit<string>(
     //     `No permission to execute ${command.requiredPermission}`,
     //     EventName.Error
     //   );

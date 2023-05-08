@@ -1,5 +1,5 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import { ChangeDirectory } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
@@ -23,11 +23,11 @@ class ChangeDirCommand implements ICommand {
 
   public async Handle(): Promise<Exit> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return new NoResourceAccess(this._props);
+    if (!validated) return new NoResourceAccess();
 
     const result = await ChangeDirectory(this._props);
 
-    return new CommandReturn(result);
+    return new Exit(result);
   }
 }
 

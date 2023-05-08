@@ -1,7 +1,7 @@
 // import Settings from "@core/settings/settings";
 // import javascriptOs from "@inversify/inversify.config";
 // import { EventName } from "@ostypes/ProcessTypes";
-// import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+// import {  ICommand } from "@ostypes/CommandTypes";
 // import types from "@ostypes/types";
 // import { Permissions } from "@thijmen-os/common";
 // import { GrantPermission } from "@thijmen-os/prompt";
@@ -24,14 +24,14 @@
 //           app.applicationIdentifier === Process.processIdentifier.toString()
 //       );
 
-//     if (!application) return new CommandReturn(false);
+//     if (!application) return new Exit(false);
 
 //     const permissionAlreadyGranted = application.permissions.some(
 //       (permission) => permission === this._requestedPermission
 //     );
 
 //     if (permissionAlreadyGranted)
-//       return new CommandReturn(true, EventName.PermissionGranted);
+//       return new Exit(true, EventName.PermissionGranted);
 
 //     const userInteraction = new Promise((resolve) => {
 //       new GrantPermission(
@@ -46,7 +46,7 @@
 
 //     const granted = await userInteraction;
 //     if (!granted) {
-//       return new CommandReturn<boolean>(false, EventName.PermissionNotGranted);
+//       return new Exit<boolean>(false, EventName.PermissionNotGranted);
 //     }
 
 //     await this._settings.ApplicationSettings.GrantPermissionsToApplication({
@@ -54,7 +54,7 @@
 //       permission: this._requestedPermission,
 //     });
 //     await this._settings.RefreshSettings();
-//     return new CommandReturn<boolean>(true, EventName.PermissionGranted);
+//     return new Exit<boolean>(true, EventName.PermissionGranted);
 //   }
 // }
 

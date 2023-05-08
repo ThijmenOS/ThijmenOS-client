@@ -1,4 +1,4 @@
-import { ApplicationInstance } from "@core/processManager/processes/baseProcess";
+import { ApplicationInstance } from "@core/processManager/processes/process";
 import Exit from "@providers/error/systemErrors/Exit";
 interface ApplicationCommunicationModel<T> {
   worker: ApplicationInstance;

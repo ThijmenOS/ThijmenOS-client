@@ -3,10 +3,10 @@ import MemoryAccess from "./models/memoryAccess";
 
 export default interface MemoryMethodShape {
   AllocateMemory(
-    pid: string,
+    pid: number,
     memoryKey: string,
     memoryAccess: Array<MemoryAccess>
   ): Exit;
-  SaveToMemory<T extends object>(pid: string, key: string, data: T): Exit;
-  LoadFromMemory<T>(pid: string, key: string): T | Exit;
+  SaveToMemory<T extends object>(pid: number, key: string, data: T): Exit;
+  LoadFromMemory<T>(pid: number, key: string): T | Exit;
 }

@@ -1,5 +1,5 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
@@ -7,7 +7,7 @@ import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import Exit from "@providers/error/systemErrors/Exit";
 import NoResourceAccess from "./errors/NoResourceAccess";
 
-class ReadFileCommand implements ICommand {
+class ReadFileCommand implements ICommand<string> {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
     types.CommandAccessValidation
   );
@@ -21,13 +21,13 @@ class ReadFileCommand implements ICommand {
     this._props = props;
   }
 
-  public async Handle(): Promise<Exit> {
+  public async Handle(): Promise<string | Exit<string>> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return new NoResourceAccess(this._props);
+    if (!validated) return new NoResourceAccess();
 
     const result: string = await OpenFile(this._props);
 
-    return new CommandReturn(result);
+    return result;
   }
 }
 

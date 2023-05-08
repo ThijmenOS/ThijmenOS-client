@@ -27,6 +27,6 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "*.json"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "*.json", "src/utils/thread.js"],
   "exclude": ["node_modules"]
 }

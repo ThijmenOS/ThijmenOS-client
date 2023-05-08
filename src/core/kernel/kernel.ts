@@ -35,14 +35,12 @@ import KernelMethodShape from "./kernelMethodShape";
 // import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
 // import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 import AccessValidationMethods from "./accessValidationMethods";
-import Communication from "./commands/application/communication";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
 import SpawnWindow from "./commands/processes/spawnWindow";
 import AllocateMemory from "./commands/filesystem/allocateMemory";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
-import Exit from "@providers/error/systemErrors/Exit";
 import SelectFile from "./commands/application/selectFile";
 
 @injectable()
@@ -97,12 +95,14 @@ class Kernel implements KernelMethodShape {
         props.origin
       );
 
-      if (result instanceof Exit) {
-        new Communication({
-          exit: result,
-          worker: props.origin,
-        }).Handle();
+      if (!props.origin.code) {
+        throw new Error();
       }
+
+      props.origin.code.Message({
+        data: result,
+        id: props.messageId,
+      });
     } catch (error) {
       console.log(error);
     }
