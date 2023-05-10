@@ -1,10 +1,8 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
-import { Process } from "@core/processManager/interfaces/process";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
-import Exit from "@providers/error/systemErrors/Exit";
-import types from "@ostypes/types";
-import ParameterError from "@providers/error/systemErrors/paramError";
+import { errors } from "../errors";
 
 class ReadMemory implements ICommand {
   private readonly _memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
@@ -15,9 +13,9 @@ class ReadMemory implements ICommand {
     this._memoryKey = memoryKey;
   }
 
-  public Handle(Process: Process): Exit | Exit<unknown> {
+  public Handle(Process: BaseProcess): number | unknown {
     if (!this._memoryKey) {
-      return new ParameterError();
+      return errors.ParameterError;
     }
 
     const result = this._memory.LoadFromMemory(
@@ -25,11 +23,7 @@ class ReadMemory implements ICommand {
       this._memoryKey
     );
 
-    if (result instanceof Exit) {
-      return result;
-    }
-
-    return new Exit(result);
+    return result;
   }
 }
 

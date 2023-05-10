@@ -5,15 +5,11 @@ import types from "@ostypes/types";
 import { injectable } from "inversify";
 import ProcessesShape from "./interfaces/processesShape";
 import { ipcKey, processkey } from "@ostypes/memoryKeys";
-import Exit from "@providers/error/systemErrors/Exit";
-import ProcessNotFound from "./errors/ProcessNotFound";
 import FatalError from "@providers/error/userErrors/fatalError";
-import { OSErrors } from "@providers/error/defaults/errors";
 import { GenerateId } from "@utils/generatePid";
 import { BaseProcess } from "./processes/baseProcess";
 import MessageBus from "./ipc/messageBus";
-import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import Thread from "./processes/thread";
+import { errors, success } from "@core/kernel/commands/errors";
 
 /**
  * Do not store the child object in the process object but save a reference to the parent on the child.
@@ -34,8 +30,10 @@ class Processes implements ProcessesShape {
     this._memory.AllocateMemory(this._pid, ipcKey, []);
   }
 
-  public RegisterProcess = (process: BaseProcess) => {
+  public RegisterProcess = (process: BaseProcess): number => {
     let processes = this.LoadProcesses();
+
+    if (typeof processes === "number") return errors.UnkownError;
 
     processes ? processes.push(process) : (processes = new Array(process));
 
@@ -44,53 +42,58 @@ class Processes implements ProcessesShape {
       processkey,
       processes
     );
+
+    return success;
   };
 
-  public FindProcess(pid: number): BaseProcess | Exit {
+  public FindProcess(pid: number): BaseProcess | number {
     const processes = this.LoadProcesses();
 
-    if (!processes)
+    if (typeof processes === "number") {
       throw new FatalError(
         "Processes could not be loaded from memory",
-        OSErrors.couldNotLoadProcesses
+        processes
       );
+    }
 
     const targetProcess = processes.find((process) => process.pid === pid);
 
-    if (!targetProcess) return new ProcessNotFound();
+    if (!targetProcess) return errors.ProcessNotFound;
 
     return targetProcess;
   }
 
-  public RemoveProcess(pid: number): Exit {
+  public RemoveProcess(pid: number): number {
     const processes = this.LoadProcesses();
 
-    if (!processes)
+    if (typeof processes === "number")
       throw new FatalError(
         "Processes could not be loaded from memory",
-        OSErrors.couldNotLoadProcesses
+        processes
       );
 
     const result = processes.findIndex((process) => process.pid === pid);
 
-    if (result < 0) return new Exit(-1);
+    if (result < 0) return errors.UnkownError;
 
     processes.splice(result, 1);
 
     this._memory.SaveToMemory(this._pid, processkey, processes);
 
-    return new Exit();
+    return success;
   }
 
   public CreateMessageBus(
     ownerPid: number,
     receivingPid: number,
     bufferSize?: number
-  ): Exit {
+  ): number {
     let messageBusses = this.LoadMessageBusses();
 
+    if (typeof messageBusses === "number") return messageBusses;
+
     if (messageBusses?.find((bus) => bus.receivingPid === receivingPid))
-      return new Exit(-1);
+      return errors.UnkownError;
 
     const messageBus = new MessageBus(ownerPid, receivingPid, bufferSize);
 
@@ -106,15 +109,15 @@ class Processes implements ProcessesShape {
   public FindMessageBus(
     ownerPid: number,
     receivingPid: number
-  ): MessageBus | Exit {
+  ): MessageBus | number {
     const messageBusses = this.LoadMessageBusses();
 
-    if (!messageBusses) return new Exit(-1);
+    if (typeof messageBusses === "number") return errors.UnkownError;
 
     const messageBus = messageBusses.find(
       (bus) => bus.ownerPid === ownerPid && bus.receivingPid === receivingPid
     );
-    if (!messageBus) return new Exit(-1);
+    if (!messageBus) return errors.MessageBusNotFound;
 
     return messageBus;
   }
@@ -122,28 +125,24 @@ class Processes implements ProcessesShape {
   public GetAllProcesses(): BaseProcess[] {
     const processes = this.LoadProcesses();
 
-    if (!processes) return new Array<BaseProcess>();
+    if (typeof processes === "number") return new Array<BaseProcess>();
     return processes;
   }
 
-  private LoadMessageBusses(): Array<MessageBus> | null {
+  private LoadMessageBusses(): Array<MessageBus> | number {
     const result = this._memory.LoadFromMemory<Array<MessageBus>>(
       this._pid,
       ipcKey
     );
 
-    if (result instanceof Exit) throw new Error(result.data);
-
     return result;
   }
 
-  private LoadProcesses(): Array<BaseProcess> | null {
+  private LoadProcesses(): Array<BaseProcess> | number {
     const result = this._memory.LoadFromMemory<Array<BaseProcess>>(
       this._pid,
       processkey
     );
-
-    if (result instanceof Exit) throw new Error(result.data);
 
     return result;
   }

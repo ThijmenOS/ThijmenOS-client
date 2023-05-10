@@ -1,3 +1,4 @@
+import { errors, success } from "@core/kernel/commands/errors";
 import Exit from "@providers/error/systemErrors/Exit";
 import { GenerateId } from "@utils/generatePid";
 
@@ -17,11 +18,12 @@ class MessageBus {
     this.messageBusId = GenerateId();
   }
 
-  public Send(message: string | number): Exit {
-    if (this._queue.length >= this._bufferSize) return new Exit(-1);
+  public Send(message: string | number): number {
+    if (this._queue.length >= this._bufferSize)
+      return errors.MessagebufferExceeded;
 
     this._queue.push(message);
-    return new Exit();
+    return success;
   }
 
   public Read(): null | string | number {

@@ -4,6 +4,7 @@ import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import Exit from "@providers/error/systemErrors/Exit";
+import { errors } from "../errors";
 
 class CreateMessageBus implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -19,7 +20,7 @@ class CreateMessageBus implements ICommand {
   }
 
   Handle(process?: BaseProcess): Exit {
-    if (!process) return new Exit(-1);
+    if (!process) return errors.UnkownError;
 
     const status = this._processes.CreateMessageBus(
       process.pid,

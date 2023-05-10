@@ -1,17 +1,16 @@
-import Exit from "@providers/error/systemErrors/Exit";
 import MessageBus from "../ipc/messageBus";
 import { BaseProcess } from "../processes/baseProcess";
 
 interface ProcessesShape {
   RegisterProcess(process: BaseProcess): void;
-  FindProcess(pid: number): BaseProcess | Exit;
-  RemoveProcess(pid: number): Exit;
+  FindProcess(pid: number): BaseProcess | number;
+  RemoveProcess(pid: number): number;
   CreateMessageBus(
     ownerPid: number,
     receivingPid: number,
     bufferSize?: number
-  ): Exit;
-  FindMessageBus(ownerPid: number, receivingPid: number): MessageBus | Exit;
+  ): number;
+  FindMessageBus(ownerPid: number, receivingPid: number): MessageBus | number;
   GetAllProcesses(): Array<BaseProcess>;
 }
 

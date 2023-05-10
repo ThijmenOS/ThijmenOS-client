@@ -4,6 +4,7 @@ import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import Exit from "@providers/error/systemErrors/Exit";
+import { errors } from "../errors";
 
 class SendMsg implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -18,13 +19,13 @@ class SendMsg implements ICommand {
     this._message = args.message;
   }
 
-  Handle(process: BaseProcess): string | number | null | Exit {
+  Handle(process: BaseProcess): string | number | null {
     const messageBus = this._processes.FindMessageBus(
       process.pid,
       this._receivingPid
     );
 
-    if (messageBus instanceof Exit) return new Exit(-1, messageBus.data);
+    if (typeof messageBus === "number") return errors.MessageBusNotFound;
 
     return messageBus.Send(this._message);
   }
