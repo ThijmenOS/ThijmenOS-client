@@ -43,6 +43,7 @@ import WriteMemory from "./commands/filesystem/writeMemory";
 import SelectFile from "./commands/application/selectFile";
 import ExitProcess from "./commands/processes/exit";
 import WaitPid from "./commands/processes/waitpid";
+import CreateMessageBus from "./commands/processes/createMessageBus";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -86,6 +87,7 @@ class Kernel implements KernelMethodShape {
     terminateProcess: TerminateProcess,
     exit: ExitProcess,
     waitpid: WaitPid,
+    crtmsgbus: CreateMessageBus,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {

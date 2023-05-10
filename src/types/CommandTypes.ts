@@ -6,7 +6,7 @@ export interface ICommand<T = unknown> {
   requiredPermission?: Permissions;
 
   Handle(
-    Process?: BaseProcess
+    process?: BaseProcess
   ):
     | Promise<Exit>
     | Promise<Exit | T>

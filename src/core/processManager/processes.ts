@@ -4,13 +4,14 @@ import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { injectable } from "inversify";
 import ProcessesShape from "./interfaces/processesShape";
-import { processkey } from "@ostypes/memoryKeys";
+import { ipcKey, processkey } from "@ostypes/memoryKeys";
 import Exit from "@providers/error/systemErrors/Exit";
 import ProcessNotFound from "./errors/ProcessNotFound";
 import FatalError from "@providers/error/userErrors/fatalError";
 import { OSErrors } from "@providers/error/defaults/errors";
 import { GenerateId } from "@utils/generatePid";
 import { BaseProcess } from "./processes/baseProcess";
+import MessageBus from "./ipc/messageBus";
 
 /**
  * Do not store the child object in the process object but save a reference to the parent on the child.
@@ -28,14 +29,13 @@ class Processes implements ProcessesShape {
   constructor() {
     this._pid = GenerateId();
     this._memory.AllocateMemory(this._pid, processkey, []);
+    this._memory.AllocateMemory(this._pid, ipcKey, []);
   }
 
   public RegisterProcess = (process: BaseProcess) => {
     let processes = this.LoadProcesses();
 
     processes ? processes.push(process) : (processes = new Array(process));
-
-    console.log(processes);
 
     this._memory.SaveToMemory<Array<BaseProcess>>(
       this._pid,
@@ -78,6 +78,49 @@ class Processes implements ProcessesShape {
     this._memory.SaveToMemory(this._pid, processkey, processes);
 
     return new Exit();
+  }
+
+  public CreateMessageBus(
+    ownerPid: number,
+    receivingPid: number,
+    bufferSize?: number
+  ): Exit {
+    let messageBusses = this.LoadMessageBusses();
+
+    if (messageBusses?.find((bus) => bus.receivingPid === receivingPid))
+      return new Exit(-1);
+
+    const messageBus = new MessageBus(ownerPid, receivingPid, bufferSize);
+
+    messageBusses
+      ? messageBusses.push(messageBus)
+      : (messageBusses = new Array<MessageBus>(messageBus));
+
+    const saved = this._memory.SaveToMemory(this._pid, ipcKey, messageBusses);
+
+    return saved;
+  }
+
+  public FindMessageBus(ownerPid: number): MessageBus | Exit {
+    const messageBusses = this.LoadMessageBusses();
+
+    if (!messageBusses) return new Exit(-1);
+
+    const messageBus = messageBusses.find((bus) => bus.ownerPid === ownerPid);
+    if (!messageBus) return new Exit(-1);
+
+    return messageBus;
+  }
+
+  private LoadMessageBusses(): Array<MessageBus> | null {
+    const result = this._memory.LoadFromMemory<Array<MessageBus>>(
+      this._pid,
+      ipcKey
+    );
+
+    if (result instanceof Exit) throw new Error(result.data);
+
+    return result;
   }
 
   private LoadProcesses(): Array<BaseProcess> | null {

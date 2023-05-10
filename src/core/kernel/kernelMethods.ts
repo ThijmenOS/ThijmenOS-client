@@ -23,4 +23,5 @@ export enum ValidMethods {
   terminateProcess = "terminateProcess",
   exit = "exit",
   waitpid = "waitpid",
+  createMessageBus = "crtmsgbus",
 }
