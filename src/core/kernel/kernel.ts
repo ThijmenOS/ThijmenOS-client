@@ -46,6 +46,8 @@ import WaitPid from "./commands/processes/waitpid";
 import CreateMessageBus from "./commands/processes/createMessageBus";
 import SendMsg from "./commands/processes/sendmsg";
 import ReadMsg from "./commands/processes/readmsg";
+import GetProcesses from "./commands/processes/getProcesses";
+import Kill from "./commands/processes/kill";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -92,6 +94,8 @@ class Kernel implements KernelMethodShape {
     crtmsgbus: CreateMessageBus,
     sendMsg: SendMsg,
     readMsg: ReadMsg,
+    getProcesses: GetProcesses,
+    kill: Kill,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {

@@ -22,10 +22,7 @@ class ExitProcess implements ICommand {
       return result;
     }
 
-    const removed = this._processes.RemoveProcess(result.pid);
-    if (removed.id >= 0) {
-      result.Terminate();
-    }
+    result.Terminate(this._code);
 
     return new Exit(this._code);
   }

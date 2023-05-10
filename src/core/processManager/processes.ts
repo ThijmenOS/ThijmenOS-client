@@ -12,6 +12,8 @@ import { OSErrors } from "@providers/error/defaults/errors";
 import { GenerateId } from "@utils/generatePid";
 import { BaseProcess } from "./processes/baseProcess";
 import MessageBus from "./ipc/messageBus";
+import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
+import Thread from "./processes/thread";
 
 /**
  * Do not store the child object in the process object but save a reference to the parent on the child.
@@ -115,6 +117,13 @@ class Processes implements ProcessesShape {
     if (!messageBus) return new Exit(-1);
 
     return messageBus;
+  }
+
+  public GetAllProcesses(): BaseProcess[] {
+    const processes = this.LoadProcesses();
+
+    if (!processes) return new Array<BaseProcess>();
+    return processes;
   }
 
   private LoadMessageBusses(): Array<MessageBus> | null {

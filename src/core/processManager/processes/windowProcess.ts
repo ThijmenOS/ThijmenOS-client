@@ -4,14 +4,22 @@ import WindowConstructorMethods from "@providers/gui/applicationWindow/interface
 import { BaseProcess } from "./baseProcess";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
 import KernelMethodShape from "@core/kernel/kernelMethodShape";
+import { ProcessState } from "../types/processState";
 
 export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
   private readonly _kernel = javascriptOs.get<KernelMethodShape>(types.Kernel);
   private readonly _windowConstructor =
     javascriptOs.get<WindowConstructorMethods>(types.CreateWindow);
 
-  constructor() {
-    super();
+  constructor(
+    exePath: string,
+    name: string,
+    args?: string,
+    parentPid?: number
+  ) {
+    super(name, exePath, "window (.html)");
+
+    this.Initialise(exePath, args, parentPid);
   }
 
   public async Initialise(exePath: string, args?: string, parentPid?: number) {
@@ -27,8 +35,10 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
     return this;
   }
 
-  public Terminate(): void {
+  public Terminate(exitCode: number): void {
     this.code?.Destroy();
+    this.state = ProcessState.Terminated;
+    this.exitCode = exitCode;
   }
 
   private ListenToSysCalls() {

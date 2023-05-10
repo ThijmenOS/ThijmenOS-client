@@ -2,9 +2,7 @@ import Exit from "@providers/error/systemErrors/Exit";
 import { ProcessState } from "../types/processState";
 import { GenerateId } from "@utils/generatePid";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import { ProcessMessage } from "@core/kernel/kernelTypes";
 import javascriptOs from "@inversify/inversify.config";
-import KernelMethodShape from "@core/kernel/kernelMethodShape";
 import types from "@ostypes/types";
 import Thread from "./thread";
 import ProcessesShape from "../interfaces/processesShape";
@@ -17,15 +15,25 @@ export abstract class BaseProcess<
   );
 
   pid: number;
+  name: string;
+  location: string;
+  processType: string;
+
   parentPid?: number;
   childPids?: Array<number>;
   code?: T;
   openFiles?: Array<string>;
   state: ProcessState;
+  exitCode: number;
 
-  constructor() {
+  constructor(name: string, location: string, processType: string) {
     this.pid = GenerateId();
     this.state = ProcessState.New;
+    this.exitCode = -1;
+
+    this.name = name;
+    this.location = location;
+    this.processType = processType;
   }
 
   protected Startup(args?: string): Exit {
@@ -46,5 +54,5 @@ export abstract class BaseProcess<
     this._processes.RegisterProcess(this);
   }
 
-  public abstract Terminate(): void;
+  public abstract Terminate(exitCode: number): void;
 }

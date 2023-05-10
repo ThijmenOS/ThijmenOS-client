@@ -8,17 +8,27 @@ import Exit from "@providers/error/systemErrors/Exit";
 class StartProcess implements ICommand {
   private readonly _exePath: string;
   private readonly _args?: string;
+  private readonly _name?: string;
 
-  constructor(args: { exePath: string; args?: string }) {
+  constructor(args: { exePath: string; name?: string; args?: string }) {
     this._exePath = args.exePath;
     this._args = args.args;
+    this._name = args.name;
   }
 
   public async Handle(process?: BaseProcess): Promise<Exit | number> {
     const mimetype = this._exePath.split(".").at(-1);
+
+    let name = this._name;
+
+    if (!name) {
+      name = this._exePath.split("/").at(-1)?.split(".")[0];
+    }
+
     if (mimetype === "html") {
-      const newProcess = await new WindowProcessV2().Initialise(
+      const newProcess = await new WindowProcessV2(
         this._exePath,
+        name!,
         this._args,
         process?.pid
       );
@@ -28,7 +38,12 @@ class StartProcess implements ICommand {
       return new Exit(0);
     }
     if (mimetype === "js") {
-      const newProcess = new ProcessV2(this._exePath, this._args, process?.pid);
+      const newProcess = new ProcessV2(
+        this._exePath,
+        name!,
+        this._args,
+        process?.pid
+      );
 
       if (process) return newProcess.pid;
 

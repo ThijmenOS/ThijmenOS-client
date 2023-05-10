@@ -12,6 +12,7 @@ interface ProcessesShape {
     bufferSize?: number
   ): Exit;
   FindMessageBus(ownerPid: number, receivingPid: number): MessageBus | Exit;
+  GetAllProcesses(): Array<BaseProcess>;
 }
 
 export default ProcessesShape;

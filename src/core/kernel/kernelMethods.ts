@@ -26,4 +26,6 @@ export enum ValidMethods {
   createMessageBus = "crtmsgbus",
   sendMsg = "sendMsg",
   readMsg = "readMsg",
+  getProcesses = "getProcesses",
+  kill = "kill",
 }

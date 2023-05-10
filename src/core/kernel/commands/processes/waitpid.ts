@@ -1,5 +1,4 @@
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
-import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
@@ -17,11 +16,12 @@ class WaitPid implements ICommand {
   }
 
   Handle(): Exit | number {
-    const processAlive = this._processes.FindProcess(this._pid);
+    const process = this._processes.FindProcess(this._pid);
 
-    if (processAlive instanceof BaseProcess) return 0;
+    if (process instanceof Exit)
+      return new Exit(-1, `could not find process with pid ${this._pid}`);
 
-    return 1;
+    return process.exitCode;
   }
 }
 
