@@ -101,12 +101,17 @@ class Processes implements ProcessesShape {
     return saved;
   }
 
-  public FindMessageBus(ownerPid: number): MessageBus | Exit {
+  public FindMessageBus(
+    ownerPid: number,
+    receivingPid: number
+  ): MessageBus | Exit {
     const messageBusses = this.LoadMessageBusses();
 
     if (!messageBusses) return new Exit(-1);
 
-    const messageBus = messageBusses.find((bus) => bus.ownerPid === ownerPid);
+    const messageBus = messageBusses.find(
+      (bus) => bus.ownerPid === ownerPid && bus.receivingPid === receivingPid
+    );
     if (!messageBus) return new Exit(-1);
 
     return messageBus;

@@ -181,7 +181,6 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       .appendChild(this.windowContainerElement!);
   }
   public Message(message: ThreadMessage): void {
-    console.log(message);
     this.windowContent.contentWindow?.postMessage(message, "*");
   }
 }

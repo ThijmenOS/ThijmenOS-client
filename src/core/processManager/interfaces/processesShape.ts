@@ -11,7 +11,7 @@ interface ProcessesShape {
     receivingPid: number,
     bufferSize?: number
   ): Exit;
-  FindMessageBus(ownerPid: number): MessageBus | Exit;
+  FindMessageBus(ownerPid: number, receivingPid: number): MessageBus | Exit;
 }
 
 export default ProcessesShape;

@@ -1,3 +1,4 @@
+import Exit from "@providers/error/systemErrors/Exit";
 import { GenerateId } from "@utils/generatePid";
 
 class MessageBus {
@@ -16,11 +17,11 @@ class MessageBus {
     this.messageBusId = GenerateId();
   }
 
-  public Send(message: string | number) {
-    if (this._queue.length >= this._bufferSize) return -1;
+  public Send(message: string | number): Exit {
+    if (this._queue.length >= this._bufferSize) return new Exit(-1);
 
     this._queue.push(message);
-    return 0;
+    return new Exit();
   }
 
   public Read(): null | string | number {

@@ -13,9 +13,9 @@ class CreateMessageBus implements ICommand {
   private _bufferSize?: number;
   private _targetPid: number;
 
-  constructor(targetPid: number, bufferSize?: number) {
-    this._targetPid = targetPid;
-    this._bufferSize = bufferSize;
+  constructor(args: { targetPid: number; bufferSize?: number }) {
+    this._targetPid = args.targetPid;
+    this._bufferSize = args.bufferSize;
   }
 
   Handle(process?: BaseProcess): Exit {

@@ -5,26 +5,29 @@ import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import Exit from "@providers/error/systemErrors/Exit";
 
-class ReadMsg implements ICommand {
+class SendMsg implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
     types.ProcessManager
   );
 
-  private _senderPid: number;
+  private _receivingPid: number;
+  private _message: string | number;
 
-  constructor(pid: number) {
-    this._senderPid = pid;
+  constructor(args: { receivingPid: number; message: string | number }) {
+    this._receivingPid = args.receivingPid;
+    this._message = args.message;
   }
 
-  Handle(process: BaseProcess): string | number | null {
+  Handle(process: BaseProcess): string | number | null | Exit {
     const messageBus = this._processes.FindMessageBus(
-      this._senderPid,
-      process.pid
+      process.pid,
+      this._receivingPid
     );
-    if (messageBus instanceof Exit) return null;
 
-    return messageBus.Read();
+    if (messageBus instanceof Exit) return new Exit(-1, messageBus.data);
+
+    return messageBus.Send(this._message);
   }
 }
 
-export default ReadMsg;
+export default SendMsg;

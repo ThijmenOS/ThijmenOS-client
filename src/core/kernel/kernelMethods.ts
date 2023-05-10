@@ -24,4 +24,6 @@ export enum ValidMethods {
   exit = "exit",
   waitpid = "waitpid",
   createMessageBus = "crtmsgbus",
+  sendMsg = "sendMsg",
+  readMsg = "readMsg",
 }
