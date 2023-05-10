@@ -16,7 +16,7 @@ class ExitProcess implements ICommand {
     this._code = code;
   }
 
-  Handle(process: BaseProcess): Exit {
+  Handle(process: BaseProcess): number {
     const result = this._processes.FindProcess(process.pid);
     if (result instanceof Exit) {
       return result;
@@ -24,7 +24,7 @@ class ExitProcess implements ICommand {
 
     result.Terminate(this._code);
 
-    return new Exit(this._code);
+    return this._code;
   }
 }
 
