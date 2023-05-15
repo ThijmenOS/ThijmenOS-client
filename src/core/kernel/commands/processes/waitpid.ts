@@ -3,6 +3,7 @@ import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import { ProcessState } from "@core/processManager/types/processState";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class WaitPid implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -17,7 +18,7 @@ class WaitPid implements ICommand {
 
   Handle(): number {
     const process = this._processes.FindProcess(this._pid);
-    if (typeof process === "number") return -1;
+    if (process instanceof Exit) return -1;
 
     if (process.state === ProcessState.Terminated) {
       return process.exitCode;

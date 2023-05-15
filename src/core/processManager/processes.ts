@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 /* eslint-disable consistent-return */
 import Memory from "@core/memory/memoryMethodShape";
 import javascriptOs from "@inversify/inversify.config";
@@ -9,12 +10,12 @@ import FatalError from "@providers/error/userErrors/fatalError";
 import { GenerateId } from "@utils/generatePid";
 import { BaseProcess } from "./processes/baseProcess";
 import MessageBus from "./ipc/messageBus";
-import { errors, success } from "@core/kernel/commands/errors";
 import MqFlag from "./types/messageQueueFlags";
 import Exit from "@providers/error/systemErrors/Exit";
 import MessageBusNotFOund from "./errors/MessageBusNotFound";
 import MsgBusAlreadyExists from "./errors/messageBusAlreadyExists";
 import ProcessNotFound from "./errors/ProcessNotFound";
+import CantDeleteMessageBus from "./errors/cantDeleteMessageBus";
 
 /**
  * Do not store the child object in the process object but save a reference to the parent on the child.
@@ -36,16 +37,12 @@ class Processes implements ProcessesShape {
   }
 
   public RegisterProcess = (process: BaseProcess): Exit => {
-    let processes = this.LoadProcesses();
+    const processes = this.LoadProcesses();
 
     if (processes instanceof Exit) return processes;
 
-    processes = processes ? [process, ...processes] : [process];
-    this._memory.SaveToMemory<Array<BaseProcess>>(
-      this._pid,
-      processkey,
-      processes
-    );
+    processes.push(process);
+    this.SaveProcessesToMemory(processes);
 
     return new Exit();
   };
@@ -64,7 +61,7 @@ class Processes implements ProcessesShape {
     return targetProcess;
   }
 
-  public RemoveProcess(pid: number): number {
+  public RemoveProcess(pid: number): Exit {
     const processes = this.LoadProcesses();
 
     if (processes instanceof Exit)
@@ -72,13 +69,13 @@ class Processes implements ProcessesShape {
 
     const result = processes.findIndex((process) => process.pid === pid);
 
-    if (result < 0) return errors.UnkownError;
+    if (result < 0) return new Exit();
 
     processes.splice(result, 1);
 
-    this._memory.SaveToMemory(this._pid, processkey, processes);
+    this.SaveProcessesToMemory(processes);
 
-    return success;
+    return new Exit();
   }
 
   public OpenMessageQueue(
@@ -87,8 +84,7 @@ class Processes implements ProcessesShape {
     flags: MqFlag[],
     bufferSize?: number
   ): Exit | MessageBus {
-    let messageBusses = this.LoadMessageBusses();
-
+    const messageBusses = this.LoadMessageBusses();
     if (messageBusses instanceof Exit) {
       return messageBusses;
     }
@@ -112,9 +108,11 @@ class Processes implements ProcessesShape {
 
     if (messageBus instanceof Exit) return messageBus;
 
-    messageBusses = messageBusses
-      ? [messageBus, ...messageBusses]
-      : [messageBus];
+    const ownerProcess = this.FindProcess(pid);
+    if (ownerProcess instanceof Exit) return ownerProcess;
+
+    ownerProcess.AddResource().messageBus(messageBus.messageBusId);
+
     messageBusses.push(messageBus);
     this.SaveMessageBusToMemory(messageBusses);
 
@@ -146,6 +144,25 @@ class Processes implements ProcessesShape {
     );
   }
 
+  public FreeMessageBus(id: number, pid: number): Exit {
+    const messageBusses = this.LoadMessageBusses();
+
+    if (messageBusses instanceof Exit) return messageBusses;
+
+    const busIndex = messageBusses.findIndex(
+      (messageBus) => messageBus.messageBusId === id
+    );
+    if (busIndex === -1) return new MessageBusNotFOund();
+
+    if (messageBusses[busIndex].ownerPid !== pid)
+      return new CantDeleteMessageBus();
+
+    messageBusses.splice(busIndex, 1);
+    this.SaveMessageBusToMemory(messageBusses);
+
+    return new Exit();
+  }
+
   public FindMessageBus(msgBusId: number): MessageBus | Exit {
     const messageBusses = this.LoadMessageBusses();
 
@@ -172,7 +189,7 @@ class Processes implements ProcessesShape {
       ipcKey
     );
 
-    return result;
+    return result ?? [];
   }
 
   private LoadProcesses(): Array<BaseProcess> | Exit {
@@ -181,7 +198,15 @@ class Processes implements ProcessesShape {
       processkey
     );
 
-    return result;
+    return result ?? [];
+  }
+
+  private SaveProcessesToMemory(processes: Array<BaseProcess>) {
+    this._memory.SaveToMemory<Array<BaseProcess>>(
+      this._pid,
+      processkey,
+      processes
+    );
   }
 }
 

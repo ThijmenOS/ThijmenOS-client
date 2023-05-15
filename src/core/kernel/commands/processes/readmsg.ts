@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import MqFlag from "@core/processManager/types/messageQueueFlags";
@@ -24,10 +25,7 @@ class ReadMsg implements ICommand {
     const session = messageBus.FindSession(process.pid);
     if (session instanceof Exit) return -1;
 
-    if (
-      session.flags.includes(MqFlag.WRONLY) ||
-      !session.flags.includes(MqFlag.RDONLY || MqFlag.RDWR)
-    ) {
+    if (session.flags.includes(MqFlag.WRONLY)) {
       return -1;
     }
 

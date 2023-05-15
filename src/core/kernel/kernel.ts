@@ -48,6 +48,7 @@ import SendMsg from "./commands/processes/sendmsg";
 import ReadMsg from "./commands/processes/readmsg";
 import GetProcesses from "./commands/processes/getProcesses";
 import Kill from "./commands/processes/kill";
+import CloseMessageBus from "./commands/processes/closeMessageBus";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -94,6 +95,7 @@ class Kernel implements KernelMethodShape {
     mqOpen: OpenMessageBus,
     sendMsg: SendMsg,
     readMsg: ReadMsg,
+    killMq: CloseMessageBus,
     getProcesses: GetProcesses,
     kill: Kill,
   };

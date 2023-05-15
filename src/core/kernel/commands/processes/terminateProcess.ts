@@ -4,6 +4,7 @@ import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import { errors, success } from "../errors";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class Terminate implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -26,14 +27,11 @@ class Terminate implements ICommand {
     }
 
     const result = this._processes.FindProcess(this._pid);
-    if (typeof result === "number") {
-      return result;
+    if (result instanceof Exit) {
+      return -1;
     }
 
-    const removed = this._processes.RemoveProcess(result.pid);
-    if (removed === 0) {
-      result.Terminate(0);
-    }
+    result.Terminate(0);
 
     return success;
   }

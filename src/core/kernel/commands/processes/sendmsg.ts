@@ -20,6 +20,7 @@ class SendMsg implements ICommand {
   }
 
   Handle(process: BaseProcess): string | number | null {
+    console.log(this._msqId);
     const messageBus = this._processes.FindMessageBus(this._msqId);
     if (messageBus instanceof Exit) return -1;
 

@@ -25,6 +25,7 @@ export class ProcessV2 extends BaseProcess<Thread> {
   }
 
   public Terminate(exitCode: number): void {
+    this.FreeResources();
     this.code?.worker.terminate();
     this.state = ProcessState.Terminated;
     this.exitCode = exitCode;

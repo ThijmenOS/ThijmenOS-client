@@ -36,6 +36,7 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
   }
 
   public Terminate(exitCode: number): void {
+    this.FreeResources();
     this.code?.Destroy();
     this.state = ProcessState.Terminated;
     this.exitCode = exitCode;

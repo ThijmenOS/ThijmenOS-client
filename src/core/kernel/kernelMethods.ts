@@ -26,6 +26,7 @@ export enum ValidMethods {
   OpenMessageQueue = "mqOpen",
   sendMsg = "sendMsg",
   readMsg = "readMsg",
+  killMq = "killMq",
   getProcesses = "getProcesses",
   kill = "kill",
 }
