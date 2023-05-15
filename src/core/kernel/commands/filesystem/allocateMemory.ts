@@ -28,7 +28,11 @@ class AllocateMemory implements ICommand {
       this._memoryAccess
     );
 
-    return result;
+    if (result.code !== 0) {
+      return -1;
+    }
+
+    return 0;
   }
 }
 

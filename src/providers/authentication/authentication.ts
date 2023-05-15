@@ -8,6 +8,7 @@ import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
 import { userKey } from "@ostypes/memoryKeys";
 import MemoryAccess from "@core/memory/models/memoryAccess";
 import { GenerateId } from "@utils/generatePid";
+import Exit from "@providers/error/systemErrors/Exit";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
@@ -26,7 +27,7 @@ class Authentication implements AuthenticationMethodShape {
   public CheckAuthenticationState(): false | User {
     const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
 
-    if (typeof result === "number") throw new Error(result.toString());
+    if (result instanceof Exit) throw new Error(result.data);
 
     if (result) return result;
 

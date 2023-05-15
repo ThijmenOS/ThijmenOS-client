@@ -27,7 +27,9 @@ class WriteMemory implements ICommand {
       this._data
     );
 
-    return result;
+    if (result.code !== 0) return -1;
+
+    return 0;
   }
 }
 

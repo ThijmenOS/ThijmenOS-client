@@ -2,7 +2,7 @@ import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
-import { success } from "../errors";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class Kill implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -20,11 +20,11 @@ class Kill implements ICommand {
   //TODO: in feature, make it only possible for root applications (somehow find out how to make root applications) and parent processes to kill processes
   Handle() {
     const targetProcess = this._processes.FindProcess(this._pid);
-    if (typeof targetProcess === "number") return targetProcess;
+    if (targetProcess instanceof Exit) return -1;
 
     targetProcess.Terminate(this._exitCode ?? 0);
 
-    return success;
+    return 0;
   }
 }
 

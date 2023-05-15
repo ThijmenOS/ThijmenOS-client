@@ -9,6 +9,7 @@ import { Access, AccessMap, Path, User } from "@thijmen-os/common";
 import { injectable } from "inversify";
 import AccessValidationMethods from "./accessValidationMethods";
 import { GenerateId } from "@utils/generatePid";
+import Exit from "@providers/error/systemErrors/Exit";
 
 @injectable()
 class CommandAccessValidation implements AccessValidationMethods {
@@ -62,8 +63,8 @@ class CommandAccessValidation implements AccessValidationMethods {
   private LoadUserData(): User {
     const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
     //TODO: Throw kernel panic
-    if (typeof result === "number") {
-      throw new Error(result.toString());
+    if (result instanceof Exit) {
+      throw new Error(result.data);
     }
 
     return result;
@@ -76,8 +77,8 @@ class CommandAccessValidation implements AccessValidationMethods {
     );
 
     //TODO: Implement invalid signature error
-    if (typeof result === "number") {
-      throw new Error(result.toString());
+    if (result instanceof Exit) {
+      throw new Error(result.data);
     }
 
     return result;
