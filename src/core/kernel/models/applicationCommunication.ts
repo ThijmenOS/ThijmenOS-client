@@ -1,9 +1,8 @@
-import { ApplicationInstance } from "@core/processManager/interfaces/baseProcess";
-import { EventName } from "@ostypes/ProcessTypes";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import Exit from "@providers/error/systemErrors/Exit";
 interface ApplicationCommunicationModel<T> {
-  worker: ApplicationInstance;
-  data: T;
-  eventName: EventName;
+  worker: BaseProcess;
+  exit: Exit<T>;
 }
 
 export default ApplicationCommunicationModel;

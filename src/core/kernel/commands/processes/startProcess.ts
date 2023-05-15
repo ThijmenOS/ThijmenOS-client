@@ -1,67 +1,56 @@
-import {
-  ApplicationInstance,
-  Process,
-} from "@core/processManager/interfaces/baseProcess";
-import ProcessesShape from "@core/processManager/interfaces/processesShape";
-import WorkerProcess from "@core/processManager/processes/workerProcess";
-import javascriptOs from "@inversify/inversify.config";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import { EventName } from "@ostypes/ProcessTypes";
-import types from "@ostypes/types";
-import { host } from "@thijmen-os/common";
-import GenerateUUID from "@utils/generateUUID";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import { ProcessV2 } from "@core/processManager/processes/process";
+import { WindowProcessV2 } from "@core/processManager/processes/windowProcess";
+import { ICommand } from "@ostypes/CommandTypes";
+import { errors } from "../errors";
 
+//TODO: Provide functionality to give process args list file open path and such
 class StartProcess implements ICommand {
-  private readonly _processes = javascriptOs.get<ProcessesShape>(
-    types.ProcessManager
-  );
-
   private readonly _exePath: string;
+  private readonly _args?: string;
+  private readonly _name?: string;
 
-  constructor(exePath: string) {
-    this._exePath = exePath;
+  constructor(args: { exePath: string; name?: string; args?: string }) {
+    this._exePath = args.exePath;
+    this._args = args.args;
+    this._name = args.name;
   }
 
-  public Handle(process?: Process): CommandReturn<ApplicationInstance<Worker>> {
-    //Op basis van exe pad  het process starten en runnen.
-    const applicationInstance = this.InitialiseProcess(this._exePath);
+  public async Handle(process?: BaseProcess): Promise<number> {
+    const mimetype = this._exePath.split(".").at(-1);
 
-    if (process && process instanceof WorkerProcess) {
-      process.AddChildProcess(applicationInstance);
+    let name = this._name;
 
-      return new CommandReturn<ApplicationInstance<Worker>>(
-        applicationInstance,
-        EventName.StartedApplication
-      );
+    if (!name) {
+      name = this._exePath.split("/").at(-1)?.split(".")[0];
     }
 
-    this._processes.RegisterProcess(applicationInstance);
+    if (mimetype === "html") {
+      const newProcess = new WindowProcessV2(
+        this._exePath,
+        name!,
+        this._args,
+        process?.pid
+      );
 
-    return new CommandReturn<ApplicationInstance<Worker>>(
-      applicationInstance,
-      EventName.StartedApplication
-    );
-  }
+      if (process) return newProcess.pid;
 
-  private InitialiseProcess(
-    executionLocation: string
-  ): ApplicationInstance<Worker> {
-    const blob = new Blob(
-      [`importScripts('${host}/static/${executionLocation}');`],
-      {
-        type: "application/javascript",
-      }
-    );
-    const url = URL.createObjectURL(blob);
+      return errors.UnkownError;
+    }
+    if (mimetype === "js") {
+      const newProcess = new ProcessV2(
+        this._exePath,
+        name!,
+        this._args,
+        process?.pid
+      );
 
-    const process = new WorkerProcess({
-      processIdentifier: GenerateUUID(),
-      origin: new Worker(url),
-    });
+      if (process) return newProcess.pid;
 
-    process.AddEventListener();
+      return errors.UnkownError;
+    }
 
-    return process;
+    return errors.FiletypeNotExecutable;
   }
 }
 

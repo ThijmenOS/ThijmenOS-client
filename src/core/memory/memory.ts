@@ -3,58 +3,62 @@ import { injectable } from "inversify";
 import MemoryMethodShape from "./memoryMethodShape";
 import MemoryEntry from "./models/memoryEntry";
 import MemoryAccess from "./models/memoryAccess";
+import MemAllocNotFound from "./errors/memAllocNotFound";
 import Exit from "@providers/error/systemErrors/Exit";
-import MemKeyAlreadyAllocated from "./errors/MemKeyAlreadyAllocated";
-import MemAllocationDoesNotExist from "./errors/MemAllocationDoesNotExist";
-import NoWriteAccessToMemAllocation from "./errors/NoWriteAccessToMemAllocation";
-import NoReadAccessToMemAllocation from "./errors/NoReadAccessToMemAllocation";
+import NoMemReadAccess from "./errors/noMemReadAccess";
+import MemoryAlreadyAllocated from "./errors/memAlreadyAllocated";
+import NoMemWWriteAccess from "./errors/noMemWriteAccess";
 
-//TODO: When memory is stored in localstorage, on startup all localstorage items to memory
 @injectable()
 class Memory implements MemoryMethodShape {
   private _memory: MemoryObject = {};
 
   public AllocateMemory(
-    pid: string,
+    pid: number,
     memoryKey: string,
     memoryAccess: Array<MemoryAccess>
-  ): Exit | 0 {
-    const memoryObject: MemoryEntry<any> = {
+  ): Exit {
+    const memoryObject: MemoryEntry<unknown> = {
       ownerPid: pid,
       access: memoryAccess,
     };
 
-    if (this._memory[memoryKey]) return new MemKeyAlreadyAllocated();
+    if (this._memory[memoryKey]) {
+      return new MemoryAlreadyAllocated();
+    }
 
     this._memory[memoryKey] = memoryObject;
-    return 0;
+    return new Exit();
   }
 
-  public SaveToMemory<T>(pid: string, key: string, data: T): Exit | number {
+  public SaveToMemory<T>(pid: number, key: string, data: T): Exit {
     const memoryEntry = this._memory[key];
 
-    if (!memoryEntry) return new MemAllocationDoesNotExist();
+    if (!memoryEntry) return new MemAllocNotFound();
 
     if (
       memoryEntry.ownerPid !== pid &&
       !this.ValidateMemoryAccess(memoryEntry.access, MemoryAccess.MEM_WRITE)
     )
-      return new NoWriteAccessToMemAllocation();
+      return new NoMemWWriteAccess();
 
     this._memory[key].data = data;
 
-    return 0;
+    return new Exit();
   }
 
-  public LoadFromMemory<T>(pid: string, key: string): T | Exit {
+  public LoadFromMemory<T>(pid: number, key: string): T | Exit {
     const memoryEntry = this._memory[key];
-    if (!memoryEntry) return new MemAllocationDoesNotExist();
+    if (!memoryEntry) {
+      return new MemAllocNotFound();
+    }
 
     if (
       memoryEntry.ownerPid !== pid &&
       !this.ValidateMemoryAccess(memoryEntry.access, MemoryAccess.MEM_READ)
-    )
-      return new NoReadAccessToMemAllocation();
+    ) {
+      return new NoMemReadAccess();
+    }
 
     return memoryEntry.data as T;
   }

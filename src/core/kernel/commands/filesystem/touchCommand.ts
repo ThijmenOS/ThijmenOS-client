@@ -5,8 +5,7 @@ import types from "@ostypes/types";
 import { CreateFile } from "@providers/filesystemEndpoints/filesystem";
 import DesktopMethods from "@providers/desktop/desktopMethods";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
-import Exit from "@providers/error/systemErrors/Exit";
-import NoResourceAccess from "./errors/NoResourceAccess";
+import { errors, success } from "../errors";
 
 class TouchCommand implements ICommand {
   private _desktop = javascriptOs.get<DesktopMethods>(types.Desktop);
@@ -22,12 +21,12 @@ class TouchCommand implements ICommand {
   constructor(props: Mkdir) {
     this._props = props;
   }
-  public async Handle(): Promise<Exit> {
+  public async Handle(): Promise<number> {
     const validated = this._cmdAccess.ValidateAccess(
       this._props.directoryPath,
       this._access
     );
-    if (!validated) return new NoResourceAccess(this._props.directoryPath);
+    if (!validated) return errors.NoResourceAccess;
 
     await CreateFile({
       props: this._props,
@@ -36,7 +35,7 @@ class TouchCommand implements ICommand {
     });
 
     this._desktop.RefreshDesktop();
-    return new Exit();
+    return success;
   }
 }
 

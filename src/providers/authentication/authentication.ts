@@ -5,9 +5,10 @@ import { User } from "@thijmen-os/common";
 import { inject, injectable } from "inversify";
 import AuthenticationMethodShape from "./authenticationMethodShape";
 import { AuthenticationMethods, SigninActionShape, UserClass } from "./user";
-import Exit from "@providers/error/systemErrors/Exit";
-import GenerateUUID from "@utils/generateUUID";
 import { userKey } from "@ostypes/memoryKeys";
+import MemoryAccess from "@core/memory/models/memoryAccess";
+import { GenerateId } from "@utils/generatePid";
+import Exit from "@providers/error/systemErrors/Exit";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
@@ -15,18 +16,18 @@ class Authentication implements AuthenticationMethodShape {
 
   private _userAccounts: Array<User> = new Array<User>();
 
-  private readonly _pid: string = GenerateUUID();
+  private readonly _pid: number = GenerateId();
 
   constructor(@inject(types.Memory) memory: MemoryMethodShape) {
     this._memory = memory;
 
-    this._memory.AllocateMemory(this._pid, userKey, []);
+    this._memory.AllocateMemory(this._pid, userKey, [MemoryAccess.MEM_READ]);
   }
 
   public CheckAuthenticationState(): false | User {
     const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
 
-    if (result instanceof Exit) throw new Error(result.event);
+    if (result instanceof Exit) throw new Error(result.data);
 
     if (result) return result;
 

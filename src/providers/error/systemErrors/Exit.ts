@@ -1,12 +1,16 @@
-class Exit {
-  public id: number;
-  public event: string;
-  public description: string;
+//TODO: Create logger to log errors
 
-  constructor(id?: number, event?: string, description?: string) {
-    this.id = id || 0;
-    this.event = event || "Success";
-    this.description = description || "Command exited with no exeptions";
+class Exit<T = string> {
+  public code: number;
+  public data: T | string;
+
+  constructor(code?: number, data?: T) {
+    this.code = code ?? 0;
+    this.data = data ?? "success";
+
+    if (this.code !== 0) {
+      console.error(data);
+    }
   }
 }
 

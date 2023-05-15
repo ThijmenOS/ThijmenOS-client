@@ -4,8 +4,7 @@ import { MakeDirectory } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import types from "@ostypes/types";
-import Exit from "@providers/error/systemErrors/Exit";
-import NoResourceAccess from "./errors/NoResourceAccess";
+import { errors, success } from "../errors";
 
 class MkdirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -21,12 +20,12 @@ class MkdirCommand implements ICommand {
     this._props = props;
   }
 
-  public Handle(): Exit {
+  public Handle(): number {
     const validated = this._cmdAccess.ValidateAccess(
       this._props.directoryPath,
       this._access
     );
-    if (!validated) new NoResourceAccess(this._props.directoryPath);
+    if (!validated) return errors.NoResourceAccess;
 
     MakeDirectory({
       props: this._props,
@@ -34,7 +33,7 @@ class MkdirCommand implements ICommand {
       access: this._cmdAccess.tempDefaultAccess,
     });
 
-    return new Exit();
+    return success;
   }
 }
 

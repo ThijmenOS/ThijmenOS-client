@@ -148,7 +148,10 @@ class FileIcon implements IFileIcon {
 
     if (metadata.mimeType === MimeTypes.thijm) {
       //Exe path mee geven op basis daar van exe laden.
-      new StartProcess(metadata.exeLocation).Handle();
+      new StartProcess({
+        exePath: metadata.exeLocation,
+        name: metadata.name,
+      }).Handle();
       return;
     }
 

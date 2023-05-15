@@ -1,13 +1,10 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
-import { EventName } from "@ostypes/ProcessTypes";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import Exit from "@providers/error/systemErrors/Exit";
-import NoResourceAccess from "./errors/NoResourceAccess";
-import ResourceDoesNotExist from "./errors/ResourceDoesNotExist";
+import { errors, success } from "../errors";
 
 class RmdirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -23,15 +20,15 @@ class RmdirCommand implements ICommand {
     this._props = props;
   }
 
-  public async Handle(): Promise<CommandReturn<boolean> | Exit> {
+  public async Handle(): Promise<number> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return new NoResourceAccess(this._props);
+    if (!validated) errors.NoResourceAccess;
 
     const result = await RemoveDirectory(this._props);
 
-    if (!result) return new ResourceDoesNotExist(this._props);
+    if (!result) return errors.ResourceDoesNotExist;
 
-    return new CommandReturn<boolean>(result, EventName.DirectoryRemoved);
+    return success;
   }
 }
 

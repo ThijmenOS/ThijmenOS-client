@@ -1,43 +1,55 @@
-import KernelMethodShape from "@core/kernel/kernelMethodShape";
-import { ProcessMessage } from "@core/kernel/kernelTypes";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
+import WindowConstructorMethods from "@providers/gui/applicationWindow/interfaces/windowConstructorMethods";
+import { BaseProcess } from "./baseProcess";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
-import { ProcessArgs, ApplicationInstance } from "../interfaces/baseProcess";
+import KernelMethodShape from "@core/kernel/kernelMethodShape";
+import { ProcessState } from "../types/processState";
 
-class WindowProcess extends ApplicationInstance<Window> {
-  private readonly _kernel: KernelMethodShape =
-    javascriptOs.get<KernelMethodShape>(types.Kernel);
+export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
+  private readonly _kernel = javascriptOs.get<KernelMethodShape>(types.Kernel);
+  private readonly _windowConstructor =
+    javascriptOs.get<WindowConstructorMethods>(types.CreateWindow);
 
-  private _applicationWindow: ApplicationWindow;
+  constructor(
+    exePath: string,
+    name: string,
+    args?: string,
+    parentPid?: number
+  ) {
+    super(name, exePath, "window (.html)");
 
-  constructor(args: ProcessArgs<Window>, applicationWindow: ApplicationWindow) {
-    super(args);
-
-    this._applicationWindow = applicationWindow;
+    this.Initialise(exePath, args, parentPid);
   }
 
-  public AddEventListener(): void {
-    //TODO: Throw application crash
-    if (window === null) throw new Error();
+  public async Initialise(exePath: string, args?: string, parentPid?: number) {
+    this.code = await this._windowConstructor.Window(exePath, this.pid);
+    this.parentPid = parentPid;
 
-    window.addEventListener("message", (event) => {
-      const message: ProcessMessage = event.data;
+    this.RegisterProcess();
+    this.ListenToSysCalls();
+    setTimeout(() => {
+      this.Startup(args);
+    }, 100);
 
-      if (message.origin !== this.processIdentifier) return;
+    return this;
+  }
 
+  public Terminate(exitCode: number): void {
+    this.FreeResources();
+    this.code?.Destroy();
+    this.state = ProcessState.Terminated;
+    this.exitCode = exitCode;
+  }
+
+  private ListenToSysCalls() {
+    window.addEventListener("message", ({ data }) => {
+      if (Number(data.pid) !== this.pid) return;
       this._kernel.ProcessMethod({
         origin: this,
-        processIdentifier: message.origin,
-        method: message.method,
-        params: message.params,
+        pid: this.pid,
+        ...data,
       });
     });
   }
-
-  public Terminate(): void {
-    this._applicationWindow.Destroy();
-  }
 }
-
-export default WindowProcess;

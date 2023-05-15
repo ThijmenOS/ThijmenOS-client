@@ -1,32 +1,39 @@
 import { ICommand } from "@ostypes/CommandTypes";
-import { Process } from "@core/processManager/interfaces/baseProcess";
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import { errors, success } from "../errors";
+import Exit from "@providers/error/systemErrors/Exit";
 
 class Terminate implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
     types.ProcessManager
   );
 
-  private _targetPid: string;
+  private _pid?: number;
 
-  constructor(targetPid: string) {
-    this._targetPid = targetPid;
+  constructor(pid?: number) {
+    this._pid = pid;
   }
 
-  Handle(Process?: Process): void {
-    if (Process) {
-      this._targetPid = Process.processIdentifier;
+  Handle(Process?: BaseProcess): number {
+    if (Process && !this._pid) {
+      this._pid = Process.pid;
     }
 
-    const targetProcess = this._processes.FindProcess(this._targetPid);
-    if (!targetProcess) {
-      return;
+    if (!this._pid) {
+      return errors.ParameterError;
     }
 
-    targetProcess.Terminate();
-    this._processes.RemoveProcess(this._targetPid);
+    const result = this._processes.FindProcess(this._pid);
+    if (result instanceof Exit) {
+      return -1;
+    }
+
+    result.Terminate(0);
+
+    return success;
   }
 }
 

@@ -30,19 +30,25 @@ import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
 import ReadFileCommand from "./commands/filesystem/readFileCommand";
 import ListFilesCommand from "./commands/filesystem/listFilesCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
-import { CommandReturn } from "@ostypes/CommandTypes";
 import KernelMethodShape from "./kernelMethodShape";
-import AskPermissionCommand from "./commands/settings/askPermissionCommand";
-import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
-import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
+// import AskPermissionCommand from "./commands/settings/askPermissionCommand";
+// import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
+// import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
 import AccessValidationMethods from "./accessValidationMethods";
-import Communication from "./commands/application/communication";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
-import SpawnWindow from "./commands/processes/spawnWindow";
 import AllocateMemory from "./commands/filesystem/allocateMemory";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
+import SelectFile from "./commands/application/selectFile";
+import ExitProcess from "./commands/processes/exit";
+import WaitPid from "./commands/processes/waitpid";
+import OpenMessageBus from "./commands/processes/openMessageBus";
+import SendMsg from "./commands/processes/sendmsg";
+import ReadMsg from "./commands/processes/readmsg";
+import GetProcesses from "./commands/processes/getProcesses";
+import Kill from "./commands/processes/kill";
+import CloseMessageBus from "./commands/processes/closeMessageBus";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -72,18 +78,26 @@ class Kernel implements KernelMethodShape {
     memAlloc: AllocateMemory,
     memRead: ReadMemory,
     memWrite: WriteMemory,
+    selectFile: SelectFile,
 
     //Window operations
     openFile: OpenFileCommand,
 
     //Settings
-    askPermission: AskPermissionCommand,
-    revokeAllPermissions: RevokeAllPermissionCommand,
-    revokePermission: RevokePermissionCommand,
+    // askPermission: AskPermissionCommand,
+    // revokeAllPermissions: RevokeAllPermissionCommand,
+    // revokePermission: RevokePermissionCommand,
 
     startProcess: StartProcess,
     terminateProcess: TerminateProcess,
-    spawnWindow: SpawnWindow,
+    exit: ExitProcess,
+    waitpid: WaitPid,
+    mqOpen: OpenMessageBus,
+    sendMsg: SendMsg,
+    readMsg: ReadMsg,
+    killMq: CloseMessageBus,
+    getProcesses: GetProcesses,
+    kill: Kill,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {
@@ -95,13 +109,14 @@ class Kernel implements KernelMethodShape {
         props.origin
       );
 
-      if (result instanceof CommandReturn) {
-        new Communication({
-          data: result.data,
-          eventName: result.event,
-          worker: props.origin,
-        }).Handle();
+      if (!props.origin.code) {
+        throw new Error();
       }
+
+      props.origin.code.Message({
+        data: result,
+        id: props.messageId,
+      });
     } catch (error) {
       console.log(error);
     }

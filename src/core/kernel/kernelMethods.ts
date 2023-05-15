@@ -9,16 +9,24 @@ export enum ValidMethods {
   memAlloc = "memAlloc",
   memRead = "memRead",
   memWrite = "memWrite",
+  selectFile = "selectFile",
 
   //Window operations
   openFile = "openFile",
 
   //Settings
-  askPermission = "askPermission",
-  revokePermission = "revokePermission",
-  revokeAllPermissions = "revokeAllPermissions",
+  // askPermission = "askPermission",
+  // revokePermission = "revokePermission",
+  // revokeAllPermissions = "revokeAllPermissions",
 
   startProcess = "startProcess",
   terminateProcess = "terminateProcess",
-  spawnWindow = "spawnWindow",
+  exit = "exit",
+  waitpid = "waitpid",
+  OpenMessageQueue = "mqOpen",
+  sendMsg = "sendMsg",
+  readMsg = "readMsg",
+  killMq = "killMq",
+  getProcesses = "getProcesses",
+  kill = "kill",
 }

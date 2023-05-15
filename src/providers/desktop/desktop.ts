@@ -10,15 +10,15 @@ import AuthenticationMethodShape from "@providers/authentication/authenticationM
 import { imagetypes } from "@ostypes/imageTypes";
 import FatalError from "@providers/error/userErrors/fatalError";
 import { OSErrors } from "@providers/error/defaults/errors";
+import { GenerateId } from "@utils/generatePid";
 import Exit from "@providers/error/systemErrors/Exit";
-import GenerateUUID from "@utils/generateUUID";
 
 @injectable()
 class Desktop implements DesktopMethods {
   private readonly _memory: MemoryMethodShape;
   private readonly _authentication: AuthenticationMethodShape;
 
-  private readonly _pid: string = GenerateUUID();
+  private readonly _pid: number = GenerateId();
   private readonly _memoryKey: string = "desktop:files";
 
   constructor(
@@ -67,7 +67,7 @@ class Desktop implements DesktopMethods {
       this._memoryKey
     );
 
-    if (result instanceof Exit) throw new Error(result.event);
+    if (result instanceof Exit) throw new Error(result.data);
     const loggedInUser = this._authentication.CheckAuthenticationState();
 
     //This error should never happen. Therefore implement kernel panic where os is rebooted;

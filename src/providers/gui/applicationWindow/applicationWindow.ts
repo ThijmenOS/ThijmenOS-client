@@ -17,6 +17,7 @@ import {
 } from "@thijmen-os/graphics";
 import { injectable } from "inversify";
 import TerminateProcess from "@core/kernel/commands/processes/terminateProcess";
+import { ThreadMessage } from "@core/processManager/types/threadMessage";
 
 let lastWindowOnTop: ApplicationWindow;
 
@@ -79,7 +80,9 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
       ) as WindowDataActions;
 
       if (action === WindowDataActions.Close)
-        new TerminateProcess(this.windowOptions.windowIdentifier).Handle();
+        new TerminateProcess(
+          Number(this.windowOptions.windowIdentifier)
+        ).Handle();
       if (action === WindowDataActions.Maximize)
         this.MaxOrMin(ClassOperation.ADD);
       if (action === WindowDataActions.Minimize)
@@ -169,13 +172,16 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.RegisterEventListeners();
     this.InitMovement();
   }
-  public Render(content: string): void {
-    this.windowContent = CreateElementFromString<HTMLIFrameElement>(content);
-    this._windowContentElement.appendChild(this.windowContent);
+  public Render(element: HTMLIFrameElement): void {
+    this.windowContent = element;
+    this._windowContentElement.appendChild(element);
 
     document
       .getElementById("main-application-container")!
       .appendChild(this.windowContainerElement!);
+  }
+  public Message(message: ThreadMessage): void {
+    this.windowContent.contentWindow?.postMessage(message, "*");
   }
 }
 

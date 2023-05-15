@@ -1,12 +1,10 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import { EventName } from "@ostypes/ProcessTypes";
+import { ICommand } from "@ostypes/CommandTypes";
 import { ChangeDirectory } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
-import Exit from "@providers/error/systemErrors/Exit";
-import NoResourceAccess from "./errors/NoResourceAccess";
+import { errors } from "../errors";
 
 class ChangeDirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -22,13 +20,13 @@ class ChangeDirCommand implements ICommand {
     this._props = props;
   }
 
-  public async Handle(): Promise<CommandReturn<string> | Exit> {
+  public async Handle(): Promise<number | string> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return new NoResourceAccess(this._props);
+    if (!validated) return errors.NoResourceAccess;
 
     const result = await ChangeDirectory(this._props);
 
-    return new CommandReturn(result, EventName.SelfInvoked);
+    return result;
   }
 }
 

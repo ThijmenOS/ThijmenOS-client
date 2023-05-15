@@ -1,39 +1,35 @@
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
-import { Process } from "@core/processManager/interfaces/baseProcess";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
-import { CommandReturn, ICommand } from "@ostypes/CommandTypes";
-import Exit from "@providers/error/systemErrors/Exit";
+import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
-import { EventName } from "@ostypes/ProcessTypes";
-import ParameterError from "@providers/error/systemErrors/paramError";
+import { errors } from "../errors";
 
 class WriteMemory implements ICommand {
   private readonly _memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
 
   private _memoryKey: string;
-  private _data: any;
+  private _data: object;
 
-  constructor(args: { memoryKey: string; data: unknown }) {
+  constructor(args: { memoryKey: string; data: object }) {
     this._memoryKey = args.memoryKey;
     this._data = args.data;
   }
 
-  public Handle(Process: Process): Exit | CommandReturn<unknown> {
+  public Handle(Process: BaseProcess): number {
     if (!this._memoryKey) {
-      return new ParameterError("WriteMemory");
+      return errors.ParameterError;
     }
 
     const result = this._memory.SaveToMemory(
-      Process.processIdentifier,
+      Process.pid,
       this._memoryKey,
       this._data
     );
 
-    if (result instanceof Exit) {
-      return result;
-    }
+    if (result.code !== 0) return -1;
 
-    return new CommandReturn(result, EventName.WriteMemory);
+    return 0;
   }
 }
 

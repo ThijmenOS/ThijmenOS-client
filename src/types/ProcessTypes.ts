@@ -1,22 +1,21 @@
 export type Event<T> = { eventName: string; eventSender: string; eventData: T };
 
 export enum EventName {
-  ChangeDir = "changeDir",
-  MkDir = "mkDir",
-  ReadFile = "readFile",
-  RmDir = "rmDir",
-  ListFiles = "listFiles",
-  Touch = "touch",
-  ReadMemory = "ReadMemory",
-  WriteMemory = "WriteMemory",
+  ChangeDir = "Change_Dir",
+  MkDir = "Mk_Dir",
+  ReadFile = "Read_File",
+  RmDir = "Rm_Dir",
+  ListFiles = "List_Files",
+  Touch = "Touch",
+  ReadMemory = "Read_Mem",
+  WriteMemory = "Write_Mem",
 
-  TestCommand = "testCommand",
-  SelfInvoked = "selfInvoked",
+  OpenFile = "Open_File",
+  ProcessStarted = "Process_Started",
+  StartupArgs = "Startup_Args",
+  Ipc = "Process_Communication",
 
-  OpenFile = "openFile",
-  StartedApplication = "startedApplication",
-
-  DirectoryCreated = "directoryCreated",
+  DirectoryCreated = "Dir_Created",
   DirectoryRemoved = "directoryRemoved",
   DirectoryDoesNotExist = "DirectoryDoesNotExist",
 
