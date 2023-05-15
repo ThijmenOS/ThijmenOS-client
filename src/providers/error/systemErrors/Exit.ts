@@ -1,10 +1,16 @@
+//TODO: Create logger to log errors
+
 class Exit<T = string> {
-  public id: number;
+  public code: number;
   public data: T | string;
 
-  constructor(id?: number, data?: T) {
-    this.id = id ?? 0;
-    this.data = data ?? "";
+  constructor(code?: number, data?: T) {
+    this.code = code ?? 0;
+    this.data = data ?? "success";
+
+    if (this.code !== 0) {
+      console.error(data);
+    }
   }
 }
 

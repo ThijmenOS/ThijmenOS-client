@@ -1,5 +1,4 @@
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
-import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import { ProcessState } from "@core/processManager/types/processState";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";

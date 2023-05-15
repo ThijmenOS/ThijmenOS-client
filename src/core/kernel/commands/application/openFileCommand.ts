@@ -8,6 +8,7 @@ import NoAppForFiletypeError from "@providers/error/userErrors/noApplicationForF
 import StartProcess from "../processes/startProcess";
 import SelectAppPrompt from "@providers/dialog/selectApp";
 import { ApplicationMetaData } from "@thijmen-os/common";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 
 class OpenFileCommand implements ICommand {
   private readonly _applicationManager: ApplicationManager =
@@ -22,7 +23,8 @@ class OpenFileCommand implements ICommand {
     this._props = props;
   }
 
-  public async Handle(): Promise<void> {
+  public async Handle(process: BaseProcess): Promise<void> {
+    console.log(process.name);
     const defaultAppToOpen = this._settings.DefaultApplication(
       this._props.mimeType
     );

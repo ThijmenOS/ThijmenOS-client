@@ -43,7 +43,7 @@ import WriteMemory from "./commands/filesystem/writeMemory";
 import SelectFile from "./commands/application/selectFile";
 import ExitProcess from "./commands/processes/exit";
 import WaitPid from "./commands/processes/waitpid";
-import CreateMessageBus from "./commands/processes/createMessageBus";
+import OpenMessageBus from "./commands/processes/openMessageBus";
 import SendMsg from "./commands/processes/sendmsg";
 import ReadMsg from "./commands/processes/readmsg";
 import GetProcesses from "./commands/processes/getProcesses";
@@ -91,7 +91,7 @@ class Kernel implements KernelMethodShape {
     terminateProcess: TerminateProcess,
     exit: ExitProcess,
     waitpid: WaitPid,
-    crtmsgbus: CreateMessageBus,
+    mqOpen: OpenMessageBus,
     sendMsg: SendMsg,
     readMsg: ReadMsg,
     getProcesses: GetProcesses,

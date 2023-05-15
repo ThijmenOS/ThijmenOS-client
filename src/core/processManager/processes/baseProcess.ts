@@ -1,4 +1,3 @@
-import Exit from "@providers/error/systemErrors/Exit";
 import { ProcessState } from "../types/processState";
 import { GenerateId } from "@utils/generatePid";
 import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindow";
@@ -6,6 +5,7 @@ import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import Thread from "./thread";
 import ProcessesShape from "../interfaces/processesShape";
+import { success } from "@core/kernel/commands/errors";
 
 export abstract class BaseProcess<
   T extends Thread | ApplicationWindow = Thread | ApplicationWindow
@@ -36,14 +36,14 @@ export abstract class BaseProcess<
     this.processType = processType;
   }
 
-  protected Startup(args?: string): Exit {
+  protected Startup(args?: string): number {
     const code = this.code as Thread | ApplicationWindow;
     code.Message({
       id: "startup",
       data: args,
     });
 
-    return new Exit(0);
+    return success;
   }
 
   protected RegisterProcess() {

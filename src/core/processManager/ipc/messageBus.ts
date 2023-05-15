@@ -1,6 +1,9 @@
-import { errors, success } from "@core/kernel/commands/errors";
-import Exit from "@providers/error/systemErrors/Exit";
 import { GenerateId } from "@utils/generatePid";
+import MqFlag from "../types/messageQueueFlags";
+import Exit from "@providers/error/systemErrors/Exit";
+import MessagebufferExceeded from "../errors/messageBufferExceeded";
+import MessageBusSession from "../types/messageBusSession";
+import MessageBusSessionNotFound from "../errors/messageBusSessionNotFound";
 
 class MessageBus {
   private _bufferSize: number;
@@ -8,22 +11,44 @@ class MessageBus {
 
   public messageBusId: number;
   public ownerPid: number;
-  public receivingPid: number;
+  public name: string;
+  public args: Array<MqFlag>;
 
-  constructor(ownerPid: number, receivingPid: number, bufferSize?: number) {
+  private _openSessions: Array<MessageBusSession> = [];
+
+  constructor(
+    ownerPid: number,
+    name: string,
+    args: Array<MqFlag>,
+    bufferSize?: number
+  ) {
     this.ownerPid = ownerPid;
-    this.receivingPid = receivingPid;
+    this.name = name;
+    this.args = args;
     this._bufferSize = bufferSize ?? 0;
 
     this.messageBusId = GenerateId();
   }
 
-  public Send(message: string | number): number {
+  public OpenSession(pid: number, flags: Array<MqFlag>): void {
+    this._openSessions.push({ pid: pid, flags: flags });
+  }
+
+  public FindSession(pid: number): MessageBusSession | Exit {
+    const session = this._openSessions.find((session) => session.pid === pid);
+    if (!session) {
+      return new MessageBusSessionNotFound();
+    }
+
+    return session;
+  }
+
+  public Send(message: string | number): Exit {
     if (this._queue.length >= this._bufferSize)
-      return errors.MessagebufferExceeded;
+      return new MessagebufferExceeded();
 
     this._queue.push(message);
-    return success;
+    return new Exit();
   }
 
   public Read(): null | string | number {

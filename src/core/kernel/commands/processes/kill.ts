@@ -1,5 +1,4 @@
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
-import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
@@ -19,7 +18,7 @@ class Kill implements ICommand {
   }
 
   //TODO: in feature, make it only possible for root applications (somehow find out how to make root applications) and parent processes to kill processes
-  Handle(process: BaseProcess) {
+  Handle() {
     const targetProcess = this._processes.FindProcess(this._pid);
     if (typeof targetProcess === "number") return targetProcess;
 

@@ -10,7 +10,6 @@ import AuthenticationMethodShape from "@providers/authentication/authenticationM
 import { imagetypes } from "@ostypes/imageTypes";
 import FatalError from "@providers/error/userErrors/fatalError";
 import { OSErrors } from "@providers/error/defaults/errors";
-import Exit from "@providers/error/systemErrors/Exit";
 import { GenerateId } from "@utils/generatePid";
 
 @injectable()
@@ -67,7 +66,7 @@ class Desktop implements DesktopMethods {
       this._memoryKey
     );
 
-    if (result instanceof Exit) throw new Error(result.data);
+    if (typeof result === "number") throw new Error(result.toString());
     const loggedInUser = this._authentication.CheckAuthenticationState();
 
     //This error should never happen. Therefore implement kernel panic where os is rebooted;

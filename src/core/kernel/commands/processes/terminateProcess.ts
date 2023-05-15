@@ -2,8 +2,8 @@ import { ICommand } from "@ostypes/CommandTypes";
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import Exit from "@providers/error/systemErrors/Exit";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import { errors, success } from "../errors";
 
 class Terminate implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -16,26 +16,26 @@ class Terminate implements ICommand {
     this._pid = pid;
   }
 
-  Handle(Process?: BaseProcess): Exit {
+  Handle(Process?: BaseProcess): number {
     if (Process && !this._pid) {
       this._pid = Process.pid;
     }
 
     if (!this._pid) {
-      throw new Error("No target pid defined");
+      return errors.ParameterError;
     }
 
     const result = this._processes.FindProcess(this._pid);
-    if (result instanceof Exit) {
+    if (typeof result === "number") {
       return result;
     }
 
     const removed = this._processes.RemoveProcess(result.pid);
-    if (removed.id >= 0) {
-      result.Terminate();
+    if (removed === 0) {
+      result.Terminate(0);
     }
 
-    return new Exit();
+    return success;
   }
 }
 

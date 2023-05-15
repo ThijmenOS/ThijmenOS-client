@@ -23,7 +23,7 @@ export enum ValidMethods {
   terminateProcess = "terminateProcess",
   exit = "exit",
   waitpid = "waitpid",
-  createMessageBus = "crtmsgbus",
+  OpenMessageQueue = "mqOpen",
   sendMsg = "sendMsg",
   readMsg = "readMsg",
   getProcesses = "getProcesses",

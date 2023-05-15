@@ -2,7 +2,7 @@ import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
-import Exit from "@providers/error/systemErrors/Exit";
+import { ProcessState } from "@core/processManager/types/processState";
 
 class WaitPid implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -15,13 +15,15 @@ class WaitPid implements ICommand {
     this._pid = pid;
   }
 
-  Handle(): Exit | number {
+  Handle(): number {
     const process = this._processes.FindProcess(this._pid);
+    if (typeof process === "number") return -1;
 
-    if (process instanceof Exit)
-      return new Exit(-1, `could not find process with pid ${this._pid}`);
+    if (process.state === ProcessState.Terminated) {
+      return process.exitCode;
+    }
 
-    return process.exitCode;
+    return -1;
   }
 }
 

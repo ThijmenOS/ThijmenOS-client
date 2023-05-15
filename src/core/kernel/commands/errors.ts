@@ -13,6 +13,7 @@ export const errors = {
   NoWriteAccessToMemoryAddress: 11,
   NoReadAccessToMemoryAddress: 12,
   MessagebufferExceeded: 13,
+  FiletypeNotExecutable: 14,
 };
 
 export const success = 0;

@@ -2,7 +2,7 @@ import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import { ProcessV2 } from "@core/processManager/processes/process";
 import { WindowProcessV2 } from "@core/processManager/processes/windowProcess";
 import { ICommand } from "@ostypes/CommandTypes";
-import Exit from "@providers/error/systemErrors/Exit";
+import { errors } from "../errors";
 
 //TODO: Provide functionality to give process args list file open path and such
 class StartProcess implements ICommand {
@@ -16,7 +16,7 @@ class StartProcess implements ICommand {
     this._name = args.name;
   }
 
-  public async Handle(process?: BaseProcess): Promise<Exit | number> {
+  public async Handle(process?: BaseProcess): Promise<number> {
     const mimetype = this._exePath.split(".").at(-1);
 
     let name = this._name;
@@ -26,7 +26,7 @@ class StartProcess implements ICommand {
     }
 
     if (mimetype === "html") {
-      const newProcess = await new WindowProcessV2(
+      const newProcess = new WindowProcessV2(
         this._exePath,
         name!,
         this._args,
@@ -35,7 +35,7 @@ class StartProcess implements ICommand {
 
       if (process) return newProcess.pid;
 
-      return new Exit(0);
+      return errors.UnkownError;
     }
     if (mimetype === "js") {
       const newProcess = new ProcessV2(
@@ -47,10 +47,10 @@ class StartProcess implements ICommand {
 
       if (process) return newProcess.pid;
 
-      return new Exit(0);
+      return errors.UnkownError;
     }
 
-    return new Exit(-1, "FILE_TYPE_NOT_EXECUTABLE");
+    return errors.FiletypeNotExecutable;
   }
 }
 

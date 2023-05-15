@@ -1,8 +1,8 @@
-import Exit from "@providers/error/systemErrors/Exit";
 import { GenerateId } from "@utils/generatePid";
 import { GetWorkerURL } from "@utils/getWorkerUrl";
 import { NormalisePath } from "@utils/pathNormaliser";
 import { ThreadMessage } from "../types/threadMessage";
+import { success } from "@core/kernel/commands/errors";
 
 class Thread {
   public threadId: number;
@@ -15,9 +15,9 @@ class Thread {
     });
   }
 
-  public Message(message: ThreadMessage): Exit {
+  public Message(message: ThreadMessage): number {
     this.worker.postMessage(message);
-    return new Exit(0);
+    return success;
   }
 }
 

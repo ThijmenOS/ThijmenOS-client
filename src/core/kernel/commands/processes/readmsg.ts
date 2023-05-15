@@ -1,5 +1,6 @@
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import MqFlag from "@core/processManager/types/messageQueueFlags";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
@@ -10,20 +11,29 @@ class ReadMsg implements ICommand {
     types.ProcessManager
   );
 
-  private _senderPid: number;
+  private _msqId: number;
 
-  constructor(pid: number) {
-    this._senderPid = pid;
+  constructor(msqId: number) {
+    this._msqId = msqId;
   }
 
   Handle(process: BaseProcess): string | number | null {
-    const messageBus = this._processes.FindMessageBus(
-      this._senderPid,
-      process.pid
-    );
-    if (messageBus instanceof Exit) return null;
+    const messageBus = this._processes.FindMessageBus(this._msqId);
+    if (messageBus instanceof Exit) return -1;
 
-    return messageBus.Read();
+    const session = messageBus.FindSession(process.pid);
+    if (session instanceof Exit) return -1;
+
+    if (
+      session.flags.includes(MqFlag.WRONLY) ||
+      !session.flags.includes(MqFlag.RDONLY || MqFlag.RDWR)
+    ) {
+      return -1;
+    }
+
+    const status = messageBus.Read();
+
+    return status;
   }
 }
 

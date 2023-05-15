@@ -2,7 +2,6 @@ import { ICommand } from "@ostypes/CommandTypes";
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import Exit from "@providers/error/systemErrors/Exit";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
 
 class ExitProcess implements ICommand {
@@ -18,11 +17,12 @@ class ExitProcess implements ICommand {
 
   Handle(process: BaseProcess): number {
     const result = this._processes.FindProcess(process.pid);
-    if (result instanceof Exit) {
+    if (typeof result === "number") {
       return result;
     }
 
     result.Terminate(this._code);
+    console.log(`process exited with code ${this._code}`);
 
     return this._code;
   }

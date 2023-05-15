@@ -4,10 +4,9 @@ import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
-import Exit from "@providers/error/systemErrors/Exit";
-import NoResourceAccess from "./errors/NoResourceAccess";
+import { errors } from "../errors";
 
-class ReadFileCommand implements ICommand<string> {
+class ReadFileCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
     types.CommandAccessValidation
   );
@@ -21,9 +20,9 @@ class ReadFileCommand implements ICommand<string> {
     this._props = props;
   }
 
-  public async Handle(): Promise<string | Exit<string>> {
+  public async Handle(): Promise<string | number> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return new NoResourceAccess();
+    if (!validated) return errors.NoResourceAccess;
 
     const result: string = await OpenFile(this._props);
 
