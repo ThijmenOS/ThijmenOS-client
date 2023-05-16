@@ -78,6 +78,9 @@ class FileIcon implements IFileIcon {
     }
 
     const file = await OpenFile(path);
+    if (typeof file === "number") {
+      throw new Error("error");
+    }
     const iconMetadata: IconMetadataShape = JSON.parse(file);
 
     return iconMetadata;
