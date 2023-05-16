@@ -28,9 +28,8 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
 
     this.RegisterProcess();
     this.ListenToSysCalls();
-    setTimeout(() => {
-      this.Startup(args);
-    }, 100);
+    this.Startup(args);
+    this.code.windowContent.addEventListener("load", () => this.Startup(args));
 
     return this;
   }

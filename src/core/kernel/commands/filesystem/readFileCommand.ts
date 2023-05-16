@@ -24,7 +24,7 @@ class ReadFileCommand implements ICommand {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
     if (!validated) return errors.NoResourceAccess;
 
-    const result: string = await OpenFile(this._props);
+    const result = await OpenFile(this._props);
 
     return result;
   }

@@ -3,5 +3,6 @@ export enum OSErrors {
   couldNotLoadSettings,
   couldNotLoadDesktop,
   couldNotLoadProcesses,
+  noSignedInUser,
   parameterError,
 }

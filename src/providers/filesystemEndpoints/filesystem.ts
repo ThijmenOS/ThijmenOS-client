@@ -11,13 +11,15 @@ export async function ShowFilesInDir(
   return data;
 }
 
-export async function OpenFile(path: string) {
-  const { data } = await api.Get(`/filesystem/openUserFile?file=${path}`);
+export async function OpenFile(path: string): Promise<string | number> {
+  const { data } = await api.Get<string | number>(
+    `/filesystem/openUserFile?file=${path}`
+  );
   return data;
 }
 
-export async function ChangeDirectory(path: Path): Promise<string> {
-  const { data } = await api.Get(`/root/changeDirectory?path=${path}`);
+export async function ValidatePath(path: Path): Promise<string> {
+  const { data } = await api.Get<string>(`/root/changeDirectory?path=${path}`);
   return data;
 }
 

@@ -1,4 +1,5 @@
 import ProcessesShape from "@core/processManager/interfaces/processesShape";
+import { ProcessState } from "@core/processManager/types/processState";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
@@ -21,6 +22,8 @@ class Kill implements ICommand {
   Handle() {
     const targetProcess = this._processes.FindProcess(this._pid);
     if (targetProcess instanceof Exit) return -1;
+
+    if (targetProcess.state === ProcessState.Terminated) return -1;
 
     targetProcess.Terminate(this._exitCode ?? 0);
 

@@ -29,7 +29,7 @@
     "vite-plugin-node-stdlib-browser": "^0.1.1"
   },
   "dependencies": {
-    "@thijmen-os/common": "^2.0.9",
+    "@thijmen-os/common": "^2.0.12",
     "@thijmen-os/errormanager": "^1.0.2",
     "@thijmen-os/eslint-config": "^1.0.0",
     "@thijmen-os/graphics": "^2.0.3",

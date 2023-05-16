@@ -49,6 +49,10 @@ import ReadMsg from "./commands/processes/readmsg";
 import GetProcesses from "./commands/processes/getProcesses";
 import Kill from "./commands/processes/kill";
 import CloseMessageBus from "./commands/processes/closeMessageBus";
+import ChangePassword from "./commands/users/changePassword";
+import ChangeUserName from "./commands/users/changeName";
+import GetCurrentUser from "./commands/users/usr";
+import ValidateCredentials from "./commands/users/validateCredentials";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -98,6 +102,12 @@ class Kernel implements KernelMethodShape {
     killMq: CloseMessageBus,
     getProcesses: GetProcesses,
     kill: Kill,
+
+    //User
+    changePwd: ChangePassword,
+    changeUsername: ChangeUserName,
+    user: GetCurrentUser,
+    auth: ValidateCredentials,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {

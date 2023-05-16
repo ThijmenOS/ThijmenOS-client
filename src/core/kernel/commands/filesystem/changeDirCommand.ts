@@ -1,6 +1,6 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import { ChangeDirectory } from "@providers/filesystemEndpoints/filesystem";
+import { ValidatePath } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
@@ -24,7 +24,7 @@ class ChangeDirCommand implements ICommand {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
     if (!validated) return errors.NoResourceAccess;
 
-    const result = await ChangeDirectory(this._props);
+    const result = await ValidatePath(this._props);
 
     return result;
   }

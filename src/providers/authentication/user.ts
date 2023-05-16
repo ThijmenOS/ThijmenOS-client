@@ -1,5 +1,5 @@
-import { UserMethodShape } from "./userMethodShape";
 import { User } from "@thijmen-os/common";
+import { UserMethodShape } from "./userMethodShape";
 import { imagetypes } from "@ostypes/imageTypes";
 
 export enum AuthenticationMethods {
@@ -57,8 +57,10 @@ export class UserClass implements User, UserMethodShape {
     return this.username;
   }
 
-  ChangePassword(newPassword: string): boolean {
+  ChangePassword(oldPassword: string, newPassword: string): boolean {
+    if (!oldPassword) return false;
     if (!newPassword) return false;
+    if (oldPassword !== this.password) return false;
     if (newPassword === this.password) return false;
 
     this.password = newPassword;
