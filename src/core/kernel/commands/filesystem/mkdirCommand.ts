@@ -4,7 +4,7 @@ import { MakeDirectory } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import types from "@ostypes/types";
-import { errors, success } from "../errors";
+import { success } from "../errors";
 
 class MkdirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -25,7 +25,7 @@ class MkdirCommand implements ICommand {
       this._props.directoryPath,
       this._access
     );
-    if (!validated) return errors.NoResourceAccess;
+    if (!validated) return -1;
 
     MakeDirectory({
       props: this._props,

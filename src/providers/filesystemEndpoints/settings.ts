@@ -8,12 +8,14 @@ import {
 export async function FetchInstalledApplications(): Promise<
   Array<ApplicationMetaDataObject>
 > {
-  const { data } = await api.Get("/root/readRegisteredApplications");
+  const { data } = await api.Get<Array<ApplicationMetaDataObject>>(
+    "/root/readRegisteredApplications"
+  );
   return data;
 }
 
 export async function FetchSettings(): Promise<OSSettings> {
-  const { data } = await api.Get("/root/readSettings");
+  const { data } = await api.Get<OSSettings>("/root/readSettings");
   return data;
 }
 

@@ -5,11 +5,13 @@ export enum ValidMethods {
   changeDir = "changeDir",
   mkdir = "mkdir",
   rmdir = "rmdir",
+  rm = "rm",
   touch = "touch",
   memAlloc = "memAlloc",
   memRead = "memRead",
   memWrite = "memWrite",
   selectFile = "selectFile",
+  writeFile = "writeFile",
 
   //Window operations
   openFile = "openFile",
@@ -29,4 +31,10 @@ export enum ValidMethods {
   killMq = "killMq",
   getProcesses = "getProcesses",
   kill = "kill",
+
+  //User
+  changeUserName = "changeUsername",
+  changePwd = "changePwd",
+  user = "user",
+  auth = "auth",
 }

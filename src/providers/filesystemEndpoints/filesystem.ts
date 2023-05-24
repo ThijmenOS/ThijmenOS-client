@@ -11,13 +11,15 @@ export async function ShowFilesInDir(
   return data;
 }
 
-export async function OpenFile(path: string) {
-  const { data } = await api.Get(`/filesystem/openUserFile?file=${path}`);
+export async function OpenFile(path: string): Promise<string | number> {
+  const { data } = await api.Get<string | number>(
+    `/filesystem/openUserFile?file=${path}`
+  );
   return data;
 }
 
-export async function ChangeDirectory(path: Path): Promise<string> {
-  const { data } = await api.Get(`/root/changeDirectory?path=${path}`);
+export async function ValidatePath(path: Path): Promise<string> {
+  const { data } = await api.Get<string>(`/root/changeDirectory?path=${path}`);
   return data;
 }
 
@@ -40,8 +42,23 @@ export async function CreateFile(props: {
 }
 
 export async function RemoveDirectory(props: Path): Promise<boolean> {
-  const { data } = await api.Post("/filesystem/removeDirectory", {
+  const { data } = await api.Delete("/filesystem/removeDirectory", {
     Path: props,
   });
+  return data;
+}
+
+export async function RemoveFile(props: Path): Promise<boolean> {
+  const { data } = await api.Delete("/filesystem/removeFile", {
+    Path: props,
+  });
+  return data;
+}
+
+export async function writeFile(props: {
+  path: Path;
+  content: string;
+}): Promise<boolean> {
+  const { data } = await api.Post("/filesystem/writeFile", props);
   return data;
 }

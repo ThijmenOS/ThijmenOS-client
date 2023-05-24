@@ -4,7 +4,6 @@ import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import types from "@ostypes/types";
-import { errors } from "../errors";
 
 class ListFilesCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -22,7 +21,7 @@ class ListFilesCommand implements ICommand {
 
   public async Handle(): Promise<number | Array<Directory>> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return errors.NoResourceAccess;
+    if (!validated) return -1;
 
     const result = await ShowFilesInDir(this._props);
 

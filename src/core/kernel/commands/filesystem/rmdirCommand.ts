@@ -4,7 +4,6 @@ import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import { errors, success } from "../errors";
 
 class RmdirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -22,13 +21,13 @@ class RmdirCommand implements ICommand {
 
   public async Handle(): Promise<number> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) errors.NoResourceAccess;
+    if (!validated) -1;
 
     const result = await RemoveDirectory(this._props);
 
-    if (!result) return errors.ResourceDoesNotExist;
+    if (!result) return -1;
 
-    return success;
+    return 0;
   }
 }
 

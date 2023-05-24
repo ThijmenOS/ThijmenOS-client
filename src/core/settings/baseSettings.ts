@@ -1,8 +1,9 @@
 import { FetchSettings } from "@providers/filesystemEndpoints/settings";
 import { OSSettings } from "@thijmen-os/common";
-import ErrorManager from "@thijmen-os/errormanager";
 import { injectable } from "inversify";
 import BaseSettingsMethods from "./baseSettingsMethods";
+import FatalError from "@providers/error/userErrors/fatalError";
+import { errors } from "@core/kernel/commands/errors";
 
 @injectable()
 class BaseSettings implements BaseSettingsMethods {
@@ -12,9 +13,12 @@ class BaseSettings implements BaseSettingsMethods {
   }
 
   public async Initialise(): Promise<void> {
-    const settings = await FetchSettings().catch(() =>
-      ErrorManager.fatalError()
-    );
+    const settings = await FetchSettings().catch(() => {
+      throw new FatalError(
+        "Could not fetch settings",
+        errors.SettingsCouldNotLoad
+      );
+    });
 
     if (settings) this._settings = settings;
   }

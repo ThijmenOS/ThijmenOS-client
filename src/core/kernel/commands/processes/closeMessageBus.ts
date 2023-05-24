@@ -3,7 +3,6 @@ import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
-import { errors } from "../errors";
 
 class CloseMessageBus implements ICommand {
   private readonly _processes = javascriptOs.get<ProcessesShape>(
@@ -17,10 +16,7 @@ class CloseMessageBus implements ICommand {
   }
 
   Handle(process?: BaseProcess): number {
-    if (!process) return errors.UnkownError;
-
-    // eslint-disable-next-line no-debugger
-    debugger;
+    if (!process) return -1;
 
     const result = this._processes.FreeMessageBus(this._msbId, process.pid);
     if (result.code !== 0) return -1;

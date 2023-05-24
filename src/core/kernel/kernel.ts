@@ -41,7 +41,7 @@ import AllocateMemory from "./commands/filesystem/allocateMemory";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
 import SelectFile from "./commands/application/selectFile";
-import ExitProcess from "./commands/processes/exit";
+import ExitProcess from "./commands/processes/exitProcess";
 import WaitPid from "./commands/processes/waitpid";
 import OpenMessageBus from "./commands/processes/openMessageBus";
 import SendMsg from "./commands/processes/sendmsg";
@@ -49,6 +49,12 @@ import ReadMsg from "./commands/processes/readmsg";
 import GetProcesses from "./commands/processes/getProcesses";
 import Kill from "./commands/processes/kill";
 import CloseMessageBus from "./commands/processes/closeMessageBus";
+import ChangePassword from "./commands/users/changePassword";
+import ChangeUserName from "./commands/users/changeName";
+import GetCurrentUser from "./commands/users/usr";
+import ValidateCredentials from "./commands/users/validateCredentials";
+import RmCommand from "./commands/filesystem/rmCommand";
+import WriteFileCommand from "./commands/filesystem/writeFileCommand";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -74,11 +80,13 @@ class Kernel implements KernelMethodShape {
     changeDir: ChangeDirCommand,
     mkdir: mkdirCommand,
     rmdir: rmdirCommand,
+    rm: RmCommand,
     touch: TouchCommand,
     memAlloc: AllocateMemory,
     memRead: ReadMemory,
     memWrite: WriteMemory,
     selectFile: SelectFile,
+    writeFile: WriteFileCommand,
 
     //Window operations
     openFile: OpenFileCommand,
@@ -98,6 +106,12 @@ class Kernel implements KernelMethodShape {
     killMq: CloseMessageBus,
     getProcesses: GetProcesses,
     kill: Kill,
+
+    //User
+    changePwd: ChangePassword,
+    changeUsername: ChangeUserName,
+    user: GetCurrentUser,
+    auth: ValidateCredentials,
   };
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {

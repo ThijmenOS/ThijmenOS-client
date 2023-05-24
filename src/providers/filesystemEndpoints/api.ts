@@ -12,7 +12,9 @@ class Api {
     this._baseURL = props.baseURL;
   }
 
-  public async Get(url: string) {
+  public async Get<T = unknown>(
+    url: string
+  ): Promise<{ data: T; status: number }> {
     const response = await fetch(this._baseURL + url);
 
     return await response.json();

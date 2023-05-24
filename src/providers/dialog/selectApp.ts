@@ -1,7 +1,7 @@
 import {
   CreateElementFromString,
   GetElementByClass,
-} from "@thijmen-os/graphics";
+} from "@providers/gui/helpers";
 import Prompt from "./prompt";
 
 class SelectAppPrompt extends Prompt {

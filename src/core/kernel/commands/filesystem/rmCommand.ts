@@ -1,32 +1,34 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
+import { RemoveFile } from "@providers/filesystemEndpoints/filesystem";
+import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 
-class ReadFileCommand implements ICommand {
+class RmCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
     types.CommandAccessValidation
   );
 
   private readonly _props: Path;
 
-  public readonly requiredPermission = Permissions.fileSystem;
-  private readonly _access = Access.r;
+  readonly requiredPermission = Permissions.fileSystem;
+  private readonly _access = Access.w;
 
   constructor(props: Path) {
     this._props = props;
   }
 
-  public async Handle(): Promise<string | number> {
+  public async Handle(): Promise<number> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return -1;
+    if (!validated) -1;
 
-    const result = await OpenFile(this._props);
+    const result = await RemoveFile(this._props);
 
-    return result;
+    if (!result) return -1;
+
+    return 0;
   }
 }
 
-export default ReadFileCommand;
+export default RmCommand;

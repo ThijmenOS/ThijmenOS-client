@@ -1,4 +1,4 @@
-import { CreateElementFromString } from "@thijmen-os/graphics";
+import { CreateElementFromString } from "@providers/gui/helpers";
 import Prompt from "./prompt";
 
 class NoAppForFiletype extends Prompt {

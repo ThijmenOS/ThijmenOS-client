@@ -9,6 +9,8 @@ import { userKey } from "@ostypes/memoryKeys";
 import MemoryAccess from "@core/memory/models/memoryAccess";
 import { GenerateId } from "@utils/generatePid";
 import Exit from "@providers/error/systemErrors/Exit";
+import FatalError from "@providers/error/userErrors/fatalError";
+import { OSErrors } from "@providers/error/defaults/errors";
 
 @injectable()
 class Authentication implements AuthenticationMethodShape {
@@ -24,6 +26,26 @@ class Authentication implements AuthenticationMethodShape {
     this._memory.AllocateMemory(this._pid, userKey, [MemoryAccess.MEM_READ]);
   }
 
+  public FindUser(userId: string): UserClass | false {
+    const user = this._userAccounts.find((user) => user.userId === userId);
+
+    if (!user) return false;
+
+    return new UserClass(user);
+  }
+
+  public GetSignedInUser(): UserClass {
+    const user = this._memory.LoadFromMemory<User>(this._pid, userKey);
+
+    if (user instanceof Exit || !user)
+      throw new FatalError(
+        "No singed in user could be found",
+        OSErrors.noSignedInUser
+      );
+
+    return new UserClass(user);
+  }
+
   public CheckAuthenticationState(): false | User {
     const result = this._memory.LoadFromMemory<User>(this._pid, userKey);
 
@@ -35,7 +57,13 @@ class Authentication implements AuthenticationMethodShape {
   }
 
   public async CheckForsingleUserAccount(): Promise<false | User> {
-    this._userAccounts = await GetAllUsers();
+    const users = await GetAllUsers();
+    const allUsers = Object.values(users);
+    const rootUser = allUsers.findIndex((user) => user.userId === "1");
+    allUsers.splice(rootUser, 1);
+    this._userAccounts = allUsers;
+
+    console.log(this._userAccounts.length);
 
     const moreThenOneUser = this._userAccounts.length > 1;
     if (moreThenOneUser) {

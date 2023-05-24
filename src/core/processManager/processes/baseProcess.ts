@@ -40,6 +40,7 @@ export abstract class BaseProcess<
 
   protected Startup(args?: string): number {
     const code = this.code as Thread | ApplicationWindow;
+
     code.Message({
       id: "startup",
       data: args,
