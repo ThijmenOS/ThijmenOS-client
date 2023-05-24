@@ -4,7 +4,6 @@ import { ValidatePath } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
-import { errors } from "../errors";
 
 class ChangeDirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
@@ -22,7 +21,7 @@ class ChangeDirCommand implements ICommand {
 
   public async Handle(): Promise<number | string> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return errors.NoResourceAccess;
+    if (!validated) return -1;
 
     const result = await ValidatePath(this._props);
 

@@ -5,13 +5,17 @@ import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import { errors } from "../errors";
 
+interface WriteMemoryArgs {
+  memoryKey: string;
+  data: object;
+}
 class WriteMemory implements ICommand {
   private readonly _memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
 
   private _memoryKey: string;
   private _data: object;
 
-  constructor(args: { memoryKey: string; data: object }) {
+  constructor(args: WriteMemoryArgs) {
     this._memoryKey = args.memoryKey;
     this._data = args.data;
   }

@@ -62,7 +62,7 @@ javascriptOs
 javascriptOs
   .bind<AuthenticationMethodShapeGui>(types.AuthenticationGui)
   .to(AuthenticationGui);
-javascriptOs.bind<DesktopMethods>(types.Desktop).to(Desktop);
+javascriptOs.bind<DesktopMethods>(types.Desktop).to(Desktop).inSingletonScope();
 javascriptOs
   .bind<AccessValidationMethods>(types.CommandAccessValidation)
   .to(CommandAccessValidation)

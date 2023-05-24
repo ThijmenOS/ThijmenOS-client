@@ -25,7 +25,7 @@ class MkdirCommand implements ICommand {
       this._props.directoryPath,
       this._access
     );
-    if (!validated) return errors.NoResourceAccess;
+    if (!validated) return -1;
 
     MakeDirectory({
       props: this._props,

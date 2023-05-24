@@ -4,7 +4,11 @@ import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
 import { ProcessV2 } from "@core/processManager/processes/process";
-import { errors } from "../errors";
+
+interface AllocateMemoryArgs {
+  memoryKey: string;
+  memoryAccess: Array<MemoryAccess>;
+}
 
 class AllocateMemory implements ICommand {
   private readonly _memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
@@ -12,14 +16,14 @@ class AllocateMemory implements ICommand {
   private _memoryKey: string;
   private _memoryAccess: Array<MemoryAccess>;
 
-  constructor(args: { memoryKey: string; memoryAccess: Array<MemoryAccess> }) {
+  constructor(args: AllocateMemoryArgs) {
     this._memoryKey = args.memoryKey;
     this._memoryAccess = args.memoryAccess;
   }
 
   public Handle(Process: ProcessV2): number {
     if (!this._memoryAccess || !this._memoryKey) {
-      return errors.ParameterError;
+      return -1;
     }
 
     const result = this._memory.AllocateMemory(

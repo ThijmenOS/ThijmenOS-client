@@ -42,8 +42,23 @@ export async function CreateFile(props: {
 }
 
 export async function RemoveDirectory(props: Path): Promise<boolean> {
-  const { data } = await api.Post("/filesystem/removeDirectory", {
+  const { data } = await api.Delete("/filesystem/removeDirectory", {
     Path: props,
   });
+  return data;
+}
+
+export async function RemoveFile(props: Path): Promise<boolean> {
+  const { data } = await api.Delete("/filesystem/removeFile", {
+    Path: props,
+  });
+  return data;
+}
+
+export async function writeFile(props: {
+  path: Path;
+  content: string;
+}): Promise<boolean> {
+  const { data } = await api.Post("/filesystem/writeFile", props);
   return data;
 }

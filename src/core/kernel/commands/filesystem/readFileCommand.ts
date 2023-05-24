@@ -22,7 +22,7 @@ class ReadFileCommand implements ICommand {
 
   public async Handle(): Promise<string | number> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return errors.NoResourceAccess;
+    if (!validated) return -1;
 
     const result = await OpenFile(this._props);
 

@@ -59,7 +59,8 @@ class Authentication implements AuthenticationMethodShape {
   public async CheckForsingleUserAccount(): Promise<false | User> {
     const users = await GetAllUsers();
     const allUsers = Object.values(users);
-    console.log(allUsers);
+    const rootUser = allUsers.findIndex((user) => user.userId === "1");
+    allUsers.splice(rootUser, 1);
     this._userAccounts = allUsers;
 
     console.log(this._userAccounts.length);

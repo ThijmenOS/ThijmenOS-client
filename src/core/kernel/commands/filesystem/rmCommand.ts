@@ -1,12 +1,14 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
+import {
+  RemoveDirectory,
+  RemoveFile,
+} from "@providers/filesystemEndpoints/filesystem";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import { errors, success } from "../errors";
 
-class RmdirCommand implements ICommand {
+class RmCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
     types.CommandAccessValidation
   );
@@ -24,7 +26,7 @@ class RmdirCommand implements ICommand {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
     if (!validated) -1;
 
-    const result = await RemoveDirectory(this._props);
+    const result = await RemoveFile(this._props);
 
     if (!result) return -1;
 
@@ -32,4 +34,4 @@ class RmdirCommand implements ICommand {
   }
 }
 
-export default RmdirCommand;
+export default RmCommand;

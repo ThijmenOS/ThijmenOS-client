@@ -22,7 +22,7 @@ class ListFilesCommand implements ICommand {
 
   public async Handle(): Promise<number | Array<Directory>> {
     const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
-    if (!validated) return errors.NoResourceAccess;
+    if (!validated) return -1;
 
     const result = await ShowFilesInDir(this._props);
 

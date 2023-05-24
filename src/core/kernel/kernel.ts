@@ -53,6 +53,8 @@ import ChangePassword from "./commands/users/changePassword";
 import ChangeUserName from "./commands/users/changeName";
 import GetCurrentUser from "./commands/users/usr";
 import ValidateCredentials from "./commands/users/validateCredentials";
+import RmCommand from "./commands/filesystem/rmCommand";
+import WriteFileCommand from "./commands/filesystem/writeFileCommand";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -78,11 +80,13 @@ class Kernel implements KernelMethodShape {
     changeDir: ChangeDirCommand,
     mkdir: mkdirCommand,
     rmdir: rmdirCommand,
+    rm: RmCommand,
     touch: TouchCommand,
     memAlloc: AllocateMemory,
     memRead: ReadMemory,
     memWrite: WriteMemory,
     selectFile: SelectFile,
+    writeFile: WriteFileCommand,
 
     //Window operations
     openFile: OpenFileCommand,
