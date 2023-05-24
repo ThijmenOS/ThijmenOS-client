@@ -1,9 +1,6 @@
 import { Access, Path, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
-import {
-  RemoveDirectory,
-  RemoveFile,
-} from "@providers/filesystemEndpoints/filesystem";
+import { RemoveFile } from "@providers/filesystemEndpoints/filesystem";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";

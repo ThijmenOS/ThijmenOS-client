@@ -4,7 +4,6 @@ import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import types from "@ostypes/types";
-import { errors } from "../errors";
 
 class ListFilesCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(

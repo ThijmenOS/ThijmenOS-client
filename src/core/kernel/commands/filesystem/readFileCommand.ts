@@ -4,7 +4,6 @@ import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
-import { errors } from "../errors";
 
 class ReadFileCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(

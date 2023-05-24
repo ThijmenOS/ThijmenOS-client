@@ -4,7 +4,6 @@ import { RemoveDirectory } from "@providers/filesystemEndpoints/filesystem";
 import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import javascriptOs from "@inversify/inversify.config";
 import types from "@ostypes/types";
-import { errors, success } from "../errors";
 
 class RmdirCommand implements ICommand {
   private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
