@@ -3,8 +3,8 @@ import {
   SigninActionShape,
   SinginAction,
 } from "@providers/authentication/user";
-import { AddElement, CreateElementFromString } from "@thijmen-os/graphics";
 import template from "./defaults/htmlTemplate";
+import { AddElement, CreateElementFromString } from "../helpers";
 
 export class AuthenticationForm {
   private readonly _rootElement: HTMLElement;

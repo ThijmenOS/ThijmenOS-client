@@ -2,10 +2,10 @@ import types from "@ostypes/types";
 import AuthorizationMethodShape from "@providers/authentication/authenticationMethodShape";
 import { SigninActionShape } from "@providers/authentication/user";
 import { ClassOperation } from "@thijmen-os/common";
-import { AddOrRemoveClass } from "@thijmen-os/graphics";
 import { inject } from "inversify";
 import { injectable } from "inversify/lib/annotation/injectable";
 import { AuthenticationForm } from "./authenticationFromElement";
+import { AddOrRemoveClass } from "../helpers";
 
 @injectable()
 class AuthenticationGui implements AuthenticationGuiShape {

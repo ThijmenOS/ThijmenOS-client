@@ -15,7 +15,7 @@
       "@providers/*": ["providers/*"],
       "@inversify/*": ["../*"]
     },
-    "types": ["node", "jest", "reflect-metadata"],
+    "types": ["node", "reflect-metadata"],
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,

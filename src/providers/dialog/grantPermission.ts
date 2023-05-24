@@ -1,4 +1,3 @@
-import { CreateElementFromString } from "@thijmen-os/graphics";
 import Prompt from "./prompt";
 import { PermissionRequestDto, Permissions } from "@thijmen-os/common";
 import {
@@ -6,6 +5,7 @@ import {
   promptFooters,
   promptSelectors,
 } from "./defaults";
+import { CreateElementFromString } from "@providers/gui/helpers";
 
 class GrantPermission extends Prompt {
   promptCallback: (

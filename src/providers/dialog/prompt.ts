@@ -1,9 +1,9 @@
 import {
-  AddElement,
   CreateElementFromString,
   GetElementByClass,
+  AddElement,
   InitMovement,
-} from "@thijmen-os/graphics";
+} from "@providers/gui/helpers";
 import { promptSelectors, prompt } from "./defaults";
 import GenerateUUID from "@utils/generateUUID";
 

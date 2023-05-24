@@ -13,16 +13,12 @@ import {
   fileIconsPath,
   IconMetadataShape,
 } from "@thijmen-os/common";
-import {
-  CreateElementFromString,
-  InitMovement,
-  AddElement,
-} from "@thijmen-os/graphics";
-import ErrorManager from "@thijmen-os/errormanager";
 import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import GenerateUUID from "@utils/generateUUID";
 import StartProcess from "@core/kernel/commands/processes/startProcess";
 import OpenFileCommand from "@core/kernel/commands/application/openFileCommand";
+import { AddElement, CreateElementFromString, InitMovement } from "../helpers";
+import ApplicationNotFoundError from "@providers/error/userErrors/applicationNotFound";
 
 @injectable()
 class FileIcon implements IFileIcon {
@@ -147,7 +143,8 @@ class FileIcon implements IFileIcon {
   }
 
   private OpenFile(metadata: IconMetadataShape) {
-    if (this._iconHasError) ErrorManager.applicationNotFoundError();
+    if (this._iconHasError)
+      throw new ApplicationNotFoundError("Application cloud not be found");
 
     if (metadata.mimeType === MimeTypes.thijm) {
       //Exe path mee geven op basis daar van exe laden.
@@ -160,8 +157,7 @@ class FileIcon implements IFileIcon {
 
     if (!metadata.mimeType) {
       //TODO: add mimetypeinvalid error
-      ErrorManager.applicationNotFoundError();
-      return;
+      throw new ApplicationNotFoundError("");
     }
 
     new OpenFileCommand({

@@ -9,15 +9,15 @@ import { WindowOptions } from "./interfaces/window";
 import { ClassOperation } from "@thijmen-os/common";
 
 //Other
-import {
-  AddOrRemoveClass,
-  CreateElementFromString,
-  GetElementByClass,
-  InitMovement,
-} from "@thijmen-os/graphics";
 import { injectable } from "inversify";
 import TerminateProcess from "@core/kernel/commands/processes/terminateProcess";
 import { ThreadMessage } from "@core/processManager/types/threadMessage";
+import {
+  InitMovement,
+  AddOrRemoveClass,
+  CreateElementFromString,
+  GetElementByClass,
+} from "../helpers";
 
 let lastWindowOnTop: ApplicationWindow;
 
