@@ -41,7 +41,7 @@ import AllocateMemory from "./commands/filesystem/allocateMemory";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
 import SelectFile from "./commands/application/selectFile";
-import ExitProcess from "./commands/processes/exit";
+import ExitProcess from "./commands/processes/exitProcess";
 import WaitPid from "./commands/processes/waitpid";
 import OpenMessageBus from "./commands/processes/openMessageBus";
 import SendMsg from "./commands/processes/sendmsg";
