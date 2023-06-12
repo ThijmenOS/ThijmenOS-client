@@ -17,7 +17,7 @@ const types = {
   Authentication: Symbol.for("Authentication"),
   AuthenticationGui: Symbol.for("AuthenticationGui"),
   Desktop: Symbol.for("Desktop"),
-  CommandAccessValidation: Symbol.for("CommandAccessValidation"),
+  FileSystem: Symbol.for("FileSystem"),
 };
 
 export default types;

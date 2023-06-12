@@ -111,7 +111,7 @@ class Processes implements ProcessesShape {
     const ownerProcess = this.FindProcess(pid);
     if (ownerProcess instanceof Exit) return ownerProcess;
 
-    ownerProcess.AddResource().messageBus(messageBus.messageBusId);
+    ownerProcess.AddResource.messageBus(messageBus.messageBusId);
 
     messageBusses.push(messageBus);
     this.SaveMessageBusToMemory(messageBusses);

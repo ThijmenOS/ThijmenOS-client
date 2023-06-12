@@ -27,7 +27,7 @@ class StartProcess implements ICommand {
 
     const pathExists = await ValidatePath(this._exePath);
     if (typeof pathExists === "number") {
-      return -1;
+      return 1;
     }
 
     if (mimetype === "html") {
@@ -55,7 +55,7 @@ class StartProcess implements ICommand {
       return -1;
     }
 
-    return -1;
+    return 2;
   }
 }
 

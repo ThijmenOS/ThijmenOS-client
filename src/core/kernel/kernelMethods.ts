@@ -1,20 +1,23 @@
 export enum ValidMethods {
+  ls = "ls",
+  fread = "fread",
+  cd = "cd",
+  fwrite = "fwrite",
+  fopen = "fopen",
+  ffree = "ffree",
+  flock = "flock",
+
   //File system
-  listFiles = "listFiles",
-  readFile = "readFile",
-  changeDir = "changeDir",
   mkdir = "mkdir",
-  rmdir = "rmdir",
   rm = "rm",
   touch = "touch",
   memAlloc = "memAlloc",
   memRead = "memRead",
   memWrite = "memWrite",
   selectFile = "selectFile",
-  writeFile = "writeFile",
+  openFile = "openFile",
 
   //Window operations
-  openFile = "openFile",
 
   //Settings
   // askPermission = "askPermission",

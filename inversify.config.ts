@@ -27,10 +27,10 @@ import AuthenticationGui from "@providers/gui/authentication/authenticationGuiPr
 import AuthenticationMethodShapeGui from "@providers/gui/authentication/authenticationGuiProvider";
 import DesktopMethods from "@providers/desktop/desktopMethods";
 import Desktop from "@providers/desktop/desktop";
-import AccessValidationMethods from "@core/kernel/accessValidationMethods";
-import CommandAccessValidation from "@core/kernel/accessValidation";
 import ApplicationSettingsMethods from "@core/settings/individualSettings/applicationsMethods";
 import ApplicationSettings from "@core/settings/individualSettings/applicationSettings";
+import FileSystemMethods from "@core/fileSystem/interfaces/fileSystem";
+import FileSystem from "@core/fileSystem";
 
 const javascriptOs = new Container();
 
@@ -64,8 +64,8 @@ javascriptOs
   .to(AuthenticationGui);
 javascriptOs.bind<DesktopMethods>(types.Desktop).to(Desktop).inSingletonScope();
 javascriptOs
-  .bind<AccessValidationMethods>(types.CommandAccessValidation)
-  .to(CommandAccessValidation)
+  .bind<FileSystemMethods>(types.FileSystem)
+  .to(FileSystem)
   .inSingletonScope();
 
 export default javascriptOs;

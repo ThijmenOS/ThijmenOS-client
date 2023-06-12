@@ -24,20 +24,18 @@ import {
 import { ValidMethods } from "./kernelMethods";
 import Mediator from "./commands/Mediator";
 import TouchCommand from "./commands/filesystem/touchCommand";
-import rmdirCommand from "./commands/filesystem/rmdirCommand";
-import mkdirCommand from "./commands/filesystem/mkdirCommand";
-import ChangeDirCommand from "./commands/filesystem/changeDirCommand";
-import ReadFileCommand from "./commands/filesystem/readFileCommand";
-import ListFilesCommand from "./commands/filesystem/listFilesCommand";
+import mkdirCommand from "./commands/filesystem/mkdir";
+import ChangeDirCommand from "./commands/filesystem/cdCommand";
+import ReadFileCommand from "./commands/filesystem/freadCommand";
+import ListFilesCommand from "./commands/filesystem/lsCommand";
 import OpenFileCommand from "./commands/application/openFileCommand";
 import KernelMethodShape from "./kernelMethodShape";
 // import AskPermissionCommand from "./commands/settings/askPermissionCommand";
 // import RevokePermissionCommand from "./commands/settings/revokePermissionCommand";
 // import RevokeAllPermissionCommand from "./commands/settings/revokeAllPermissionsCommand";
-import AccessValidationMethods from "./accessValidationMethods";
 import StartProcess from "./commands/processes/startProcess";
 import TerminateProcess from "./commands/processes/terminateProcess";
-import AllocateMemory from "./commands/filesystem/allocateMemory";
+import AllocateMemory from "./commands/filesystem/memAllocCommand";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
 import SelectFile from "./commands/application/selectFile";
@@ -54,39 +52,45 @@ import ChangeUserName from "./commands/users/changeName";
 import GetCurrentUser from "./commands/users/usr";
 import ValidateCredentials from "./commands/users/validateCredentials";
 import RmCommand from "./commands/filesystem/rmCommand";
-import WriteFileCommand from "./commands/filesystem/writeFileCommand";
+import WriteFileCommand from "./commands/filesystem/fwriteCommand";
+import FFree from "./commands/filesystem/ffreeCommand";
+import FLock from "./commands/filesystem/flockCommand";
+import FOpen from "./commands/filesystem/fopenCommand";
+import FileSystem from "@core/fileSystem/interfaces/fileSystem";
 
 @injectable()
 class Kernel implements KernelMethodShape {
   private readonly _mediator: Mediator;
-  private readonly _commandAccessValidator: AccessValidationMethods;
+  private readonly _fileSystem: FileSystem;
 
   constructor(
     @inject(types.Mediator) mediator: Mediator,
-    @inject(types.CommandAccessValidation)
-    accessValidator: AccessValidationMethods
+    @inject(types.FileSystem)
+    filesystem: FileSystem
   ) {
     this._mediator = mediator;
-    this._commandAccessValidator = accessValidator;
+    this._fileSystem = filesystem;
   }
 
   public LoadKernel(): void {
-    this._commandAccessValidator.LoadAccessFile();
+    this._fileSystem.Initialise();
   }
 
   private readonly _kernelMethods: KernelMethods = {
-    listFiles: ListFilesCommand,
-    readFile: ReadFileCommand,
-    changeDir: ChangeDirCommand,
+    ls: ListFilesCommand,
+    fread: ReadFileCommand,
+    cd: ChangeDirCommand,
     mkdir: mkdirCommand,
-    rmdir: rmdirCommand,
     rm: RmCommand,
     touch: TouchCommand,
     memAlloc: AllocateMemory,
     memRead: ReadMemory,
     memWrite: WriteMemory,
     selectFile: SelectFile,
-    writeFile: WriteFileCommand,
+    fwrite: WriteFileCommand,
+    ffree: FFree,
+    fopen: FOpen,
+    flock: FLock,
 
     //Window operations
     openFile: OpenFileCommand,

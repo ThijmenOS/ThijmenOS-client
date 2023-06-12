@@ -1,26 +1,29 @@
-import { Access, Directory, Path, Permissions } from "@thijmen-os/common";
+import { Directory, Path, Permissions } from "@thijmen-os/common";
 import { ICommand } from "@ostypes/CommandTypes";
 import { ShowFilesInDir } from "@providers/filesystemEndpoints/filesystem";
 import javascriptOs from "@inversify/inversify.config";
-import AccessValidationMethods from "@core/kernel/accessValidationMethods";
 import types from "@ostypes/types";
+import FileSystem from "@core/fileSystem/interfaces/fileSystem";
+import { FileAccessOptions } from "@core/fileSystem/enums/fileAccess";
 
-class ListFilesCommand implements ICommand {
-  private readonly _cmdAccess = javascriptOs.get<AccessValidationMethods>(
-    types.CommandAccessValidation
-  );
+class Ls implements ICommand {
+  private readonly _fileSystem = javascriptOs.get<FileSystem>(types.FileSystem);
 
   private _props: Path;
 
   public readonly requiredPermission = Permissions.fileSystem;
-  private readonly _access = Access.r;
+  private readonly _access = FileAccessOptions.r;
 
   constructor(props: Path) {
     this._props = props;
   }
 
   public async Handle(): Promise<number | Array<Directory>> {
-    const validated = this._cmdAccess.ValidateAccess(this._props, this._access);
+    const validated = this._fileSystem.ValidateAccess(
+      this._props,
+      this._access
+    );
+
     if (!validated) return -1;
 
     const result = await ShowFilesInDir(this._props);
@@ -29,4 +32,4 @@ class ListFilesCommand implements ICommand {
   }
 }
 
-export default ListFilesCommand;
+export default Ls;
