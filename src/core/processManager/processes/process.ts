@@ -4,6 +4,7 @@ import javascriptOs from "@inversify/inversify.config";
 import KernelMethodShape from "@core/kernel/kernelMethodShape";
 import types from "@ostypes/types";
 import { ProcessState } from "../types/processState";
+import Metadata from "../types/processMetadata";
 
 export class ProcessV2 extends BaseProcess<Thread> {
   private readonly _kernel = javascriptOs.get<KernelMethodShape>(types.Kernel);
@@ -18,10 +19,14 @@ export class ProcessV2 extends BaseProcess<Thread> {
 
     this.code = new Thread(exePath);
     this.parentPid = parentPid;
+    const metadata: Metadata = {
+      parentPid: parentPid,
+      processType: this.processType,
+    };
 
     this.RegisterProcess();
     this.ListenToSysCalls(this.code.worker);
-    this.Startup(args);
+    this.Startup(metadata, args);
   }
 
   public Terminate(exitCode: number): void {

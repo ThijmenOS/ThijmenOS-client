@@ -38,7 +38,6 @@ import TerminateProcess from "./commands/processes/terminateProcess";
 import AllocateMemory from "./commands/filesystem/memAllocCommand";
 import ReadMemory from "./commands/filesystem/readMemory";
 import WriteMemory from "./commands/filesystem/writeMemory";
-import SelectFile from "./commands/application/selectFile";
 import ExitProcess from "./commands/processes/exitProcess";
 import WaitPid from "./commands/processes/waitpid";
 import OpenMessageBus from "./commands/processes/openMessageBus";
@@ -86,7 +85,6 @@ class Kernel implements KernelMethodShape {
     memAlloc: AllocateMemory,
     memRead: ReadMemory,
     memWrite: WriteMemory,
-    selectFile: SelectFile,
     fwrite: WriteFileCommand,
     ffree: FFree,
     fopen: FOpen,

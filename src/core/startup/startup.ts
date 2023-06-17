@@ -61,13 +61,6 @@ class Startup implements StartupMethodShape {
 
     UpdateTime();
 
-    onresize = () => {
-      const pageWidth = window.innerWidth;
-      $("#display-too-small").css(
-        "display",
-        pageWidth >= 1000 ? "none" : "block"
-      );
-    };
     setInterval(() => {
       UpdateTime();
     }, 1000);

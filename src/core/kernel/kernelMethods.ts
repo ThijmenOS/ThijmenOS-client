@@ -14,7 +14,6 @@ export enum ValidMethods {
   memAlloc = "memAlloc",
   memRead = "memRead",
   memWrite = "memWrite",
-  selectFile = "selectFile",
   openFile = "openFile",
 
   //Window operations

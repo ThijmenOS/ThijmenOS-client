@@ -7,6 +7,7 @@ import Thread from "./thread";
 import ProcessesShape from "../interfaces/processesShape";
 import { success } from "@core/kernel/commands/errors";
 import File from "../../fileSystem/models/file";
+import Metadata from "../types/processMetadata";
 
 export abstract class BaseProcess<
   T extends Thread | ApplicationWindow = Thread | ApplicationWindow
@@ -41,12 +42,15 @@ export abstract class BaseProcess<
     this.processType = processType;
   }
 
-  protected Startup(args?: string): number {
+  protected Startup(metadata: Metadata, args?: string): number {
     const code = this.code as Thread | ApplicationWindow;
 
     code.Message({
       id: "startup",
-      data: args,
+      data: {
+        metadata: metadata,
+        args: args,
+      },
     });
 
     return success;
