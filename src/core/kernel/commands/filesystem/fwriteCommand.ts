@@ -24,6 +24,8 @@ class FWrite implements ICommand {
     )
       return -1;
 
+    console.log(fileHandle);
+
     const result = await WriteFile({
       path: fileHandle.path,
       content: this._content,

@@ -133,13 +133,13 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     if (this.windowContainerElement) this.windowContainerElement.remove();
   }
   public Freese(): void {
-    InitMovement(this.windowOptions.windowIdentifier, { disabled: true });
+    InitMovement(this.windowOptions.windowIdentifier);
 
     this.RemoveEventListeners();
     this._windowContentElement.before(this._windowFrozenElement);
   }
   public Unfreese(): void {
-    InitMovement(this.windowOptions.windowIdentifier, { disabled: false });
+    InitMovement(this.windowOptions.windowIdentifier);
 
     this.RegisterEventListeners();
     this._windowFrozenElement.remove();

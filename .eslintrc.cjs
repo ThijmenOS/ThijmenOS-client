@@ -29,18 +29,12 @@ module.exports = {
     "@typescript-eslint/naming-convention": [
       "error",
       {
-        selector: ["interface", "class", "typeAlias", "enum", "method"],
+        selector: ["interface", "class", "typeAlias", "enum"],
         format: ["PascalCase"],
       },
       {
         selector: "variable",
         format: ["camelCase"],
-      },
-      {
-        selector: "memberLike",
-        modifiers: ["private"],
-        format: ["camelCase"],
-        leadingUnderscore: "require",
       },
       {
         selector: "memberLike",

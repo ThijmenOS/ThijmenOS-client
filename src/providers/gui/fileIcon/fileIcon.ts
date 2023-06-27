@@ -16,9 +16,9 @@ import {
 import { OpenFile } from "@providers/filesystemEndpoints/filesystem";
 import GenerateUUID from "@utils/generateUUID";
 import StartProcess from "@core/kernel/commands/processes/startProcess";
-import OpenFileCommand from "@core/kernel/commands/application/openFileCommand";
 import { AddElement, CreateElementFromString, InitMovement } from "../helpers";
 import ApplicationNotFoundError from "@providers/error/userErrors/applicationNotFound";
+import OpenFileCommand from "@core/kernel/commands/application/openFileCommand";
 
 @injectable()
 class FileIcon implements IFileIcon {

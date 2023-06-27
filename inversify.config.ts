@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import "reflect-metadata";
 
 import { Container } from "inversify";
@@ -31,8 +32,29 @@ import ApplicationSettingsMethods from "@core/settings/individualSettings/applic
 import ApplicationSettings from "@core/settings/individualSettings/applicationSettings";
 import FileSystemMethods from "@core/fileSystem/interfaces/fileSystem";
 import FileSystem from "@core/fileSystem";
+import { IResolver, mediatorSettings } from "mediatr-ts";
 
 const javascriptOs = new Container();
+
+class InversifyResolver implements IResolver {
+  resolve<T>(name: string): T {
+    return javascriptOs.get<T>(name);
+  }
+
+  add<T>(name: string, instance: T): void {
+    javascriptOs.bind(name).to(instance as any);
+  }
+
+  remove(name: string): void {
+    javascriptOs.unbind(name);
+  }
+
+  clear(): void {
+    javascriptOs.unbindAll();
+  }
+}
+
+mediatorSettings.resolver = new InversifyResolver();
 
 //Settings
 javascriptOs.bind<ISettings>(types.Settings).to(Settings).inSingletonScope();

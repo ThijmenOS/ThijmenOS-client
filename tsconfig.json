@@ -5,17 +5,34 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "moduleResolution": "Node",
     "baseUrl": "./src/",
     "paths": {
-      "@ostypes/*": ["types/*"],
-      "@core/*": ["core/*"],
-      "@utils/*": ["utils/*"],
-      "@providers/*": ["providers/*"],
-      "@inversify/*": ["../*"]
+      "@ostypes/*": [
+        "types/*"
+      ],
+      "@core/*": [
+        "core/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@providers/*": [
+        "providers/*"
+      ],
+      "@inversify/*": [
+        "../*"
+      ]
     },
-    "types": ["node", "reflect-metadata"],
+    "types": [
+      "node",
+      "jest",
+      "reflect-metadata"
+    ],
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
@@ -27,6 +44,13 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "*.json", "src/utils/thread.js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "*.json",
+    "src/utils/thread.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

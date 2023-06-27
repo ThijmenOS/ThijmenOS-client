@@ -76,7 +76,7 @@ class FileSystem implements FileSystemMethods {
       throw new Error(result.data);
     }
 
-    return result;
+    return result as User;
   }
 
   public ValidateAccess<T extends boolean>(

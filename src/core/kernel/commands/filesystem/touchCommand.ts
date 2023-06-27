@@ -24,7 +24,15 @@ class TouchCommand implements ICommand {
       this._props.directoryPath,
       this._access
     );
-    if (!validated) return -1;
+    if (!validated) return 1;
+
+    const fh = this._fileSystem.RegisterFile(
+      this._props.directoryPath + "/" + this._props.name,
+      validated.userId,
+      validated.access
+    );
+
+    if (!fh) return 2;
 
     await CreateFile({
       props: this._props,
@@ -32,14 +40,11 @@ class TouchCommand implements ICommand {
       access: validated.access,
     });
 
-    this._fileSystem.RegisterFile(
-      this._props.directoryPath + "/" + this._props.name,
-      validated.userId,
-      validated.access
-    );
-
     this._desktop.RefreshDesktop();
-    return 0;
+
+    console.log(fh);
+
+    return fh.id;
   }
 }
 
