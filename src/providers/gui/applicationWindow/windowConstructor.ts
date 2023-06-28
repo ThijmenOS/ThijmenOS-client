@@ -36,7 +36,7 @@ class WindowConstructor implements WindowConstructorMethods {
     const applicationContent = this.ConstructElement(
       windowId,
       executionLocation
-    ).window(windowOptions.windowHeight, windowOptions.windowWidth);
+    );
 
     window.InitTemplate();
     window.Render(applicationContent);
@@ -61,20 +61,9 @@ class WindowConstructor implements WindowConstructorMethods {
     iframe.setAttribute("name", windowId);
     iframe.src = this.PathBuilder(src);
 
-    const window = (height: number, width: number) => {
-      iframe.classList.add("app-iframe");
-      iframe.setAttribute("style", `height: ${height}px; width: ${width}px`);
+    iframe.classList.add("app-iframe");
 
-      return iframe;
-    };
-
-    const process = () => {
-      iframe.style.display = "none";
-
-      return iframe;
-    };
-
-    return { window, process };
+    return iframe;
   }
 
   private PathBuilder = (executionLocation: string) =>

@@ -6,6 +6,7 @@ import ApplicationWindow from "@providers/gui/applicationWindow/applicationWindo
 import KernelMethodShape from "@core/kernel/kernelMethodShape";
 import { ProcessState } from "../types/processState";
 import Metadata from "../types/processMetadata";
+import StartupArgs from "../interfaces/startupArgs";
 
 export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
   private readonly _kernel = javascriptOs.get<KernelMethodShape>(types.Kernel);
@@ -25,6 +26,7 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
 
   public async Initialise(exePath: string, args?: string, parentPid?: number) {
     this.code = await this._windowConstructor.Window(exePath, this.pid);
+
     this.parentPid = parentPid;
     const metadata: Metadata = {
       parentPid: parentPid,
@@ -33,9 +35,27 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
 
     this.RegisterProcess();
     this.ListenToSysCalls();
-    this.Startup(metadata, args);
     this.code.windowContent.addEventListener("load", () =>
       this.Startup(metadata, args)
+    );
+
+    window.addEventListener(
+      "message",
+      ({ data }) => {
+        if (Number(data.pid) !== this.pid) return;
+
+        if (data.method === "startup") {
+          if (!this.code) return;
+
+          if (!data.params) {
+            this.code.Show();
+          }
+
+          this.StartupArgs(this.code, data.params);
+          this.code.Show();
+        }
+      },
+      { once: true }
     );
 
     return this;
@@ -50,12 +70,26 @@ export class WindowProcessV2 extends BaseProcess<ApplicationWindow> {
 
   private ListenToSysCalls() {
     window.addEventListener("message", ({ data }) => {
-      if (Number(data.pid) !== this.pid) return;
+      if (Number(data.pid) !== this.pid || data.method === "startup") return;
       this._kernel.ProcessMethod({
         origin: this,
         pid: this.pid,
         ...data,
       });
     });
+  }
+
+  private StartupArgs(applicationWindow: ApplicationWindow, args: StartupArgs) {
+    if (!args.winX || !args.winX) return;
+
+    if (args.winX > window.innerWidth) {
+      args.winX = window.innerWidth;
+    }
+
+    if (args.winY > window.innerHeight) {
+      args.winY = window.innerHeight;
+    }
+
+    applicationWindow.SetWindowSize(args.winX, args.winY);
   }
 }

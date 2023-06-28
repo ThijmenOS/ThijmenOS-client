@@ -7,4 +7,6 @@ export default interface ApplicationWindowMethodShape {
   Unfreese(): void;
   Render(element: HTMLIFrameElement): void;
   Message(message: ThreadMessage): void;
+  Show(): void;
+  SetWindowSize(winX: number, winY: number): void;
 }

@@ -3,7 +3,6 @@ import { BaseProcess } from "@core/processManager/processes/baseProcess";
 import javascriptOs from "@inversify/inversify.config";
 import { ICommand } from "@ostypes/CommandTypes";
 import types from "@ostypes/types";
-import { errors } from "../errors";
 
 interface WriteMemoryArgs {
   memoryKey: string;
@@ -20,9 +19,9 @@ class WriteMemory implements ICommand {
     this._data = args.data;
   }
 
-  public Handle(Process: BaseProcess): number {
+  public Handle(Process: BaseProcess): number | string {
     if (!this._memoryKey) {
-      return errors.ParameterError;
+      return 1;
     }
 
     const result = this._memory.SaveToMemory(
@@ -31,7 +30,7 @@ class WriteMemory implements ICommand {
       this._data
     );
 
-    if (result.code !== 0) return -1;
+    if (result.code !== 0) return result.data;
 
     return 0;
   }

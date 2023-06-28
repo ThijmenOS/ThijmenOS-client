@@ -8,6 +8,8 @@ import NoAppForFiletypeError from "@providers/error/userErrors/noApplicationForF
 import StartProcess from "../processes/startProcess";
 import SelectAppPrompt from "@providers/dialog/selectApp";
 import { ApplicationMetaData } from "@thijmen-os/common";
+import KernelMethodShape from "@core/kernel/kernelMethodShape";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 
 class OpenFileCommand implements ICommand {
   private readonly _applicationManager: ApplicationManager =
@@ -15,6 +17,8 @@ class OpenFileCommand implements ICommand {
   private readonly _settings: Settings = javascriptOs.get<Settings>(
     types.Settings
   );
+  private readonly _kernel: KernelMethodShape =
+    javascriptOs.get<KernelMethodShape>(types.Kernel);
 
   private readonly _props: OpenFileType;
 
@@ -22,7 +26,7 @@ class OpenFileCommand implements ICommand {
     this._props = props;
   }
 
-  public async Handle(): Promise<void> {
+  public async Handle(process: BaseProcess): Promise<void> {
     const defaultAppToOpen = this._settings.DefaultApplication(
       this._props.mimeType
     );
@@ -31,10 +35,13 @@ class OpenFileCommand implements ICommand {
       return;
     }
 
-    await new StartProcess({
-      exePath: defaultAppToOpen.exeLocation,
-      args: this._props.filePath,
-    }).Handle();
+    this._kernel.ProcessCommand(
+      new StartProcess({
+        exePath: defaultAppToOpen.exeLocation,
+        args: this._props.filePath,
+      }),
+      process
+    );
   }
 
   private async OpenFileWithApplication(file: OpenFileType) {

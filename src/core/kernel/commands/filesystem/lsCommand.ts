@@ -24,7 +24,7 @@ class Ls implements ICommand {
       this._access
     );
 
-    if (!validated) return -1;
+    if (!validated) return 1;
 
     const result = await ShowFilesInDir(this._props);
 

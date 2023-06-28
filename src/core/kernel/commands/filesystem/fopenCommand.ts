@@ -19,7 +19,8 @@ class FOpen implements ICommand {
   public async Handle(process: BaseProcess): Promise<string | number> {
     const validated = this._fileSystem.ValidateAccess(this._path, this._mode);
 
-    if (!validated) return -1;
+    if (!validated) return 1;
+    if (validated.locked) return 2;
 
     validated.mode = this._mode;
 

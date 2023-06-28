@@ -21,7 +21,7 @@ class AllocateMemory implements ICommand {
     this._memoryAccess = args.memoryAccess;
   }
 
-  public Handle(Process: ProcessV2): number {
+  public Handle(Process: ProcessV2): number | string {
     if (!this._memoryAccess || !this._memoryKey) {
       return -1;
     }
@@ -33,8 +33,10 @@ class AllocateMemory implements ICommand {
     );
 
     if (result.code !== 0) {
-      return -1;
+      return result.data;
     }
+
+    Process.AddResource.memoryAllocation(this._memoryKey);
 
     return 0;
   }

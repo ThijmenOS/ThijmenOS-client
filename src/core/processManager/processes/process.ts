@@ -38,6 +38,8 @@ export class ProcessV2 extends BaseProcess<Thread> {
 
   private ListenToSysCalls(code: Worker) {
     code.addEventListener("message", ({ data }) => {
+      if (data.id === "startup") return;
+
       this._kernel.ProcessMethod({
         origin: this,
         pid: this.pid,

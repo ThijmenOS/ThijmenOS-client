@@ -14,11 +14,12 @@ class FRead implements ICommand {
       (handle) => handle.id === this._fileHandle
     );
 
-    if (!fileHandle || fileHandle.locked) return -1;
+    if (!fileHandle) return 1;
+    if (fileHandle.locked) return 2;
 
     const content = await Open(fileHandle.path);
 
-    if (typeof content !== "string") return -1;
+    if (typeof content !== "string") return 3;
 
     return content;
   }

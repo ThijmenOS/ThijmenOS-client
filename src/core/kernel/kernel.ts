@@ -56,6 +56,8 @@ import FFree from "./commands/filesystem/ffreeCommand";
 import FLock from "./commands/filesystem/flockCommand";
 import FOpen from "./commands/filesystem/fopenCommand";
 import FileSystem from "@core/fileSystem/interfaces/fileSystem";
+import { ICommand } from "@ostypes/CommandTypes";
+import { BaseProcess } from "@core/processManager/processes/baseProcess";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -115,6 +117,20 @@ class Kernel implements KernelMethodShape {
     user: GetCurrentUser,
     auth: ValidateCredentials,
   };
+
+  public async ProcessCommand(command: ICommand, process: BaseProcess) {
+    try {
+      const result = await this._mediator.Send(command, process);
+
+      if (!process.code) {
+        throw new Error();
+      }
+
+      return result;
+    } catch (err) {
+      return -1;
+    }
+  }
 
   public async ProcessMethod(props: JsOsCommunicationMessage) {
     try {

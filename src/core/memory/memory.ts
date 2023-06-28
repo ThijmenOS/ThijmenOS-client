@@ -31,6 +31,12 @@ class Memory implements MemoryMethodShape {
     return new Exit();
   }
 
+  public DeAllocateMemory(memoryKey: string): Exit<string> {
+    delete this._memory[memoryKey];
+
+    return new Exit();
+  }
+
   public SaveToMemory<T>(pid: number, key: string, data: T): Exit {
     const memoryEntry = this._memory[key];
 
@@ -61,6 +67,10 @@ class Memory implements MemoryMethodShape {
     }
 
     return memoryEntry.data as T;
+  }
+
+  public MemoryDump(): MemoryObject {
+    return this._memory;
   }
 
   private ValidateMemoryAccess = (

@@ -4,6 +4,28 @@
   --app-bar-height: 40px;
 }
 
+.javascript-os-file-icon-wrapper {
+  margin: 1em;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app {
+  display: inline-flex;
+  flex-direction: row;
+  height: var(--app-icons-size);
+  width: var(--app-icon-width);
+  cursor: pointer;
+}
+
+.app>p {
+  font-size: 15px;
+  margin: 0;
+  color: white;
+  margin-top: 5px;
+}
+
 .app-dock {
   width: 100%;
   height: var(--app-bar-height);
@@ -32,28 +54,6 @@
 
 .app-apps * {
   display: inline-block;
-}
-
-.app {
-  display: inline-flex;
-  flex-direction: row;
-  height: var(--app-icons-size);
-  width: var(--app-icon-width);
-  cursor: pointer;
-}
-
-.javascript-os-file-icon-wrapper {
-  margin: 1em;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.app > p {
-  font-size: 15px;
-  margin: 0;
-  color: white;
-  margin-top: 5px;
 }
 
 .all-apps-container {

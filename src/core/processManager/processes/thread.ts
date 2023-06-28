@@ -16,6 +16,7 @@ class Thread {
   }
 
   public Message(message: ThreadMessage): number {
+    console.log(message);
     this.worker.postMessage(message);
     return success;
   }

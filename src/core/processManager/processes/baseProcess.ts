@@ -8,6 +8,7 @@ import ProcessesShape from "../interfaces/processesShape";
 import { success } from "@core/kernel/commands/errors";
 import File from "../../fileSystem/models/file";
 import Metadata from "../types/processMetadata";
+import MemoryMethodShape from "@core/memory/memoryMethodShape";
 
 export abstract class BaseProcess<
   T extends Thread | ApplicationWindow = Thread | ApplicationWindow
@@ -15,6 +16,7 @@ export abstract class BaseProcess<
   private readonly _processes = javascriptOs.get<ProcessesShape>(
     types.ProcessManager
   );
+  private readonly _memory = javascriptOs.get<MemoryMethodShape>(types.Memory);
 
   pid: number;
   name: string;
@@ -29,6 +31,7 @@ export abstract class BaseProcess<
 
   messageBusses: Array<number>;
   fileHandles: Array<File>;
+  memoryAllocations: Array<string>;
 
   constructor(name: string, location: string, processType: string) {
     this.pid = GenerateId();
@@ -36,6 +39,7 @@ export abstract class BaseProcess<
     this.exitCode = -1;
     this.messageBusses = [];
     this.fileHandles = [];
+    this.memoryAllocations = [];
 
     this.name = name;
     this.location = location;
@@ -73,7 +77,11 @@ export abstract class BaseProcess<
       this.fileHandles.push(file);
     };
 
-    return { messageBus, file };
+    const memoryAllocation = (key: string) => {
+      this.memoryAllocations.push(key);
+    };
+
+    return { messageBus, file, memoryAllocation };
   }
 
   public FreeResources() {
@@ -84,6 +92,9 @@ export abstract class BaseProcess<
 
     this.fileHandles.forEach((file) => file.Free());
     this.fileHandles = [];
+
+    this.memoryAllocations.forEach((key) => this._memory.DeAllocateMemory(key));
+    this.memoryAllocations = [];
   }
 
   public abstract Terminate(exitCode: number): void;

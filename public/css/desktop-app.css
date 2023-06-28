@@ -92,10 +92,16 @@
 .ball.orange {
   background-color: orange;
 }
+
 .ball.green {
   background-color: green;
 }
 
 .top-header-full-screen {
   border-radius: 0px;
+}
+
+.javascript-os-content {
+  height: 100%;
+  overflow: hidden;
 }

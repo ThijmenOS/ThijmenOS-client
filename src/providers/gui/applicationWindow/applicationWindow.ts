@@ -176,9 +176,18 @@ class ApplicationWindow implements ApplicationWindowMethodShape {
     this.windowContent = element;
     this._windowContentElement.appendChild(element);
 
+    this.windowContainerElement.style.display = "none";
+
     document
       .getElementById("main-application-container")!
-      .appendChild(this.windowContainerElement!);
+      .appendChild(this.windowContainerElement);
+  }
+  public Show(): void {
+    this.windowContainerElement.style.display = "unset";
+  }
+  public SetWindowSize(winX: number, winY: number): void {
+    this.windowContainerElement.style.width = winX + "px";
+    this.windowContainerElement.style.height = winY + "px";
   }
   public Message(message: ThreadMessage): void {
     this.windowContent.contentWindow?.postMessage(message, "*");
