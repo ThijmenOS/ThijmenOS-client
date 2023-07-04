@@ -1,6 +1,6 @@
 import interact from "interactjs";
 
-export function InitMovement(dataId: string): void {
+export function InitMovement(dataId: string | number): void {
   const element: HTMLElement | null = document.querySelector(
     `[data-id="${dataId}"]`
   );

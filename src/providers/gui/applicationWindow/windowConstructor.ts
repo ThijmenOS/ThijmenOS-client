@@ -9,47 +9,54 @@
 
 */
 
-import WindowConstructorMethods from "./interfaces/windowConstructorMethods";
 import { host } from "@thijmen-os/common";
 import ApplicationWindow from "./applicationWindow";
-import { windowOptions } from "./defaults";
 import { injectable } from "inversify";
 import ExectutionLocationNotFound from "@providers/error/userErrors/executionLocationNotFound";
+import { WindowOptions } from "@ostypes/WindowTypes";
 
 @injectable()
-class WindowConstructor implements WindowConstructorMethods {
-  public async Window(
+class WindowBuilder {
+  public executionLocation: string;
+  public winId: number;
+  public windowOptions: WindowOptions;
+
+  constructor(
     executionLocation: string,
-    pid: number
-  ): Promise<ApplicationWindow> {
-    await this.CheckExecutionPath(executionLocation);
+    winId: number,
+    windowOptions: WindowOptions
+  ) {
+    this.executionLocation = executionLocation;
+    this.winId = winId;
+    this.windowOptions = windowOptions;
+  }
 
-    const windowId = pid.toString();
-
-    const window = new ApplicationWindow({
-      windowHeight: windowOptions.windowHeight,
-      windowWidth: windowOptions.windowWidth,
-      windowType: windowOptions.windowType,
-      windowIdentifier: windowId,
-    });
+  public async Construct() {
+    await this.CheckExecutionPath();
 
     const applicationContent = this.ConstructElement(
-      windowId,
-      executionLocation
+      this.winId.toString(),
+      this.executionLocation
     );
 
-    window.InitTemplate();
-    window.Render(applicationContent);
-    window.InitBehaviour();
+    const window = new ApplicationWindow(
+      this.winId,
+      {
+        windowHeight: this.windowOptions.windowHeight ?? 400,
+        windowWidth: this.windowOptions.windowWidth ?? 700,
+        windowTitle: this.windowOptions.windowTitle ?? "",
+      },
+      applicationContent
+    );
 
     return window;
   }
 
-  private async CheckExecutionPath(executionLocation: string): Promise<void> {
-    await fetch(this.PathBuilder(executionLocation)).then((result) => {
+  private async CheckExecutionPath(): Promise<void> {
+    await fetch(this.PathBuilder(this.executionLocation)).then((result) => {
       if (!result.ok) {
         new ExectutionLocationNotFound(
-          `The target execution location could not be started: ${executionLocation}`
+          `The target execution location could not be started: ${this.executionLocation}`
         );
       }
     });
@@ -70,4 +77,4 @@ class WindowConstructor implements WindowConstructorMethods {
     `${host}/static/${executionLocation}`;
 }
 
-export default WindowConstructor;
+export default WindowBuilder;

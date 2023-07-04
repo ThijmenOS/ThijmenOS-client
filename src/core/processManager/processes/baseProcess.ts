@@ -9,6 +9,7 @@ import { success } from "@core/kernel/commands/errors";
 import File from "../../fileSystem/models/file";
 import Metadata from "../types/processMetadata";
 import MemoryMethodShape from "@core/memory/memoryMethodShape";
+import Window from "@providers/gui/applicationWindow/applicationWindow";
 
 export abstract class BaseProcess<
   T extends Thread | ApplicationWindow = Thread | ApplicationWindow
@@ -24,7 +25,7 @@ export abstract class BaseProcess<
   processType: string;
 
   parentPid?: number;
-  childPids?: Array<number>;
+  childPids: Array<number>;
   code?: T;
   state: ProcessState;
   exitCode: number;
@@ -32,14 +33,18 @@ export abstract class BaseProcess<
   messageBusses: Array<number>;
   fileHandles: Array<File>;
   memoryAllocations: Array<string>;
+  windows: Array<Window>;
 
   constructor(name: string, location: string, processType: string) {
     this.pid = GenerateId();
     this.state = ProcessState.New;
     this.exitCode = -1;
+
+    this.childPids = [];
     this.messageBusses = [];
     this.fileHandles = [];
     this.memoryAllocations = [];
+    this.windows = [];
 
     this.name = name;
     this.location = location;
@@ -48,6 +53,8 @@ export abstract class BaseProcess<
 
   protected Startup(metadata: Metadata, args?: string): number {
     const code = this.code as Thread | ApplicationWindow;
+
+    console.log("a");
 
     code.Message({
       id: "startup",
@@ -69,6 +76,14 @@ export abstract class BaseProcess<
   }
 
   public get AddResource() {
+    const childProcess = (pid: number) => {
+      this.childPids.push(pid);
+    };
+
+    const window = (window: Window) => {
+      this.windows.push(window);
+    };
+
     const messageBus = (id: number) => {
       this.messageBusses.push(id);
     };
@@ -81,7 +96,7 @@ export abstract class BaseProcess<
       this.memoryAllocations.push(key);
     };
 
-    return { messageBus, file, memoryAllocation };
+    return { childProcess, window, messageBus, file, memoryAllocation };
   }
 
   public FreeResources() {

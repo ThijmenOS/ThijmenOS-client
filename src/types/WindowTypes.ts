@@ -1,16 +1,7 @@
-export enum WindowType {
-  APPLICATION,
-  DIALOG,
-}
-
-export interface BaseWindowOptions {
+export interface WindowOptions {
   windowHeight: number;
   windowWidth: number;
-  windowType: WindowType;
+  windowTitle: string;
 }
 
-export interface WindowOptions extends BaseWindowOptions {
-  iconLocation?: string;
-  windowTitle: string;
-  windowIdentifier: string;
-}
+export default WindowOptions;

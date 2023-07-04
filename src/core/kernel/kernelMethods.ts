@@ -33,6 +33,7 @@ export enum ValidMethods {
   killMq = "killMq",
   getProcesses = "getProcesses",
   kill = "kill",
+  createWindow = "createWindow",
 
   //User
   changeUserName = "changeUsername",

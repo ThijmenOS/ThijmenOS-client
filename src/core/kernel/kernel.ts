@@ -58,6 +58,7 @@ import FOpen from "./commands/filesystem/fopenCommand";
 import FileSystem from "@core/fileSystem/interfaces/fileSystem";
 import { ICommand } from "@ostypes/CommandTypes";
 import { BaseProcess } from "@core/processManager/processes/baseProcess";
+import CreateWindow from "./commands/processes/createWindow";
 
 @injectable()
 class Kernel implements KernelMethodShape {
@@ -110,6 +111,7 @@ class Kernel implements KernelMethodShape {
     killMq: CloseMessageBus,
     getProcesses: GetProcesses,
     kill: Kill,
+    createWindow: CreateWindow,
 
     //User
     changePwd: ChangePassword,
